@@ -122,7 +122,7 @@ function StaticFrame({ frame }: { frame: FrameData }) {
   return (
     <div className="grid-12 items-center gap-y-6">
       <div className="col-span-6 md:col-span-5">
-        <MediaSlot name={frame.media} alt={frame.title} ratio="4 / 5" label={`FRAME ${frame.n}`} />
+        <MediaSlot name={frame.media} alt={frame.title} label={`FRAME ${frame.n}`} />
       </div>
       <div className="col-span-6 md:col-span-6 md:col-start-7">
         <FrameText frame={frame} />
@@ -183,10 +183,9 @@ function Frame({
           <MediaSlot
             name={frame.media}
             alt={frame.title}
-            ratio="4 / 5"
             label={`FRAME ${frame.n}`}
             priority={index === 0}
-            maxHeight="62vh"
+            maxHeight="58vh"
           />
         </motion.div>
         <motion.div className="col-span-6 md:col-span-6 md:col-start-7" style={{ y }}>

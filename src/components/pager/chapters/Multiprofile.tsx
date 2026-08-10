@@ -56,7 +56,6 @@ export function Multiprofile() {
               key={m}
               name={m}
               alt={`Мультипрофиль — экран ${i + 1}`}
-              ratio="16 / 10"
               label={`MPF DESKTOP ${i + 1}`}
               className="w-[78vw] max-w-[52rem] md:w-[44vw]"
             />
@@ -88,8 +87,8 @@ export function Multiprofile() {
                   key={m}
                   name={m}
                   alt={`Мультипрофиль мобильный экран ${i + 1}`}
-                  ratio="9 / 19.5"
                   label={`M${i + 1}`}
+                  className="w-full"
                 />
               ))}
             </div>

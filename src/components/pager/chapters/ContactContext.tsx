@@ -81,10 +81,9 @@ export function ContactContext() {
                     <MediaSlot
                       name={ctx.media}
                       alt={`Профиль: ${ctx.label}`}
-                      ratio="4 / 5"
                       label={ctx.label.toUpperCase()}
                       className="w-full"
-                      maxHeight="72vh"
+                      maxHeight="70vh"
                     />
                   </motion.div>
                 </AnimatePresence>
