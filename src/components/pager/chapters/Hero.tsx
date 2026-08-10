@@ -156,7 +156,7 @@ function Frame({
   index: number;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
-  const pad = 0.08;
+  const pad = 0.045;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const start = index / FRAMES.length;
   const end = (index + 1) / FRAMES.length;
