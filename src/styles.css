@@ -239,3 +239,44 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Locale typography ---------- */
+/* Latin/Cyrillic keep Plus Jakarta Sans; Simplified Chinese gets a real CJK stack. */
+html[data-locale="zh"] body {
+  font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: normal;
+}
+
+/* CJK has no uppercase and needs looser tracking and leading to stay legible. */
+html[data-locale="zh"] .display-xl,
+html[data-locale="zh"] .display-lg,
+html[data-locale="zh"] .display-md {
+  text-transform: none;
+  letter-spacing: 0.005em;
+  font-weight: 700;
+}
+html[data-locale="zh"] .display-xl {
+  line-height: 1.02;
+  font-size: clamp(2.2rem, 6.6vw, 6.4rem);
+}
+html[data-locale="zh"] .display-lg {
+  line-height: 1.08;
+  font-size: clamp(1.7rem, 3.9vw, 3.6rem);
+}
+html[data-locale="zh"] .display-md {
+  line-height: 1.2;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+}
+html[data-locale="zh"] .lead {
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+}
+html[data-locale="zh"] .label-tech {
+  letter-spacing: 0.12em;
+}
+
+/* English words are longer than Cyrillic at display sizes on small screens. */
+html[data-locale="en"] .display-xl {
+  font-size: clamp(2.1rem, 7.6vw, 8.2rem);
+}
