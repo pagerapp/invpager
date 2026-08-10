@@ -44,6 +44,13 @@ export function MediaSlot({
   const maxWidth =
     maxHeight && rw && rh ? `calc(${maxHeight} * ${(rw / rh).toFixed(6)})` : undefined;
 
+  const markLoaded = (img: HTMLImageElement) => {
+    if (!entry && img.naturalWidth && img.naturalHeight) {
+      setMeasured(`${img.naturalWidth} / ${img.naturalHeight}`);
+    }
+    setLoaded(true);
+  };
+
   return (
     <figure
       className={`relative mx-auto ${loaded ? "" : "bg-[color-mix(in_oklab,var(--color-foreground)_5%,transparent)]"} ${className}`}
