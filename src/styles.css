@@ -94,7 +94,7 @@
 
   /* Editorial rhythm */
   --gutter: 1.25rem;
-  --chapter-space: clamp(6rem, 12vw, 12rem);
+  --chapter-space: clamp(4.5rem, 8vw, 8rem);
 }
 
 /* Light editorial chapter — cold off-white, never beige */
