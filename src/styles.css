@@ -277,6 +277,10 @@ html[data-locale="zh"] .label-tech {
 }
 
 /* English words are longer than Cyrillic at display sizes on small screens. */
+/* English display words (COMMUNICATION) are far longer than the Cyrillic set. */
 html[data-locale="en"] .display-xl {
-  font-size: clamp(2.1rem, 7.6vw, 8.2rem);
+  font-size: clamp(1.9rem, 5.9vw, 6rem);
+}
+html[data-locale="en"] .display-lg {
+  font-size: clamp(1.6rem, 3.6vw, 3.4rem);
 }
