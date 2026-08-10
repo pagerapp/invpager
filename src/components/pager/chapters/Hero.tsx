@@ -2,33 +2,35 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { useRef } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { MaskLine } from "../primitives";
+import { useT } from "@/i18n";
 
-const FRAMES = [
-  {
-    n: "01",
-    tag: "ХАОС",
-    title: "ВАШЕ ПРОСТРАНСТВО — НЕ ДЛЯ ВСЕХ.",
-    body: "Один номер открывает доступ всем — семье, коллегам и случайным контактам.",
-    media: "Hero_storyscroll_img_RU_ENG_1.jpg",
-    color: "var(--guest)",
-  },
-  {
-    n: "02",
-    tag: "КОНТЕКСТ",
-    title: "ОДИН ЧЕЛОВЕК — РАЗНЫЕ КОНТЕКСТЫ.",
-    body: "Для каждого контакта — свой профиль, свои правила и свой уровень доступа.",
-    media: "Hero_storyscroll_img_RU_2.jpg",
-    color: "var(--work)",
-  },
-  {
-    n: "03",
-    tag: "КОНТРОЛЬ",
-    title: "PAGER ВОЗВРАЩАЕТ КОНТРОЛЬ.",
-    body: "Вы сами решаете, как вас видят и как с вами общаются.",
-    media: "Hero_storyscroll_img_RU_3.jpg",
-    color: "var(--personal)",
-  },
+const MEDIA = [
+  "Hero_storyscroll_img_RU_ENG_1.jpg",
+  "Hero_storyscroll_img_RU_2.jpg",
+  "Hero_storyscroll_img_RU_3.jpg",
 ];
+const COLORS = ["var(--guest)", "var(--work)", "var(--personal)"];
+
+type FrameData = {
+  n: string;
+  tag: string;
+  title: string;
+  body: string;
+  media: string;
+  color: string;
+};
+
+function useFrames(): FrameData[] {
+  const t = useT();
+  return t.hero.frames.map((f, i) => ({
+    n: String(i + 1).padStart(2, "0"),
+    tag: f.tag,
+    title: f.title,
+    body: f.body,
+    media: MEDIA[i]!,
+    color: COLORS[i]!,
+  }));
+}
 
 export function Hero() {
   return (
@@ -41,42 +43,43 @@ export function Hero() {
 }
 
 function Manifesto() {
+  const t = useT();
   return (
     <div className="shell pt-28 pb-[clamp(4rem,10vw,9rem)] md:pt-40">
       <div className="grid-12 items-end">
         <div className="col-span-6 md:col-span-8">
           <MaskLine className="label-tech mb-8 md:mb-12" as="div">
             <span className="label-tech text-[color:var(--color-foreground)]">
-              МЕССЕНДЖЕР С УПРАВЛЯЕМЫМ ДОСТУПОМ
+              {t.hero.kicker}
             </span>
           </MaskLine>
           <h1 className="display-xl">
-            <MaskLine delay={0.05}>ОБЩЕНИЕ</MaskLine>
-            <MaskLine delay={0.12} className="md:pl-[6%]">
-              ПО ВАШИМ
-            </MaskLine>
-            <MaskLine delay={0.19} className="md:pl-[12%]">
-              ПРАВИЛАМ
-            </MaskLine>
+            {t.hero.h1.map((line, i) => (
+              <MaskLine
+                key={line}
+                delay={0.05 + i * 0.07}
+                className={i === 1 ? "md:pl-[6%]" : i === 2 ? "md:pl-[12%]" : ""}
+              >
+                {line}
+              </MaskLine>
+            ))}
           </h1>
         </div>
         <div className="col-span-6 md:col-span-4 md:pb-3">
           <div className="rule-t pt-4">
-            <p className="lead max-w-sm">
-              Один аккаунт. Разные профили общения. Разные границы доступа.
-            </p>
+            <p className="lead max-w-sm">{t.hero.lead}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href="#chapter-08"
                 className="focus-instrument bg-[color:var(--color-foreground)] px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-background)] transition-transform duration-200 hover:-translate-y-0.5"
               >
-                Запросить презентацию
+                {t.hero.ctaPrimary}
               </a>
               <a
                 href="#chapter-03"
                 className="focus-instrument border border-[color:var(--color-border)] px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200 hover:bg-[color:var(--color-accent)]"
               >
-                Как это работает
+                {t.hero.ctaSecondary}
               </a>
             </div>
           </div>
@@ -89,6 +92,7 @@ function Manifesto() {
 function StoryScroll() {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const frames = useFrames();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
   return (
@@ -99,14 +103,20 @@ function StoryScroll() {
       >
         {reduced ? (
           <div className="shell space-y-16 py-16">
-            {FRAMES.map((f) => (
+            {frames.map((f) => (
               <StaticFrame key={f.n} frame={f} />
             ))}
           </div>
         ) : (
           <div className="relative h-full">
-            {FRAMES.map((f, i) => (
-              <Frame key={f.n} frame={f} index={i} progress={scrollYProgress} />
+            {frames.map((f, i) => (
+              <Frame
+                key={f.n}
+                frame={f}
+                index={i}
+                count={frames.length}
+                progress={scrollYProgress}
+              />
             ))}
             <Progress progress={scrollYProgress} />
           </div>
@@ -115,8 +125,6 @@ function StoryScroll() {
     </div>
   );
 }
-
-type FrameData = (typeof FRAMES)[number];
 
 function StaticFrame({ frame }: { frame: FrameData }) {
   return (
@@ -128,7 +136,6 @@ function StaticFrame({ frame }: { frame: FrameData }) {
         <FrameText frame={frame} />
       </div>
     </div>
-
   );
 }
 
@@ -141,7 +148,7 @@ function FrameText({ frame }: { frame: FrameData }) {
           FRAME {frame.n} / {frame.tag}
         </span>
       </div>
-      <h2 className="display-md max-w-[16ch] uppercase">{frame.title}</h2>
+      <h2 className="display-md max-w-[20ch] uppercase">{frame.title}</h2>
       <p className="lead mt-6 max-w-[42ch]">{frame.body}</p>
     </>
   );
@@ -150,16 +157,18 @@ function FrameText({ frame }: { frame: FrameData }) {
 function Frame({
   frame,
   index,
+  count,
   progress,
 }: {
   frame: FrameData;
   index: number;
+  count: number;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
   const pad = 0.045;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
-  const start = index / FRAMES.length;
-  const end = (index + 1) / FRAMES.length;
+  const start = index / count;
+  const end = (index + 1) / count;
   const a = clamp(start - pad);
   const b = clamp(start + pad);
   const c = clamp(end - pad);
@@ -168,17 +177,13 @@ function Frame({
   const opacity = useTransform(
     progress,
     [a, b, c, d],
-    index === 0 ? [1, 1, 1, 0] : index === FRAMES.length - 1 ? [0, 1, 1, 1] : [0, 1, 1, 0],
+    index === 0 ? [1, 1, 1, 0] : index === count - 1 ? [0, 1, 1, 1] : [0, 1, 1, 0],
   );
   const y = useTransform(progress, [a, d], [40, -40]);
   const mediaY = useTransform(progress, [a, d], [70, -70]);
 
   return (
-    <motion.div
-      className="absolute inset-0 flex items-center"
-      style={{ opacity }}
-      aria-hidden={false}
-    >
+    <motion.div className="absolute inset-0 flex items-center" style={{ opacity }}>
       <div className="shell grid-12 w-full items-center gap-y-8">
         <motion.div className="col-span-6 md:col-span-7" style={{ y: mediaY }}>
           <MediaSlot
@@ -194,7 +199,6 @@ function Frame({
           <FrameText frame={frame} />
         </motion.div>
       </div>
-
     </motion.div>
   );
 }
@@ -220,15 +224,16 @@ function Progress({ progress }: { progress: ReturnType<typeof useScroll>["scroll
 }
 
 function Launch() {
+  const t = useT();
   return (
     <div className="shell pt-16 pb-[var(--chapter-space)]">
       <div className="grid-12 rule-t pt-4">
-        <span className="label-tech col-span-6 md:col-span-4">LAUNCH</span>
+        <span className="label-tech col-span-6 md:col-span-4">{t.hero.launch.label}</span>
         <span className="label-tech col-span-6 md:col-span-4 text-[color:var(--color-foreground)]">
-          PRIVATE BETA — Q3 2026
+          {t.hero.launch.beta}
         </span>
         <span className="label-tech col-span-6 md:col-span-4 md:text-right">
-          APP STORE / GOOGLE PLAY — Q1 2027
+          {t.hero.launch.stores}
         </span>
       </div>
     </div>

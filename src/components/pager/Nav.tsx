@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import logo from "@/assets/pager_logo.png.asset.json";
-
-const LINKS = [
-  { href: "#chapter-04", label: "ПРОДУКТ" },
-  { href: "#chapter-03", label: "ДЕМО" },
-  { href: "#chapter-06", label: "СТАТУС" },
-  { href: "#chapter-07", label: "БИЗНЕС" },
-];
+import { LOCALES, useLocale } from "@/i18n";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { t } = useLocale();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -28,7 +23,7 @@ export function Nav() {
       }`}
       style={{ color: "var(--paper)" }}
     >
-      <nav className="shell flex h-14 items-center justify-between gap-6" aria-label="Основная">
+      <nav className="shell flex h-14 items-center justify-between gap-5" aria-label={t.nav.aria}>
         <a href="#top" className="focus-instrument flex items-center gap-2.5">
           <img
             src={logo.url}
@@ -42,7 +37,7 @@ export function Nav() {
         </a>
 
         <ul className="hidden items-center gap-7 md:flex">
-          {LINKS.map((l) => (
+          {t.nav.links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
@@ -54,25 +49,25 @@ export function Nav() {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-6 lg:flex">
-          <span className="label-tech">PRIVATE COMMUNICATION / 2026</span>
+        <div className="flex items-center gap-4 lg:gap-6">
+          <span className="label-tech hidden xl:inline">{t.nav.meta}</span>
+          <LangSwitch />
           <a
             href="#chapter-08"
-            className="focus-instrument border border-[color:oklch(1_0_0/25%)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200 hover:bg-[color:var(--paper)] hover:text-[color:var(--ink)]"
+            className="focus-instrument hidden border border-[color:oklch(1_0_0/25%)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200 hover:bg-[color:var(--paper)] hover:text-[color:var(--ink)] lg:inline-block"
           >
-            Запросить презентацию
+            {t.nav.cta}
           </a>
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls="nav-mobile"
+            onClick={() => setOpen((v) => !v)}
+            className="focus-instrument label-tech md:hidden"
+          >
+            {open ? t.nav.close : t.nav.menu}
+          </button>
         </div>
-
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls="nav-mobile"
-          onClick={() => setOpen((v) => !v)}
-          className="focus-instrument label-tech md:hidden"
-        >
-          {open ? "ЗАКРЫТЬ" : "МЕНЮ"}
-        </button>
       </nav>
 
       <div
@@ -81,7 +76,7 @@ export function Nav() {
         className="border-t border-[color:oklch(1_0_0/12%)] bg-[color:var(--ink)] md:hidden"
       >
         <ul className="shell py-4">
-          {LINKS.map((l) => (
+          {t.nav.links.map((l) => (
             <li key={l.href} className="rule-b py-3">
               <a
                 href={l.href}
@@ -98,11 +93,45 @@ export function Nav() {
               onClick={() => setOpen(false)}
               className="focus-instrument block border border-[color:oklch(1_0_0/25%)] px-4 py-3 text-center font-mono text-[11px] uppercase tracking-[0.14em]"
             >
-              Запросить презентацию
+              {t.nav.cta}
             </a>
           </li>
         </ul>
       </div>
     </header>
+  );
+}
+
+/** Compact three-state locale selector — an instrument switch, not a dropdown. */
+function LangSwitch() {
+  const { locale, setLocale, t } = useLocale();
+  return (
+    <div
+      role="group"
+      aria-label={t.nav.langAria}
+      className="flex items-center border border-[color:oklch(1_0_0/22%)]"
+    >
+      {LOCALES.map((l, i) => {
+        const on = l.code === locale;
+        return (
+          <button
+            key={l.code}
+            type="button"
+            lang={l.code === "zh" ? "zh-CN" : l.code}
+            aria-pressed={on}
+            onClick={() => setLocale(l.code)}
+            className={`focus-instrument px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-200 ${
+              i > 0 ? "border-l border-[color:oklch(1_0_0/22%)]" : ""
+            } ${
+              on
+                ? "bg-[color:var(--paper)] text-[color:var(--ink)]"
+                : "text-[color:oklch(1_0_0/55%)] hover:text-[color:var(--paper)]"
+            }`}
+          >
+            {l.label}
+          </button>
+        );
+      })}
+    </div>
   );
 }
