@@ -121,13 +121,14 @@ type FrameData = (typeof FRAMES)[number];
 function StaticFrame({ frame }: { frame: FrameData }) {
   return (
     <div className="grid-12 items-center gap-y-6">
-      <div className="col-span-6 md:col-span-5">
+      <div className="col-span-6 md:col-span-7">
         <MediaSlot name={frame.media} alt={frame.title} label={`FRAME ${frame.n}`} />
       </div>
-      <div className="col-span-6 md:col-span-6 md:col-start-7">
+      <div className="col-span-6 md:col-span-5 md:col-start-8">
         <FrameText frame={frame} />
       </div>
     </div>
+
   );
 }
 
@@ -155,7 +156,7 @@ function Frame({
   index: number;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
-  const pad = 0.08;
+  const pad = 0.045;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const start = index / FRAMES.length;
   const end = (index + 1) / FRAMES.length;
@@ -179,19 +180,21 @@ function Frame({
       aria-hidden={false}
     >
       <div className="shell grid-12 w-full items-center gap-y-8">
-        <motion.div className="col-span-6 md:col-span-5" style={{ y: mediaY }}>
+        <motion.div className="col-span-6 md:col-span-7" style={{ y: mediaY }}>
           <MediaSlot
             name={frame.media}
             alt={frame.title}
             label={`FRAME ${frame.n}`}
             priority={index === 0}
-            maxHeight="58vh"
+            maxHeight="74vh"
+            className="md:mx-0"
           />
         </motion.div>
-        <motion.div className="col-span-6 md:col-span-6 md:col-start-7" style={{ y }}>
+        <motion.div className="col-span-6 md:col-span-5 md:col-start-8" style={{ y }}>
           <FrameText frame={frame} />
         </motion.div>
       </div>
+
     </motion.div>
   );
 }

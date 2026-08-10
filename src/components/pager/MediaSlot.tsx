@@ -85,10 +85,8 @@ function Placeholder({ name, label }: { name: string; label?: string | undefined
           backgroundSize: "clamp(28px, 6%, 64px) clamp(28px, 6%, 64px)",
         }}
       />
-      <div className="absolute inset-0 flex flex-col justify-between p-3">
-        <span className="label-tech">{label ?? "MEDIA"}</span>
-        <span className="label-tech break-all opacity-70">{name}</span>
-      </div>
+      <div className="sr-only">{label ?? "MEDIA"} {name}</div>
+
     </div>
   );
 }
