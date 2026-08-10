@@ -95,30 +95,15 @@ export function Multiprofile() {
           ))}
         </ol>
 
-        <div className="mt-20 grid-12 items-center gap-y-10 md:mt-28">
-          <div className="col-span-6 md:col-span-5">
-            <p className="label-tech mb-6">MOBILE / ПРОФИЛИ</p>
-            <div className="grid grid-cols-4 gap-3">
-              {MOBILE.map((m, i) => (
-                <MediaSlot
-                  key={m}
-                  name={m}
-                  alt={`Мультипрофиль мобильный экран ${i + 1}`}
-                  label={`M${i + 1}`}
-                  className="w-full"
-                />
-              ))}
-            </div>
-          </div>
-          <div className="col-span-6 md:col-span-6 md:col-start-7">
-            <MaskLine as="div" className="display-lg">
-              Разный.
-            </MaskLine>
-            <MaskLine as="div" delay={0.08} className="display-lg text-[color:var(--personal)]">
-              Но всегда я!
-            </MaskLine>
-          </div>
+        <div className="mt-20 md:mt-28">
+          <MaskLine as="div" className="display-lg">
+            Разный.
+          </MaskLine>
+          <MaskLine as="div" delay={0.08} className="display-lg text-[color:var(--personal)]">
+            Но всегда я!
+          </MaskLine>
         </div>
+
       </div>
     </Section>
   );
