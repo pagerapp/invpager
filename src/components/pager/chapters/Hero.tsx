@@ -1,4 +1,5 @@
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { rng } from "@/lib/scroll-range";
 import { useRef } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { MaskLine } from "../primitives";
@@ -208,9 +209,9 @@ function Frame({
     last ? [1.03, 1, 1, 1] : first ? [1, 1, 1, 0.965] : [1.03, 1, 1, 0.965],
   );
   const amp = frame.amp;
-  const mediaY = useTransform(progress, [a, outB], [`${4 * amp}%`, `${-4 * amp}%`]);
-  const textY = useTransform(progress, [a, outB], [`${9 * amp}%`, `${-9 * amp}%`]);
-  const metaY = useTransform(progress, [a, outB], [`${14 * amp}%`, `${-14 * amp}%`]);
+  const mediaY = useTransform(progress, ...rng([a, outB], [`${4 * amp}%`, `${-4 * amp}%`]));
+  const textY = useTransform(progress, ...rng([a, outB], [`${9 * amp}%`, `${-9 * amp}%`]));
+  const metaY = useTransform(progress, ...rng([a, outB], [`${14 * amp}%`, `${-14 * amp}%`]));
   // Outgoing state recedes: slight contrast/brightness loss, incoming comes forward.
   const filter = useTransform(
     progress,
@@ -275,7 +276,7 @@ function StateLine({
   outB: number;
   children: React.ReactNode;
 }) {
-  const y = useTransform(progress, [a, b, outA, outB], ["105%", "0%", "0%", "-45%"]);
+  const y = useTransform(progress, ...rng([a, b, outA, outB], ["105%", "0%", "0%", "-45%"]));
   return (
     <motion.span className="block" style={{ y }}>
       {children}

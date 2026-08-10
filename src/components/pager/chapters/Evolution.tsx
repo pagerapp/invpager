@@ -1,4 +1,5 @@
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { rng } from "@/lib/scroll-range";
 import { useRef } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
@@ -103,16 +104,12 @@ function AxisLabel({
 }) {
   const span = 1 / count;
   const cl = (v: number) => Math.min(1, Math.max(0, v));
-  const opacity = useTransform(
-    progress,
-    [
+  const opacity = useTransform(progress, ...rng([
       cl(index * span - span * 0.3),
       cl(index * span + span * 0.2),
       cl((index + 1) * span),
       cl((index + 1) * span + span * 0.3),
-    ],
-    [0.35, 1, 1, 0.35],
-  );
+    ], [0.35, 1, 1, 0.35]));
   return (
     <motion.span
       style={{ opacity }}
@@ -155,8 +152,8 @@ function Generation({
   );
   // Earlier generations recede into the chronology as the next becomes primary.
   const scale = useTransform(progress, [a, b, c, d], final ? [1.02, 1, 1, 1] : [1.02, 1, 1, 0.94]);
-  const x = useTransform(progress, [a, d], ["3%", "-3%"]);
-  const y = useTransform(progress, [a, d], ["4%", "-4%"]);
+  const x = useTransform(progress, ...rng([a, d], ["3%", "-3%"]));
+  const y = useTransform(progress, ...rng([a, d], ["4%", "-4%"]));
 
   return (
     <motion.div className="absolute inset-0" style={{ opacity }}>

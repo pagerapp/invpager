@@ -1,4 +1,5 @@
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { rng } from "@/lib/scroll-range";
 import { useRef } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
@@ -140,8 +141,8 @@ function ProfileState({
   // The final state settles: no residual drift once control is established.
   const amp = last ? 0.2 : first ? 1 : 0.6;
   const scale = useTransform(progress, [a, b, c, d], last ? [1.02, 1, 1, 1] : [1.025, 1, 1, 0.97]);
-  const mediaY = useTransform(progress, [a, d], [`${3 * amp}%`, `${-3 * amp}%`]);
-  const textY = useTransform(progress, [a, d], [`${8 * amp}%`, `${-8 * amp}%`]);
+  const mediaY = useTransform(progress, ...rng([a, d], [`${3 * amp}%`, `${-3 * amp}%`]));
+  const textY = useTransform(progress, ...rng([a, d], [`${8 * amp}%`, `${-8 * amp}%`]));
 
   return (
     <motion.div className="absolute inset-0 flex items-center" style={{ opacity }}>
@@ -189,7 +190,7 @@ function StateLine({
   d: number;
   children: React.ReactNode;
 }) {
-  const y = useTransform(progress, [a, b, c, d], ["105%", "0%", "0%", "-40%"]);
+  const y = useTransform(progress, ...rng([a, b, c, d], ["105%", "0%", "0%", "-40%"]));
   return (
     <motion.span className="block" style={{ y }}>
       {children}
