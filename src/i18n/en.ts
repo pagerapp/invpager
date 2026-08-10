@@ -21,6 +21,7 @@ export const en: Dict = {
     close: "CLOSE",
     langAria: "Language",
   },
+  ticker: ["MULTIPROFILE","RULES OF CONTACT FOR EVERY CONNECTION","TEMPORARY ACCESS FOR 24 HOURS","NO PHONE NUMBER","PAGER ID","CONTROLLED ACCESS"],
   hero: {
     sectionAria: "Chaos, context, control",
     kicker: "A MESSENGER WITH CONTROLLED ACCESS",

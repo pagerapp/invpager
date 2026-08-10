@@ -1,15 +1,28 @@
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { rng } from "@/lib/scroll-range";
 import { useRef } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { MaskLine } from "../primitives";
-import { useT } from "@/i18n";
+import { useLocale, useT } from "@/i18n";
 
-const MEDIA = [
-  "Hero_storyscroll_img_RU_ENG_1.jpg",
-  "Hero_storyscroll_img_RU_2.jpg",
-  "Hero_storyscroll_img_RU_3.jpg",
-];
+/**
+ * Hero StoryScroll — one pinned stage, three story states.
+ * CHAOS MOVES → SYSTEM ORGANIZES → CONTROL STOPS: motion amplitude decays per state.
+ */
+
+/** Locale-aware source frames. Media is never altered; only the source variant changes. */
+function heroMedia(locale: string): string[] {
+  const ru = locale === "ru";
+  return [
+    "Hero_storyscroll_img_RU_ENG_1.jpg",
+    ru ? "Hero_storyscroll_img_RU_2.jpg" : "Hero_storyscroll_img_ENG_2.jpg",
+    ru ? "Hero_storyscroll_img_RU_3.jpg" : "Hero_storyscroll_img_ENG_3.jpg",
+  ];
+}
+
 const COLORS = ["var(--guest)", "var(--work)", "var(--personal)"];
+/** Motion settles state by state — chaos moves, control stops. */
+const AMPLITUDE = [1, 0.55, 0.18];
 
 type FrameData = {
   n: string;
@@ -18,17 +31,21 @@ type FrameData = {
   body: string;
   media: string;
   color: string;
+  amp: number;
 };
 
 function useFrames(): FrameData[] {
   const t = useT();
+  const { locale } = useLocale();
+  const media = heroMedia(locale);
   return t.hero.frames.map((f, i) => ({
     n: String(i + 1).padStart(2, "0"),
     tag: f.tag,
     title: f.title,
     body: f.body,
-    media: MEDIA[i]!,
+    media: media[i]!,
     color: COLORS[i]!,
+    amp: AMPLITUDE[i]!,
   }));
 }
 
@@ -95,32 +112,31 @@ function StoryScroll() {
   const frames = useFrames();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
+  if (reduced) {
+    return (
+      <div className="shell space-y-20 py-16">
+        {frames.map((f) => (
+          <StaticFrame key={f.n} frame={f} />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div ref={ref} className="relative" style={{ height: reduced ? "auto" : "300vh" }}>
-      <div
-        className={reduced ? "" : "sticky top-0 h-screen overflow-hidden"}
-        style={{ minHeight: reduced ? undefined : "40rem" }}
-      >
-        {reduced ? (
-          <div className="shell space-y-16 py-16">
-            {frames.map((f) => (
-              <StaticFrame key={f.n} frame={f} />
-            ))}
-          </div>
-        ) : (
-          <div className="relative h-full">
-            {frames.map((f, i) => (
-              <Frame
-                key={f.n}
-                frame={f}
-                index={i}
-                count={frames.length}
-                progress={scrollYProgress}
-              />
-            ))}
-            <Progress progress={scrollYProgress} />
-          </div>
-        )}
+    <div ref={ref} className="relative" style={{ height: "300svh" }}>
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
+        <div className="relative h-full">
+          {frames.map((f, i) => (
+            <Frame
+              key={f.n}
+              frame={f}
+              index={i}
+              count={frames.length}
+              progress={scrollYProgress}
+            />
+          ))}
+          <Readout progress={scrollYProgress} frames={frames} />
+        </div>
       </div>
     </div>
   );
@@ -142,14 +158,14 @@ function StaticFrame({ frame }: { frame: FrameData }) {
 function FrameText({ frame }: { frame: FrameData }) {
   return (
     <>
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-5 flex items-center gap-3">
         <span aria-hidden className="h-2 w-2" style={{ backgroundColor: frame.color }} />
         <span className="label-tech text-[color:var(--color-foreground)]">
           FRAME {frame.n} / {frame.tag}
         </span>
       </div>
       <h2 className="display-md max-w-[20ch] uppercase">{frame.title}</h2>
-      <p className="lead mt-6 max-w-[42ch]">{frame.body}</p>
+      <p className="lead mt-5 max-w-[42ch]">{frame.body}</p>
     </>
   );
 }
@@ -163,54 +179,135 @@ function Frame({
   frame: FrameData;
   index: number;
   count: number;
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  progress: MotionValue<number>;
 }) {
-  const pad = 0.045;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
-  const start = index / count;
-  const end = (index + 1) / count;
-  const a = clamp(start - pad);
-  const b = clamp(start + pad);
-  const c = clamp(end - pad);
-  const d = clamp(end + pad);
+  const span = 1 / count;
+  const start = index * span;
+  const end = start + span;
+  // Windows never overlap: the outgoing state is fully gone before the next appears.
+  const inA = clamp(start);
+  const inB = clamp(start + span * 0.2);
+  const outA = clamp(end - span * 0.2);
+  const outB = clamp(end);
+
+  const first = index === 0;
+  const last = index === count - 1;
+  const a = first ? 0 : inA;
+  const b = first ? 0.0001 : inB;
 
   const opacity = useTransform(
     progress,
-    [a, b, c, d],
-    index === 0 ? [1, 1, 1, 0] : index === count - 1 ? [0, 1, 1, 1] : [0, 1, 1, 0],
+    ...rng(
+    [a, b, outA, outB],
+    first ? [1, 1, 1, 0] : last ? [0, 1, 1, 1] : [0, 1, 1, 0],
+    ),
   );
-  const y = useTransform(progress, [a, d], [40, -40]);
-  const mediaY = useTransform(progress, [a, d], [70, -70]);
+
+  // Incoming comes forward, outgoing recedes — spatial, never a slideshow.
+  const scale = useTransform(
+    progress,
+    ...rng(
+    [a, b, outA, outB],
+    last ? [1.03, 1, 1, 1] : first ? [1, 1, 1, 0.965] : [1.03, 1, 1, 0.965],
+    ),
+  );
+  const amp = frame.amp;
+  const mediaY = useTransform(progress, ...rng([a, outB], [`${4 * amp}%`, `${-4 * amp}%`]));
+  const textY = useTransform(progress, ...rng([a, outB], [`${9 * amp}%`, `${-9 * amp}%`]));
+  const metaY = useTransform(progress, ...rng([a, outB], [`${14 * amp}%`, `${-14 * amp}%`]));
+  // Outgoing state recedes: slight contrast/brightness loss, incoming comes forward.
+  const filter = useTransform(
+    progress,
+    ...rng(
+    [a, b, outA, outB],
+    last
+      ? ["contrast(0.92)", "contrast(1)", "contrast(1)", "contrast(1)"]
+      : ["contrast(0.9)", "contrast(1)", "contrast(1)", "contrast(0.82)"],
+    ),
+  );
 
   return (
-    <motion.div className="absolute inset-0 flex items-center" style={{ opacity }}>
-      <div className="shell grid-12 w-full items-center gap-y-8">
-        <motion.div className="col-span-6 md:col-span-7" style={{ y: mediaY }}>
+    <motion.div
+      className="absolute inset-0 flex items-center"
+      style={{ opacity }}
+      aria-hidden={false}
+    >
+      <div className="shell grid-12 w-full items-center gap-y-6">
+        <motion.div
+          className="col-span-6 md:col-span-7"
+          style={{ y: mediaY, scale, filter }}
+        >
           <MediaSlot
             name={frame.media}
             alt={frame.title}
             label={`FRAME ${frame.n}`}
             priority={index === 0}
-            maxHeight="74vh"
+            maxHeight="min(72svh, 46rem)"
             className="md:mx-0"
           />
         </motion.div>
-        <motion.div className="col-span-6 md:col-span-5 md:col-start-8" style={{ y }}>
-          <FrameText frame={frame} />
+        <motion.div className="col-span-6 md:col-span-5 md:col-start-8" style={{ y: textY }}>
+          <motion.div style={{ y: metaY }} className="mb-5 flex items-center gap-3">
+            <span aria-hidden className="h-2 w-2" style={{ backgroundColor: frame.color }} />
+            <span className="label-tech text-[color:var(--color-foreground)]">
+              FRAME {frame.n} / {frame.tag}
+            </span>
+          </motion.div>
+          <h2 className="display-md max-w-[20ch] overflow-hidden uppercase">
+            <StateLine progress={progress} a={a} b={b} outA={outA} outB={outB}>
+              {frame.title}
+            </StateLine>
+          </h2>
+          <p className="lead mt-5 max-w-[42ch]">{frame.body}</p>
         </motion.div>
       </div>
     </motion.div>
   );
 }
 
-function Progress({ progress }: { progress: ReturnType<typeof useScroll>["scrollYProgress"] }) {
+/** Heading clipped in and out of its own mask — never a generic fade. */
+function StateLine({
+  progress,
+  a,
+  b,
+  outA,
+  outB,
+  children,
+}: {
+  progress: MotionValue<number>;
+  a: number;
+  b: number;
+  outA: number;
+  outB: number;
+  children: React.ReactNode;
+}) {
+  const y = useTransform(progress, ...rng([a, b, outA, outB], ["105%", "0%", "0%", "-45%"]));
+  return (
+    <motion.span className="block" style={{ y }}>
+      {children}
+    </motion.span>
+  );
+}
+
+function Readout({
+  progress,
+  frames,
+}: {
+  progress: MotionValue<number>;
+  frames: FrameData[];
+}) {
   const scaleX = useTransform(progress, [0, 1], [0, 1]);
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0">
       <div className="shell">
-        <div className="flex items-center justify-between pb-4">
+        <div className="flex items-center justify-between pb-3">
           <span className="label-tech">HERO / STORYSCROLL</span>
-          <span className="label-tech">01</span>
+          <span className="label-tech flex gap-3">
+            {frames.map((f) => (
+              <span key={f.n}>{f.n}</span>
+            ))}
+          </span>
         </div>
         <div className="h-px w-full bg-[color:var(--color-hairline)]">
           <motion.div
@@ -226,7 +323,7 @@ function Progress({ progress }: { progress: ReturnType<typeof useScroll>["scroll
 function Launch() {
   const t = useT();
   return (
-    <div className="shell pt-16 pb-[var(--chapter-space)]">
+    <div className="shell pt-16 pb-[clamp(2.5rem,5vw,4rem)]">
       <div className="grid-12 rule-t pt-4">
         <span className="label-tech col-span-6 md:col-span-4">{t.hero.launch.label}</span>
         <span className="label-tech col-span-6 md:col-span-4 text-[color:var(--color-foreground)]">
