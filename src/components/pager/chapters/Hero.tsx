@@ -112,16 +112,6 @@ function StoryScroll() {
   const frames = useFrames();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  if (reduced) {
-    return (
-      <div className="shell space-y-20 py-16">
-        {frames.map((f) => (
-          <StaticFrame key={f.n} frame={f} />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div ref={ref} className="relative" style={{ height: "300svh" }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
@@ -133,40 +123,13 @@ function StoryScroll() {
               index={i}
               count={frames.length}
               progress={scrollYProgress}
+              motionScale={reduced ? 0.25 : 1}
             />
           ))}
           <Readout progress={scrollYProgress} frames={frames} />
         </div>
       </div>
     </div>
-  );
-}
-
-function StaticFrame({ frame }: { frame: FrameData }) {
-  return (
-    <div className="grid-12 items-center gap-y-6">
-      <div className="col-span-6 md:col-span-7">
-        <MediaSlot name={frame.media} alt={frame.title} label={`FRAME ${frame.n}`} />
-      </div>
-      <div className="col-span-6 md:col-span-5 md:col-start-8">
-        <FrameText frame={frame} />
-      </div>
-    </div>
-  );
-}
-
-function FrameText({ frame }: { frame: FrameData }) {
-  return (
-    <>
-      <div className="mb-5 flex items-center gap-3">
-        <span aria-hidden className="h-2 w-2" style={{ backgroundColor: frame.color }} />
-        <span className="label-tech text-[color:var(--color-foreground)]">
-          FRAME {frame.n} / {frame.tag}
-        </span>
-      </div>
-      <h2 className="display-md max-w-[20ch] uppercase">{frame.title}</h2>
-      <p className="lead mt-5 max-w-[42ch]">{frame.body}</p>
-    </>
   );
 }
 
