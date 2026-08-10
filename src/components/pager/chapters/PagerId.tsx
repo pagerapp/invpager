@@ -57,9 +57,19 @@ export function PagerId() {
           </div>
         </div>
 
-        {/* Engineered ID objects */}
-        <div className="mt-20 grid-12 gap-y-6 md:mt-28">
-          <div className="col-span-6 md:col-span-7">
+        {/* The supplied ID object carries the chapter */}
+        <div className="mt-16 md:mt-24">
+          <p className="label-tech rule-t pt-4">PAGER ID / OBJECT</p>
+          <MediaSlot
+            name="pager_id_variation_002.jpg"
+            alt="PAGER ID"
+            label="PAGER ID / OBJECT"
+            className="mt-6 w-full"
+          />
+        </div>
+
+        <div className="mt-16 grid-12 gap-y-6 md:mt-24">
+          <div className="col-span-6 md:col-span-8">
             <div className="rule-t rule-b divide-y divide-[color:var(--color-hairline)]">
               {IDS.map((id, i) => (
                 <Rise key={id} delay={i * 0.06}>
@@ -86,16 +96,8 @@ export function PagerId() {
             </div>
             <p className="label-tech mt-4">ID FORMAT / XXXX XXXX</p>
           </div>
-
-          <div className="col-span-6 md:col-span-5">
-            <MediaSlot
-              name="pager_id_variation_002.jpg"
-              alt="PAGER ID"
-              label="PAGER ID / OBJECT"
-              className="w-full"
-            />
-          </div>
         </div>
+
 
         <Rise className="mt-16">
           <p className="max-w-[62ch] text-[clamp(1.05rem,1.6vw,1.45rem)] leading-[1.4] tracking-[-0.02em]">
