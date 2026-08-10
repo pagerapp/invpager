@@ -58,16 +58,15 @@ export function MediaSlot({
           {...(entry ? { width: entry.width, height: entry.height } : {})}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          onLoad={(e) => {
-            const img = e.currentTarget;
-            if (!entry && img.naturalWidth && img.naturalHeight) {
-              setMeasured(`${img.naturalWidth} / ${img.naturalHeight}`);
-            }
-            setLoaded(true);
+          ref={(el) => {
+            // Images cached/decoded before hydration never fire onLoad.
+            if (el?.complete && el.naturalWidth) markLoaded(el);
           }}
+          onLoad={(e) => markLoaded(e.currentTarget)}
           onError={() => setFailed(true)}
           className={`absolute inset-0 h-full w-full object-contain ${loaded ? "opacity-100" : "opacity-0"}`}
         />
+
       ) : null}
       {children}
     </figure>
