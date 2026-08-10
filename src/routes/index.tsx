@@ -1,24 +1,48 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Nav } from "@/components/pager/Nav";
+import { Hero } from "@/components/pager/chapters/Hero";
+import { Evolution } from "@/components/pager/chapters/Evolution";
+import { PagerId } from "@/components/pager/chapters/PagerId";
+import { Multiprofile } from "@/components/pager/chapters/Multiprofile";
+import { ContactContext } from "@/components/pager/chapters/ContactContext";
+import { ProductStatus } from "@/components/pager/chapters/ProductStatus";
+import { Business } from "@/components/pager/chapters/Business";
+import { FinalCta } from "@/components/pager/chapters/FinalCta";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const TITLE = "PAGER — мессенджер с управляемым доступом";
+const DESC =
+  "PAGER — один аккаунт, разные профили общения и разные границы доступа. PAGER ID, мультипрофиль и правила связи. Private beta — Q3 2026.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESC },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESC },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div id="top" className="min-h-screen bg-background text-foreground">
+      <Nav />
+      <main>
+        <section id="chapter-01" aria-label="Хаос, контекст, контроль">
+          <Hero />
+        </section>
+        <Evolution />
+        <PagerId />
+        <Multiprofile />
+        <ContactContext />
+        <ProductStatus />
+        <Business />
+        <FinalCta />
+      </main>
     </div>
   );
 }
