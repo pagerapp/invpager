@@ -23,7 +23,7 @@ export const en: Dict = {
   },
   ticker: ["MULTIPROFILE","RULES OF CONTACT FOR EVERY CONNECTION","TEMPORARY ACCESS FOR 24 HOURS","NO PHONE NUMBER","PAGER ID","CONTROLLED ACCESS"],
   hero: {
-    sectionAria: "Chaos, context, control",
+    sectionAria: "Chaos, relationships, control",
     kicker: "A MESSENGER WITH CONTROLLED ACCESS",
     h1: ["COMMUNICATION", "ON YOUR", "TERMS"],
     lead: "One account. Separate communication profiles. Separate access boundaries.",
@@ -32,17 +32,17 @@ export const en: Dict = {
     frames: [
       {
         tag: "CHAOS",
-        title: "YOUR SPACE ISN'T FOR EVERYONE.",
+        title: "YOUR SPACE ISN'T FOR EVERYONE",
         body: "One number opens the door to everyone — family, colleagues and strangers alike.",
       },
       {
-        tag: "CONTEXT",
-        title: "ONE PERSON — DIFFERENT CONTEXTS.",
+        tag: "RELATIONSHIPS",
+        title: "ONE PERSON — DIFFERENT RELATIONSHIPS",
         body: "Every contact gets its own profile, its own rules and its own level of access.",
       },
       {
         tag: "CONTROL",
-        title: "PAGER GIVES CONTROL BACK.",
+        title: "PAGER GIVES CONTROL BACK",
         body: "You decide how you are seen and how people reach you.",
       },
     ],
