@@ -199,6 +199,6 @@ export const ru = {
     footerCenter: "Private communication",
     top: "Наверх ↑",
   },
-} as const;
+};
 
 export type Dict = typeof ru;
