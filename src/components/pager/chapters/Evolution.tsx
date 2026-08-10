@@ -186,13 +186,7 @@ function Generation({
               GEN {String(index + 1).padStart(2, "0")} / {stage.role}
             </span>
           </div>
-          <h3
-            className={`display-lg mt-6 max-w-[14ch] uppercase ${
-              final ? "text-[color:var(--color-foreground)]" : ""
-            }`}
-          >
-            {stage.name}
-          </h3>
+          <h3 className="display-lg mt-6 max-w-[14ch] uppercase">{stage.name}</h3>
           <p className="label-tech mt-8 max-w-[30ch] normal-case tracking-[0.02em]">{stage.q}</p>
         </div>
         <motion.div
