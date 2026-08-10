@@ -1,3 +1,4 @@
+import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 
 const BUILT = [
@@ -45,6 +46,26 @@ export function ProductStatus() {
           <Column title="Реализовано" index="A" items={BUILT} state="done" />
           <Column title="Ключевые механики" index="B" items={CORE} state="core" />
           <Column title="Следующие шаги" index="C" items={NEXT} state="next" />
+        </div>
+
+        <div className="mt-16 md:mt-24">
+          <p className="label-tech rule-t pt-4">PRODUCT / DESKTOP</p>
+          <MediaSlot
+            name="hero_dsktp_001.png"
+            alt="PAGER — десктоп-интерфейс"
+            label="DESKTOP 001"
+            className="mt-6 w-full"
+          />
+          <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+            {["hero_dsktp_003.png", "hero_mob_001.png", "pgr_scr_002.jpg", "pgr_scr_003.jpg"].map(
+              (m, i) => (
+                <div key={m} className="flex flex-col">
+                  <span className="label-tech mb-3">SCR {String(i + 1).padStart(2, "0")}</span>
+                  <MediaSlot name={m} alt={`PAGER — экран ${i + 1}`} className="w-full" />
+                </div>
+              ),
+            )}
+          </div>
         </div>
       </div>
     </Section>

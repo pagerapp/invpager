@@ -1,18 +1,21 @@
 import { useState, type ReactNode } from "react";
+import { media } from "@/lib/media";
 
 /**
  * MediaSlot — full-frame media holder.
  *
- * NON-NEGOTIABLE: supplied media is never cropped, never zoomed, never clipped.
+ * NON-NEGOTIABLE: supplied media is never cropped, zoomed or clipped.
  * - object-fit is always `contain`
- * - the container adopts the media's OWN aspect ratio once it loads
- * - `ratio` is only a pre-load reservation so layout does not jump
- * - transparent PNGs keep their alpha (no background fill behind loaded media)
+ * - the container is BUILT AROUND the media's true intrinsic aspect ratio
+ *   (from the generated manifest, or read from the file on load)
+ * - `maxHeight` caps the frame by scaling the WHOLE image down; the width cap
+ *   is derived from the ratio so no letterboxing or cropping occurs
+ * - transparent PNGs keep their alpha (nothing paints over the media)
  */
 export function MediaSlot({
   name,
   alt,
-  ratio = "4 / 5",
+  ratio,
   label,
   className = "",
   priority = false,
@@ -21,43 +24,48 @@ export function MediaSlot({
 }: {
   name: string;
   alt: string;
-  /** Fallback aspect ratio used ONLY until the real media reports its own. */
+  /** Fallback aspect ratio, used only when the file is unknown to the manifest. */
   ratio?: string;
   label?: string;
   className?: string;
   priority?: boolean;
-  /** Optional cap, e.g. "62vh". The image scales down entirely — never crops. */
+  /** Optional cap, e.g. "58vh". Scales the entire frame down — never crops. */
   maxHeight?: string;
   children?: ReactNode;
 }) {
-  const [natural, setNatural] = useState<string | null>(null);
+  const entry = media(name);
+  const [measured, setMeasured] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
-  const loaded = natural !== null;
+
+  const src = entry?.url ?? `/media/${name}`;
+  const aspect = entry?.ratio ?? measured ?? ratio ?? "4 / 5";
+  const [rw, rh] = aspect.split("/").map((v) => Number(v.trim()));
+  const maxWidth =
+    maxHeight && rw && rh ? `calc(${maxHeight} * ${(rw / rh).toFixed(6)})` : undefined;
 
   return (
     <figure
-      className={`relative ${loaded ? "" : "bg-[color-mix(in_oklab,var(--color-foreground)_5%,transparent)]"} ${className}`}
-      style={{ aspectRatio: natural ?? ratio, maxHeight }}
+      className={`relative mx-auto ${className}`}
+      style={{ aspectRatio: aspect, maxHeight, maxWidth }}
       data-media-slot={name}
     >
-      {!loaded ? <Placeholder name={name} label={label} /> : null}
+      {/* Sits behind the media — visible only while the file is en route or missing. */}
+      <Placeholder name={name} label={label} />
       {!failed ? (
         <img
-          src={`/media/${name}`}
+          src={src}
           alt={alt}
+          {...(entry ? { width: entry.width, height: entry.height } : {})}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           onLoad={(e) => {
             const img = e.currentTarget;
-            if (img.naturalWidth && img.naturalHeight) {
-              setNatural(`${img.naturalWidth} / ${img.naturalHeight}`);
-            } else {
-              setNatural(ratio);
+            if (!entry && img.naturalWidth && img.naturalHeight) {
+              setMeasured(`${img.naturalWidth} / ${img.naturalHeight}`);
             }
           }}
           onError={() => setFailed(true)}
-          className={`absolute inset-0 h-full w-full object-contain ${loaded ? "opacity-100" : "opacity-0"}`}
-          style={{ objectPosition: "center" }}
+          className="absolute inset-0 z-10 h-full w-full object-contain"
         />
       ) : null}
       {children}
@@ -70,23 +78,15 @@ function Placeholder({ name, label }: { name: string; label?: string | undefined
     <div className="absolute inset-0 overflow-hidden">
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.5]"
+        className="absolute inset-0 opacity-[0.4]"
         style={{
           backgroundImage:
             "linear-gradient(to right, var(--color-hairline) 1px, transparent 1px), linear-gradient(to bottom, var(--color-hairline) 1px, transparent 1px)",
           backgroundSize: "clamp(28px, 6%, 64px) clamp(28px, 6%, 64px)",
         }}
       />
-      <svg
-        aria-hidden
-        className="absolute inset-0 h-full w-full text-[color:var(--color-hairline)]"
-        preserveAspectRatio="none"
-      >
-        <line x1="0" y1="0" x2="100%" y2="100%" stroke="currentColor" strokeWidth="1" />
-        <line x1="100%" y1="0" x2="0" y2="100%" stroke="currentColor" strokeWidth="1" />
-      </svg>
       <div className="absolute inset-0 flex flex-col justify-between p-3">
-        <span className="label-tech">{label ?? "MEDIA SLOT"}</span>
+        <span className="label-tech">{label ?? "MEDIA"}</span>
         <span className="label-tech break-all opacity-70">{name}</span>
       </div>
     </div>

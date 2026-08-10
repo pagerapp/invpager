@@ -43,7 +43,6 @@ export function Evolution() {
                 <MediaSlot
                   name={s.media}
                   alt={s.name}
-                  ratio="1 / 1"
                   label={`STAGE ${s.n}`}
                   className="my-6 w-full"
                 />

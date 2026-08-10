@@ -91,8 +91,8 @@ export function PagerId() {
             <MediaSlot
               name="pager_id_variation_002.jpg"
               alt="PAGER ID"
-              ratio="4 / 3"
               label="PAGER ID / OBJECT"
+              className="w-full"
             />
           </div>
         </div>
