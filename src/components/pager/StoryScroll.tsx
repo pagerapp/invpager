@@ -168,7 +168,7 @@ function Panel({
       style={{ opacity, pointerEvents: pointer }}
     >
       {/* TOP ZONE — stable height, holds the frame title. */}
-      <div className="shell shrink-0 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-24">
+      <div className="shell shrink-0 pt-[calc(7rem+env(safe-area-inset-top))] md:pt-28">
         <div className="min-h-[4.5rem] md:min-h-[6rem]">
           {state.kicker ? (
             <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
@@ -256,16 +256,19 @@ function Rail({
 }) {
   const scaleX = useTransform(progress, [0, 1], [0, 1]);
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-16">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
       <div className="shell">
         <div className="flex items-center justify-between pb-2">
-          <span className="label-tech">{title}</span>
-          <span className="label-tech flex gap-3 md:gap-5">
+          <span className="label-tech truncate">{title}</span>
+          <span className="label-tech hidden gap-5 md:flex">
             {states.map((s, i) => (
               <RailItem key={s.label} index={i} count={states.length} progress={progress}>
                 {s.code ? `${s.code} / ${s.label}` : s.label}
               </RailItem>
             ))}
+          </span>
+          <span className="label-tech md:hidden">
+            <RailCurrent states={states} progress={progress} />
           </span>
         </div>
         <div className="h-px w-full bg-[color:var(--color-hairline)]">
@@ -277,6 +280,22 @@ function Rail({
       </div>
     </div>
   );
+}
+
+/** Mobile rail: only the active state label, so it can never wrap. */
+function RailCurrent({
+  states,
+  progress,
+}: {
+  states: StoryState[];
+  progress: MotionValue<number>;
+}) {
+  const idx = useTransform(progress, (v) => {
+    const i = Math.min(states.length - 1, Math.floor(v * states.length + 0.0001));
+    const s = states[i]!;
+    return s.code ? `${s.code} / ${s.label}` : s.label;
+  });
+  return <motion.span className="whitespace-nowrap text-[color:var(--color-foreground)]">{idx}</motion.span>;
 }
 
 function RailItem({
