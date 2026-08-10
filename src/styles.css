@@ -171,7 +171,7 @@
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.9;
-  font-size: clamp(2rem, 5.6vw, 4.75rem);
+  font-size: clamp(1.8rem, 4.5vw, 4.25rem);
   text-transform: uppercase;
 }
 
