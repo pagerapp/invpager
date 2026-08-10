@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import logo from "@/assets/pager_logo.png.asset.json";
 
 const LINKS = [
   { href: "#chapter-04", label: "ПРОДУКТ" },
@@ -28,7 +29,14 @@ export function Nav() {
       style={{ color: "var(--paper)" }}
     >
       <nav className="shell flex h-14 items-center justify-between gap-6" aria-label="Основная">
-        <a href="#top" className="focus-instrument flex items-baseline gap-2">
+        <a href="#top" className="focus-instrument flex items-center gap-2.5">
+          <img
+            src={logo.url}
+            alt="PAGER"
+            width={420}
+            height={376}
+            className="h-6 w-auto object-contain"
+          />
           <span className="font-mono text-sm font-bold tracking-[0.28em]">PAGER</span>
           <span aria-hidden className="blink h-1.5 w-1.5 bg-personal" />
         </a>
