@@ -6,24 +6,26 @@ import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 import { useT } from "@/i18n";
 
 /**
- * EVOLUTION — light editorial chapter.
- * A pinned chronology: one persistent system axis, four generations that
- * become primary in turn. No cards, no carousel, no cropping.
+ * EVOLUTION — pinned chronology instrument.
+ * One persistent 4-step axis stays visible; exactly one generation is the
+ * dominant stage at a time. Reduced motion keeps the pinning and the state
+ * changes, and only shrinks translate/scale amplitude.
  */
 const MEDIA = ["1_email.png", "2_sms.png", "3_chat.png", "4_pager.png"];
 
 export function Evolution() {
   const t = useT();
   const reduced = useReducedMotion();
+  const amp = reduced ? 0.25 : 1;
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const stages = t.evolution.stages;
 
   return (
-    <Section id="chapter-02" light className="py-[var(--chapter-space)]">
+    <Section id="chapter-02" light className="pt-[var(--chapter-space)]">
       <ChapterHead index="02" title={t.evolution.head.title} meta={t.evolution.head.meta} />
 
-      <div className="shell mt-16 md:mt-28">
+      <div className="shell mt-14 md:mt-24">
         <div className="grid-12 items-end gap-y-8">
           <h2 className="display-xl col-span-6 md:col-span-8">
             {t.evolution.h.map((line, i) => (
@@ -38,34 +40,33 @@ export function Evolution() {
         </div>
       </div>
 
-      {reduced ? (
-        <div className="shell mt-20 space-y-20">
-          {stages.map((s, i) => (
-            <StaticGeneration key={s.name} index={i} stage={s} axis={t.evolution.progression} />
-          ))}
-        </div>
-      ) : (
-        <div ref={ref} className="relative mt-20 md:mt-28" style={{ height: "340svh" }}>
-          <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
-            <div className="shell w-full">
-              <Axis labels={t.evolution.progression} progress={scrollYProgress} />
-              <div className="relative mt-8 h-[64svh] md:mt-10">
-                {stages.map((s, i) => (
-                  <Generation
-                    key={s.name}
-                    index={i}
-                    count={stages.length}
-                    stage={s}
-                    media={MEDIA[i]!}
-                    progress={scrollYProgress}
-                    final={i === stages.length - 1}
-                  />
-                ))}
-              </div>
-            </div>
+      <div
+        ref={ref}
+        className="relative mt-16 md:mt-24"
+        style={{ height: "360svh" }}
+      >
+        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
+          <div className="shell pt-20 md:pt-24">
+            <Axis labels={t.evolution.progression} progress={scrollYProgress} />
+          </div>
+          <div className="relative min-h-0 flex-1">
+            {stages.map((s, i) => (
+              <Generation
+                key={s.name}
+                index={i}
+                count={stages.length}
+                stage={s}
+                media={MEDIA[i]!}
+                progress={scrollYProgress}
+                final={i === stages.length - 1}
+                amp={amp}
+              />
+            ))}
           </div>
         </div>
-      )}
+      </div>
+
+      <div className="pb-[var(--chapter-space)]" />
     </Section>
   );
 }
@@ -104,12 +105,18 @@ function AxisLabel({
 }) {
   const span = 1 / count;
   const cl = (v: number) => Math.min(1, Math.max(0, v));
-  const opacity = useTransform(progress, ...rng([
-      cl(index * span - span * 0.3),
-      cl(index * span + span * 0.2),
-      cl((index + 1) * span),
-      cl((index + 1) * span + span * 0.3),
-    ], [0.35, 1, 1, 0.35]));
+  const opacity = useTransform(
+    progress,
+    ...rng(
+      [
+        cl(index * span - span * 0.3),
+        cl(index * span + span * 0.2),
+        cl((index + 1) * span),
+        cl((index + 1) * span + span * 0.3),
+      ],
+      [0.32, 1, 1, 0.32],
+    ),
+  );
   return (
     <motion.span
       style={{ opacity }}
@@ -128,6 +135,7 @@ function Generation({
   media,
   progress,
   final,
+  amp,
 }: {
   index: number;
   count: number;
@@ -135,83 +143,72 @@ function Generation({
   media: string;
   progress: MotionValue<number>;
   final: boolean;
+  amp: number;
 }) {
   const span = 1 / count;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const start = index * span;
   const end = start + span;
   const a = index === 0 ? 0 : clamp(start);
-  const b = index === 0 ? 0.0001 : clamp(start + span * 0.22);
-  const c = clamp(end - span * 0.22);
+  const b = index === 0 ? 0.0001 : clamp(start + span * 0.18);
+  const c = clamp(end - span * 0.18);
   const d = final ? 1 : clamp(end);
 
   const opacity = useTransform(
     progress,
+    ...rng([a, b, c, d], index === 0 ? [1, 1, 1, 0] : final ? [0, 1, 1, 1] : [0, 1, 1, 0]),
+  );
+  // The instrument timeline slides horizontally: incoming enters from the
+  // right of the frame, outgoing leaves to the left and recedes in depth.
+  const x = useTransform(
+    progress,
     ...rng(
-    [a, b, c, d],
-    index === 0 ? [1, 1, 1, 0] : final ? [0, 1, 1, 1] : [0, 1, 1, 0],
+      [a, b, c, d],
+      final
+        ? [`${6 * amp}%`, "0%", "0%", "0%"]
+        : index === 0
+          ? ["0%", "0%", "0%", `${-6 * amp}%`]
+          : [`${6 * amp}%`, "0%", "0%", `${-6 * amp}%`],
     ),
   );
-  // Earlier generations recede into the chronology as the next becomes primary.
   const scale = useTransform(
     progress,
-    ...rng([a, b, c, d], final ? [1.02, 1, 1, 1] : [1.02, 1, 1, 0.94]),
+    ...rng([a, b, c, d], final ? [1.02, 1, 1, 1] : [1.03, 1, 1, 0.95]),
   );
-  const x = useTransform(progress, ...rng([a, d], ["3%", "-3%"]));
-  const y = useTransform(progress, ...rng([a, d], ["4%", "-4%"]));
+  const mediaY = useTransform(progress, ...rng([a, d], [`${3 * amp}%`, `${-3 * amp}%`]));
 
   return (
-    <motion.div className="absolute inset-0" style={{ opacity }}>
-      <div className="grid-12 h-full items-center gap-y-6">
-        <motion.div className="col-span-6 md:col-span-6" style={{ scale, y }}>
+    <motion.div className="absolute inset-0 flex items-center" style={{ opacity }}>
+      <motion.div className="shell grid-12 w-full items-center gap-y-8" style={{ x }}>
+        <div className="col-span-6 md:col-span-5">
+          <div className="rule-t pt-4">
+            <span className="label-tech">
+              GEN {String(index + 1).padStart(2, "0")} / {stage.role}
+            </span>
+          </div>
+          <h3
+            className={`display-lg mt-6 max-w-[14ch] uppercase ${
+              final ? "text-[color:var(--color-foreground)]" : ""
+            }`}
+          >
+            {stage.name}
+          </h3>
+          <p className="label-tech mt-8 max-w-[30ch] normal-case tracking-[0.02em]">{stage.q}</p>
+        </div>
+        <motion.div
+          className="col-span-6 md:col-span-6 md:col-start-7"
+          style={{ scale, y: mediaY, transformOrigin: "50% 50%" }}
+        >
           <MediaSlot
             name={media}
             alt={stage.name}
             label={`GEN ${index + 1}`}
-            maxHeight="min(60svh, 38rem)"
+            priority={index === 0}
+            maxHeight="min(58svh, 38rem)"
             className="md:mx-0"
           />
         </motion.div>
-        <motion.div className="col-span-6 md:col-span-5 md:col-start-8" style={{ x }}>
-          <div className="rule-t pt-4">
-            <span className="label-tech">{String(index + 1).padStart(2, "0")}</span>
-            {final ? (
-              <span className="label-tech ml-4 text-[color:var(--color-foreground)]">PAGER</span>
-            ) : null}
-          </div>
-          <h3 className="display-md mt-6">{stage.name}</h3>
-          <p className="mt-3 text-lg tracking-[-0.02em]">{stage.role}</p>
-          <p className="label-tech mt-8 normal-case tracking-[0.02em]">{stage.q}</p>
-        </motion.div>
-      </div>
+      </motion.div>
     </motion.div>
-  );
-}
-
-function StaticGeneration({
-  index,
-  stage,
-  axis,
-}: {
-  index: number;
-  stage: Stage;
-  axis: string[];
-}) {
-  return (
-    <div className="grid-12 items-center gap-y-6">
-      <div className="col-span-6 md:col-span-6">
-        <MediaSlot name={MEDIA[index]!} alt={stage.name} maxHeight="40svh" className="md:mx-0" />
-      </div>
-      <div className="col-span-6 md:col-span-5 md:col-start-8">
-        <div className="rule-t pt-4">
-          <span className="label-tech">
-            {String(index + 1).padStart(2, "0")} / {axis[index]}
-          </span>
-        </div>
-        <h3 className="display-md mt-6">{stage.name}</h3>
-        <p className="mt-3 text-lg tracking-[-0.02em]">{stage.role}</p>
-        <p className="label-tech mt-6 normal-case tracking-[0.02em]">{stage.q}</p>
-      </div>
-    </div>
   );
 }
