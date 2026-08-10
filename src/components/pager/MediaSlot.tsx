@@ -10,7 +10,7 @@ import { media } from "@/lib/media";
  *   (from the generated manifest, or read from the file on load)
  * - `maxHeight` caps the frame by scaling the WHOLE image down; the width cap
  *   is derived from the ratio so no letterboxing or cropping occurs
- * - transparent PNGs keep their alpha (no background behind loaded media)
+ * - transparent PNGs keep their alpha (nothing paints over the media)
  */
 export function MediaSlot({
   name,
@@ -29,14 +29,13 @@ export function MediaSlot({
   label?: string;
   className?: string;
   priority?: boolean;
-  /** Optional cap, e.g. "62vh". Scales the entire frame down — never crops. */
+  /** Optional cap, e.g. "58vh". Scales the entire frame down — never crops. */
   maxHeight?: string;
   children?: ReactNode;
 }) {
   const entry = media(name);
   const [measured, setMeasured] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
   const src = entry?.url ?? `/media/${name}`;
   const aspect = entry?.ratio ?? measured ?? ratio ?? "4 / 5";
@@ -44,20 +43,14 @@ export function MediaSlot({
   const maxWidth =
     maxHeight && rw && rh ? `calc(${maxHeight} * ${(rw / rh).toFixed(6)})` : undefined;
 
-  const markLoaded = (img: HTMLImageElement) => {
-    if (!entry && img.naturalWidth && img.naturalHeight) {
-      setMeasured(`${img.naturalWidth} / ${img.naturalHeight}`);
-    }
-    setLoaded(true);
-  };
-
   return (
     <figure
-      className={`relative mx-auto ${loaded ? "" : "bg-[color-mix(in_oklab,var(--color-foreground)_5%,transparent)]"} ${className}`}
+      className={`relative mx-auto ${className}`}
       style={{ aspectRatio: aspect, maxHeight, maxWidth }}
       data-media-slot={name}
     >
-      {!loaded ? <Placeholder name={name} label={label} /> : null}
+      {/* Sits behind the media — visible only while the file is en route or missing. */}
+      <Placeholder name={name} label={label} />
       {!failed ? (
         <img
           src={src}
@@ -65,15 +58,15 @@ export function MediaSlot({
           {...(entry ? { width: entry.width, height: entry.height } : {})}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          ref={(el) => {
-            // Images cached/decoded before hydration never fire onLoad.
-            if (el?.complete && el.naturalWidth) markLoaded(el);
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            if (!entry && img.naturalWidth && img.naturalHeight) {
+              setMeasured(`${img.naturalWidth} / ${img.naturalHeight}`);
+            }
           }}
-          onLoad={(e) => markLoaded(e.currentTarget)}
           onError={() => setFailed(true)}
-          className={`absolute inset-0 h-full w-full object-contain ${loaded ? "opacity-100" : "opacity-0"}`}
+          className="absolute inset-0 z-10 h-full w-full object-contain"
         />
-
       ) : null}
       {children}
     </figure>
@@ -85,7 +78,7 @@ function Placeholder({ name, label }: { name: string; label?: string | undefined
     <div className="absolute inset-0 overflow-hidden">
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.5]"
+        className="absolute inset-0 opacity-[0.4]"
         style={{
           backgroundImage:
             "linear-gradient(to right, var(--color-hairline) 1px, transparent 1px), linear-gradient(to bottom, var(--color-hairline) 1px, transparent 1px)",
