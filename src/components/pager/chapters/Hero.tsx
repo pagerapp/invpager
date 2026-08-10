@@ -177,7 +177,7 @@ function Frame({
     last ? [1.03, 1, 1, 1] : first ? [1, 1, 1, 0.965] : [1.03, 1, 1, 0.965],
     ),
   );
-  const amp = frame.amp;
+  const amp = frame.amp * motionScale;
   const mediaY = useTransform(progress, ...rng([a, outB], [`${4 * amp}%`, `${-4 * amp}%`]));
   const textY = useTransform(progress, ...rng([a, outB], [`${9 * amp}%`, `${-9 * amp}%`]));
   const metaY = useTransform(progress, ...rng([a, outB], [`${14 * amp}%`, `${-14 * amp}%`]));
