@@ -44,9 +44,8 @@ export function Evolution() {
                   name={s.media}
                   alt={s.name}
                   ratio="1 / 1"
-                  fit="contain"
                   label={`STAGE ${s.n}`}
-                  className="my-6 bg-transparent"
+                  className="my-6 w-full"
                 />
                 <h3 className="text-lg font-bold tracking-[-0.02em]">{s.name}</h3>
                 <p className="mt-1 text-sm text-[color:var(--color-foreground)]/70">{s.role}</p>

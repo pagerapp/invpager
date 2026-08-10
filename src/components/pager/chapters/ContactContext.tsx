@@ -68,11 +68,11 @@ export function ContactContext() {
               className="relative rule-t rule-b"
               style={{ borderTopColor: ctx.color, transition: "border-color 400ms" }}
             >
-              <div className="relative aspect-[4/5]">
+              <div className="relative grid">
                 <AnimatePresence initial={false} mode="sync">
                   <motion.div
                     key={ctx.key}
-                    className="absolute inset-0"
+                    className="col-start-1 row-start-1"
                     initial={reduced ? { opacity: 1 } : { opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={reduced ? { opacity: 0 } : { opacity: 0, y: -12 }}
@@ -81,10 +81,10 @@ export function ContactContext() {
                     <MediaSlot
                       name={ctx.media}
                       alt={`Профиль: ${ctx.label}`}
-                      fit="contain"
                       ratio="4 / 5"
                       label={ctx.label.toUpperCase()}
-                      className="h-full bg-transparent"
+                      className="w-full"
+                      maxHeight="72vh"
                     />
                   </motion.div>
                 </AnimatePresence>

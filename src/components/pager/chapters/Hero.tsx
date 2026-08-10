@@ -186,7 +186,7 @@ function Frame({
             ratio="4 / 5"
             label={`FRAME ${frame.n}`}
             priority={index === 0}
-            className="max-h-[62vh]"
+            maxHeight="62vh"
           />
         </motion.div>
         <motion.div className="col-span-6 md:col-span-6 md:col-start-7" style={{ y }}>
