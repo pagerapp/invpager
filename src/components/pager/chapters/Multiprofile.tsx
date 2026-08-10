@@ -43,48 +43,26 @@ export function Multiprofile() {
         </div>
       </div>
 
-      {reduced ? (
-        <div className="shell mt-16 space-y-16">
-          {beats.map((b, i) => (
-            <div key={b.label} className="grid-12 items-center gap-y-6">
-              <div className="col-span-6 md:col-span-6">
-                <MediaSlot
-                  name={states[i]!}
-                  alt={`${t.multiprofile.altDesktop} ${i + 1}`}
-                  maxHeight="46svh"
-                  className="md:mx-0"
-                />
-              </div>
-              <div className="col-span-6 md:col-span-5 md:col-start-8">
-                <span className="label-tech">
-                  {String(i + 1).padStart(2, "0")} / {b.label}
-                </span>
-                <p className="display-md mt-5">{b.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div ref={ref} className="relative mt-14 md:mt-20" style={{ height: "280svh" }}>
-          <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
-            <div className="relative h-[86svh] w-full">
-              {beats.map((b, i) => (
-                <ProfileState
-                  key={b.label}
-                  index={i}
-                  count={beats.length}
-                  label={b.label}
-                  text={b.text}
-                  media={states[i]!}
-                  alt={`${t.multiprofile.altDesktop} ${i + 1}`}
-                  progress={scrollYProgress}
-                />
-              ))}
-              <StateAxis labels={beats.map((b) => b.label)} progress={scrollYProgress} />
-            </div>
+      <div ref={ref} className="relative mt-14 md:mt-20" style={{ height: "300svh" }}>
+        <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
+          <div className="relative h-[86svh] w-full">
+            {beats.map((b, i) => (
+              <ProfileState
+                key={b.label}
+                index={i}
+                count={beats.length}
+                label={b.label}
+                text={b.text}
+                media={states[i]!}
+                alt={`${t.multiprofile.altDesktop} ${i + 1}`}
+                progress={scrollYProgress}
+                motionScale={reduced ? 0.25 : 1}
+              />
+            ))}
+            <StateAxis labels={beats.map((b) => b.label)} progress={scrollYProgress} />
           </div>
         </div>
-      )}
+      </div>
 
       <div className="shell mt-16 pb-[var(--chapter-space)] md:mt-24">
         {exit ? (
