@@ -93,6 +93,7 @@ function ProfileState({
   media,
   alt,
   progress,
+  motionScale,
 }: {
   index: number;
   count: number;
@@ -101,6 +102,7 @@ function ProfileState({
   media: string;
   alt: string;
   progress: MotionValue<number>;
+  motionScale: number;
 }) {
   const span = 1 / count;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
@@ -119,10 +121,12 @@ function ProfileState({
     ),
   );
   // The final state settles: no residual drift once control is established.
-  const amp = last ? 0.2 : first ? 1 : 0.6;
+  const amp = (last ? 0.2 : first ? 1 : 0.6) * motionScale;
+  const up = 1 + 0.025 * motionScale;
+  const down = 1 - 0.03 * motionScale;
   const scale = useTransform(
     progress,
-    ...rng([a, b, c, d], last ? [1.02, 1, 1, 1] : [1.025, 1, 1, 0.97]),
+    ...rng([a, b, c, d], last ? [up, 1, 1, 1] : [up, 1, 1, down]),
   );
   const mediaY = useTransform(progress, ...rng([a, d], [`${3 * amp}%`, `${-3 * amp}%`]));
   const textY = useTransform(progress, ...rng([a, d], [`${8 * amp}%`, `${-8 * amp}%`]));
