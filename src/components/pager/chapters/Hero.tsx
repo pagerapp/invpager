@@ -170,11 +170,13 @@ function Frame({
   );
 
   // Incoming comes forward, outgoing recedes — spatial, never a slideshow.
+  const up = 1 + 0.03 * motionScale;
+  const down = 1 - 0.035 * motionScale;
   const scale = useTransform(
     progress,
     ...rng(
     [a, b, outA, outB],
-    last ? [1.03, 1, 1, 1] : first ? [1, 1, 1, 0.965] : [1.03, 1, 1, 0.965],
+    last ? [up, 1, 1, 1] : first ? [1, 1, 1, down] : [up, 1, 1, down],
     ),
   );
   const amp = frame.amp * motionScale;
