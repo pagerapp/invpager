@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Nav } from "@/components/pager/Nav";
 import { Hero } from "@/components/pager/chapters/Hero";
+import { Telemetry } from "@/components/pager/Telemetry";
 import { Evolution } from "@/components/pager/chapters/Evolution";
 import { PagerId } from "@/components/pager/chapters/PagerId";
 import { Multiprofile } from "@/components/pager/chapters/Multiprofile";
@@ -46,6 +47,7 @@ function Page() {
         <section id="chapter-01" aria-label={t.hero.sectionAria}>
           <Hero />
         </section>
+        <Telemetry />
         <Evolution />
         <PagerId />
         <Multiprofile />

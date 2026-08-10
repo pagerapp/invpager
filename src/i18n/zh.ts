@@ -21,6 +21,7 @@ export const zh: Dict = {
     close: "关闭",
     langAria: "语言",
   },
+  ticker: ["多重身份","为每一位联系人设定沟通规则","24 小时临时访问","无需手机号码","PAGER ID","可控的访问权限"],
   hero: {
     sectionAria: "混乱、情境、掌控",
     kicker: "可控访问的即时通讯",
