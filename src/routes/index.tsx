@@ -8,6 +8,7 @@ import { ContactContext } from "@/components/pager/chapters/ContactContext";
 import { ProductStatus } from "@/components/pager/chapters/ProductStatus";
 import { Business } from "@/components/pager/chapters/Business";
 import { FinalCta } from "@/components/pager/chapters/FinalCta";
+import { useEffect } from "react";
 import { LocaleProvider, useT } from "@/i18n";
 import { ru } from "@/i18n/ru";
 
@@ -60,9 +61,9 @@ function Page() {
 /** Keeps document title/description in sync with the selected locale. */
 function LocaleTitle() {
   const t = useT();
-  if (typeof document !== "undefined") {
+  useEffect(() => {
     document.title = t.meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", t.meta.desc);
-  }
+  }, [t]);
   return null;
 }
