@@ -1,50 +1,63 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 /**
- * MediaSlot — intentional slot for supplied production media.
- * Files drop into /public/media/<name>. Until then an engineered
- * placeholder holds the exact composition and aspect ratio.
+ * MediaSlot — full-frame media holder.
+ *
+ * NON-NEGOTIABLE: supplied media is never cropped, never zoomed, never clipped.
+ * - object-fit is always `contain`
+ * - the container adopts the media's OWN aspect ratio once it loads
+ * - `ratio` is only a pre-load reservation so layout does not jump
+ * - transparent PNGs keep their alpha (no background fill behind loaded media)
  */
 export function MediaSlot({
   name,
   alt,
-  fit = "cover",
   ratio = "4 / 5",
   label,
   className = "",
   priority = false,
+  maxHeight,
   children,
 }: {
   name: string;
   alt: string;
-  fit?: "cover" | "contain";
+  /** Fallback aspect ratio used ONLY until the real media reports its own. */
   ratio?: string;
   label?: string;
   className?: string;
   priority?: boolean;
+  /** Optional cap, e.g. "62vh". The image scales down entirely — never crops. */
+  maxHeight?: string;
   children?: ReactNode;
 }) {
-  const [loaded, setLoaded] = useState(false);
+  const [natural, setNatural] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
-  const ref = useRef<HTMLImageElement>(null);
+  const loaded = natural !== null;
 
   return (
     <figure
-      className={`relative overflow-hidden bg-[color-mix(in_oklab,var(--color-foreground)_5%,transparent)] ${className}`}
-      style={{ aspectRatio: ratio }}
+      className={`relative ${loaded ? "" : "bg-[color-mix(in_oklab,var(--color-foreground)_5%,transparent)]"} ${className}`}
+      style={{ aspectRatio: natural ?? ratio, maxHeight }}
       data-media-slot={name}
     >
-      <Placeholder name={name} label={label} />
+      {!loaded ? <Placeholder name={name} label={label} /> : null}
       {!failed ? (
         <img
-          ref={ref}
           src={`/media/${name}`}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          onLoad={() => setLoaded(true)}
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            if (img.naturalWidth && img.naturalHeight) {
+              setNatural(`${img.naturalWidth} / ${img.naturalHeight}`);
+            } else {
+              setNatural(ratio);
+            }
+          }}
           onError={() => setFailed(true)}
-          className={`absolute inset-0 h-full w-full ${loaded ? "opacity-100" : "opacity-0"} ${fit === "contain" ? "object-contain" : "object-cover"}`}
+          className={`absolute inset-0 h-full w-full object-contain ${loaded ? "opacity-100" : "opacity-0"}`}
+          style={{ objectPosition: "center" }}
         />
       ) : null}
       {children}
@@ -54,7 +67,7 @@ export function MediaSlot({
 
 function Placeholder({ name, label }: { name: string; label?: string | undefined }) {
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 overflow-hidden">
       <div
         aria-hidden
         className="absolute inset-0 opacity-[0.5]"
