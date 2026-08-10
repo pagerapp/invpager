@@ -198,15 +198,19 @@ function Frame({
 
   const opacity = useTransform(
     progress,
+    ...rng(
     [a, b, outA, outB],
     first ? [1, 1, 1, 0] : last ? [0, 1, 1, 1] : [0, 1, 1, 0],
+    ),
   );
 
   // Incoming comes forward, outgoing recedes — spatial, never a slideshow.
   const scale = useTransform(
     progress,
+    ...rng(
     [a, b, outA, outB],
     last ? [1.03, 1, 1, 1] : first ? [1, 1, 1, 0.965] : [1.03, 1, 1, 0.965],
+    ),
   );
   const amp = frame.amp;
   const mediaY = useTransform(progress, ...rng([a, outB], [`${4 * amp}%`, `${-4 * amp}%`]));
@@ -215,10 +219,12 @@ function Frame({
   // Outgoing state recedes: slight contrast/brightness loss, incoming comes forward.
   const filter = useTransform(
     progress,
+    ...rng(
     [a, b, outA, outB],
     last
       ? ["contrast(0.92)", "contrast(1)", "contrast(1)", "contrast(1)"]
       : ["contrast(0.9)", "contrast(1)", "contrast(1)", "contrast(0.82)"],
+    ),
   );
 
   return (

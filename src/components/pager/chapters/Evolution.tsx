@@ -147,11 +147,16 @@ function Generation({
 
   const opacity = useTransform(
     progress,
+    ...rng(
     [a, b, c, d],
     index === 0 ? [1, 1, 1, 0] : final ? [0, 1, 1, 1] : [0, 1, 1, 0],
+    ),
   );
   // Earlier generations recede into the chronology as the next becomes primary.
-  const scale = useTransform(progress, [a, b, c, d], final ? [1.02, 1, 1, 1] : [1.02, 1, 1, 0.94]);
+  const scale = useTransform(
+    progress,
+    ...rng([a, b, c, d], final ? [1.02, 1, 1, 1] : [1.02, 1, 1, 0.94]),
+  );
   const x = useTransform(progress, ...rng([a, d], ["3%", "-3%"]));
   const y = useTransform(progress, ...rng([a, d], ["4%", "-4%"]));
 

@@ -135,12 +135,17 @@ function ProfileState({
 
   const opacity = useTransform(
     progress,
+    ...rng(
     [a, b, c, d],
     first ? [1, 1, 1, 0] : last ? [0, 1, 1, 1] : [0, 1, 1, 0],
+    ),
   );
   // The final state settles: no residual drift once control is established.
   const amp = last ? 0.2 : first ? 1 : 0.6;
-  const scale = useTransform(progress, [a, b, c, d], last ? [1.02, 1, 1, 1] : [1.025, 1, 1, 0.97]);
+  const scale = useTransform(
+    progress,
+    ...rng([a, b, c, d], last ? [1.02, 1, 1, 1] : [1.025, 1, 1, 0.97]),
+  );
   const mediaY = useTransform(progress, ...rng([a, d], [`${3 * amp}%`, `${-3 * amp}%`]));
   const textY = useTransform(progress, ...rng([a, d], [`${8 * amp}%`, `${-8 * amp}%`]));
 
