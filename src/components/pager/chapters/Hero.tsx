@@ -138,11 +138,13 @@ function Frame({
   index,
   count,
   progress,
+  motionScale,
 }: {
   frame: FrameData;
   index: number;
   count: number;
   progress: MotionValue<number>;
+  motionScale: number;
 }) {
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const span = 1 / count;
