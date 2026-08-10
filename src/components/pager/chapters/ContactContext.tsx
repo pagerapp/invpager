@@ -2,62 +2,45 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
+import { useT } from "@/i18n";
 
-const CONTEXTS = [
-  {
-    key: "personal",
-    label: "Личное",
-    color: "var(--personal)",
-    media: "Hero_man_personal_1x.png",
-    access: "Полный доступ",
-    rules: "Звонки, голос, медиа",
-  },
-  {
-    key: "work",
-    label: "Работа",
-    color: "var(--work)",
-    media: "Hero_man_work_3x.png",
-    access: "Рабочие часы",
-    rules: "Текст, файлы, звонки по согласованию",
-  },
-  {
-    key: "guest",
-    label: "Гостевое",
-    color: "var(--guest)",
-    media: "Hero_man_guest_4x.png",
-    access: "Временный доступ",
-    rules: "Только текст, ограниченный период",
-  },
-  {
-    key: "alter",
-    label: "Особый контекст",
-    color: "var(--alter)",
-    media: "Hero_man_alter_ego_5x.png",
-    access: "По запросу",
-    rules: "Отдельное пространство и правила",
-  },
+const KEYS = ["personal", "work", "guest", "alter"];
+const COLORS = ["var(--personal)", "var(--work)", "var(--guest)", "var(--alter)"];
+const MEDIA = [
+  "Hero_man_personal_1x.png",
+  "Hero_man_work_3x.png",
+  "Hero_man_guest_4x.png",
+  "Hero_man_alter_ego_5x.png",
 ];
 
 export function ContactContext() {
   const [active, setActive] = useState(0);
   const reduced = useReducedMotion();
-  const ctx = CONTEXTS[active]!;
+  const t = useT();
+
+  const contexts = t.contact.contexts.map((c, i) => ({
+    ...c,
+    key: KEYS[i]!,
+    color: COLORS[i]!,
+    media: MEDIA[i]!,
+  }));
+  const ctx = contexts[active]!;
 
   return (
     <Section id="chapter-05" className="py-[var(--chapter-space)]">
-      <ChapterHead index="05" title="КОНТАКТ И КОНТЕКСТ" meta="ONE IDENTITY / MANY STATES" />
+      <ChapterHead index="05" title={t.contact.head.title} meta={t.contact.head.meta} />
 
       <div className="shell mt-16 md:mt-24">
         <div className="grid-12 gap-y-8">
           <h2 className="display-lg col-span-6 md:col-span-7">
-            <MaskLine>ОДИН ЧЕЛОВЕК.</MaskLine>
-            <MaskLine delay={0.07}>РАЗНЫЕ СПОСОБЫ ОБЩЕНИЯ.</MaskLine>
+            {t.contact.h.map((line, i) => (
+              <MaskLine key={line} delay={i * 0.07}>
+                {line}
+              </MaskLine>
+            ))}
           </h2>
           <Rise className="col-span-6 md:col-span-4 md:col-start-9">
-            <p className="lead rule-t pt-4">
-              Один человек может быть представлен по-разному — в зависимости от того, кто находится
-              по другую сторону связи.
-            </p>
+            <p className="lead rule-t pt-4">{t.contact.lead}</p>
           </Rise>
         </div>
 
@@ -80,7 +63,7 @@ export function ContactContext() {
                   >
                     <MediaSlot
                       name={ctx.media}
-                      alt={`Профиль: ${ctx.label}`}
+                      alt={`${t.contact.profileAlt}: ${ctx.label}`}
                       label={ctx.label.toUpperCase()}
                       className="w-full"
                       maxHeight="70vh"
@@ -98,8 +81,8 @@ export function ContactContext() {
           </div>
 
           <div className="col-span-6 md:col-span-6 md:col-start-7">
-            <div role="tablist" aria-label="Контексты общения" className="rule-t">
-              {CONTEXTS.map((c, i) => {
+            <div role="tablist" aria-label={t.contact.tablistAria} className="rule-t">
+              {contexts.map((c, i) => {
                 const on = i === active;
                 return (
                   <button
@@ -138,19 +121,16 @@ export function ContactContext() {
               className="mt-8 grid grid-cols-2 gap-px bg-[color:var(--color-hairline)]"
             >
               <div className="bg-[color:var(--color-background)] p-5">
-                <span className="label-tech">ДОСТУП</span>
+                <span className="label-tech">{t.contact.accessLabel}</span>
                 <p className="mt-4 text-base tracking-[-0.02em]">{ctx.access}</p>
               </div>
               <div className="bg-[color:var(--color-background)] p-5">
-                <span className="label-tech">ПРАВИЛА</span>
+                <span className="label-tech">{t.contact.rulesLabel}</span>
                 <p className="mt-4 text-base tracking-[-0.02em]">{ctx.rules}</p>
               </div>
             </div>
 
-            <p className="lead mt-8 max-w-[48ch]">
-              PAGER связывает контакт и профиль: вы выбираете, какую версию себя показать, какие
-              правила установить и какой уровень доступа открыть.
-            </p>
+            <p className="lead mt-8 max-w-[48ch]">{t.contact.summary}</p>
           </div>
         </div>
       </div>

@@ -1,70 +1,58 @@
 import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
+import { useT } from "@/i18n";
 
-const BUILT = [
-  "Регистрация",
-  "PAGER ID",
-  "Поиск по ID",
-  "Запросы на контакт",
-  "1:1-диалоги",
-];
-
-const CORE = [
-  "Базовый профиль",
-  "Контекстные профили",
-  "Управление способами общения",
-  "Гостевой профиль",
-  "Временный доступ",
-];
-
-const NEXT = [
-  "Аудио- и видеозвонки",
-  "Расширение модели профилей",
-  "Дополнительные настройки приватности",
-];
+const STATES = ["done", "core", "next"] as const;
+const SCREENS = ["hero_dsktp_003.png", "hero_mob_001.png", "pgr_scr_002.jpg", "pgr_scr_003.jpg"];
 
 export function ProductStatus() {
+  const t = useT();
+
   return (
     <Section id="chapter-06" light className="py-[var(--chapter-space)]">
-      <ChapterHead index="06" title="СТАТУС ПРОДУКТА" meta="PRIVATE BETA / Q3 2026 / ANDROID, IOS" />
+      <ChapterHead index="06" title={t.product.head.title} meta={t.product.head.meta} />
 
       <div className="shell mt-16 md:mt-24">
         <div className="grid-12 gap-y-8">
           <h2 className="display-md col-span-6 md:col-span-7">
-            <MaskLine>Основа новой модели</MaskLine>
-            <MaskLine delay={0.07}>общения уже создана</MaskLine>
+            {t.product.h.map((line, i) => (
+              <MaskLine key={line} delay={i * 0.07}>
+                {line}
+              </MaskLine>
+            ))}
           </h2>
           <Rise className="col-span-6 md:col-span-4 md:col-start-9">
-            <p className="lead rule-t pt-4">
-              PAGER уже реализует ключевую идею продукта: связь начинается не только с сообщения, а
-              с выбора профиля, правил и формата взаимодействия.
-            </p>
+            <p className="lead rule-t pt-4">{t.product.lead}</p>
           </Rise>
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-px bg-[color:var(--color-hairline)] md:mt-24 md:grid-cols-3">
-          <Column title="Реализовано" index="A" items={BUILT} state="done" />
-          <Column title="Ключевые механики" index="B" items={CORE} state="core" />
-          <Column title="Следующие шаги" index="C" items={NEXT} state="next" />
+          {t.product.columns.map((c, i) => (
+            <Column
+              key={c.title}
+              title={c.title}
+              index={["A", "B", "C"][i]!}
+              items={c.items}
+              state={STATES[i]!}
+            />
+          ))}
         </div>
 
         <div className="mt-16 md:mt-24">
           <p className="label-tech rule-t pt-4">PRODUCT / DESKTOP</p>
           <MediaSlot
             name="hero_dsktp_001.png"
-            alt="PAGER — десктоп-интерфейс"
+            alt={t.product.altDesktop}
             label="DESKTOP 001"
             className="mt-6 w-full"
           />
           <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {["hero_dsktp_003.png", "hero_mob_001.png", "pgr_scr_002.jpg", "pgr_scr_003.jpg"].map(
-              (m, i) => (
-                <div key={m} className="flex flex-col">
-                  <span className="label-tech mb-3">SCR {String(i + 1).padStart(2, "0")}</span>
-                  <MediaSlot name={m} alt={`PAGER — экран ${i + 1}`} className="w-full" />
-                </div>
-              ),
-            )}
+            {SCREENS.map((m, i) => (
+              <div key={m} className="flex flex-col">
+                <span className="label-tech mb-3">SCR {String(i + 1).padStart(2, "0")}</span>
+                <MediaSlot name={m} alt={`${t.product.altScreen} ${i + 1}`} className="w-full" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -80,7 +68,7 @@ function Column({
 }: {
   title: string;
   index: string;
-  items: string[];
+  items: readonly string[];
   state: "done" | "core" | "next";
 }) {
   return (
