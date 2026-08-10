@@ -112,16 +112,6 @@ function StoryScroll() {
   const frames = useFrames();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  if (reduced) {
-    return (
-      <div className="shell space-y-20 py-16">
-        {frames.map((f) => (
-          <StaticFrame key={f.n} frame={f} />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div ref={ref} className="relative" style={{ height: "300svh" }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
@@ -133,6 +123,7 @@ function StoryScroll() {
               index={i}
               count={frames.length}
               progress={scrollYProgress}
+              motionScale={reduced ? 0.25 : 1}
             />
           ))}
           <Readout progress={scrollYProgress} frames={frames} />
@@ -142,44 +133,18 @@ function StoryScroll() {
   );
 }
 
-function StaticFrame({ frame }: { frame: FrameData }) {
-  return (
-    <div className="grid-12 items-center gap-y-6">
-      <div className="col-span-6 md:col-span-7">
-        <MediaSlot name={frame.media} alt={frame.title} label={`FRAME ${frame.n}`} />
-      </div>
-      <div className="col-span-6 md:col-span-5 md:col-start-8">
-        <FrameText frame={frame} />
-      </div>
-    </div>
-  );
-}
-
-function FrameText({ frame }: { frame: FrameData }) {
-  return (
-    <>
-      <div className="mb-5 flex items-center gap-3">
-        <span aria-hidden className="h-2 w-2" style={{ backgroundColor: frame.color }} />
-        <span className="label-tech text-[color:var(--color-foreground)]">
-          FRAME {frame.n} / {frame.tag}
-        </span>
-      </div>
-      <h2 className="display-md max-w-[20ch] uppercase">{frame.title}</h2>
-      <p className="lead mt-5 max-w-[42ch]">{frame.body}</p>
-    </>
-  );
-}
-
 function Frame({
   frame,
   index,
   count,
   progress,
+  motionScale,
 }: {
   frame: FrameData;
   index: number;
   count: number;
   progress: MotionValue<number>;
+  motionScale: number;
 }) {
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const span = 1 / count;
@@ -205,14 +170,16 @@ function Frame({
   );
 
   // Incoming comes forward, outgoing recedes — spatial, never a slideshow.
+  const up = 1 + 0.03 * motionScale;
+  const down = 1 - 0.035 * motionScale;
   const scale = useTransform(
     progress,
     ...rng(
     [a, b, outA, outB],
-    last ? [1.03, 1, 1, 1] : first ? [1, 1, 1, 0.965] : [1.03, 1, 1, 0.965],
+    last ? [up, 1, 1, 1] : first ? [1, 1, 1, down] : [up, 1, 1, down],
     ),
   );
-  const amp = frame.amp;
+  const amp = frame.amp * motionScale;
   const mediaY = useTransform(progress, ...rng([a, outB], [`${4 * amp}%`, `${-4 * amp}%`]));
   const textY = useTransform(progress, ...rng([a, outB], [`${9 * amp}%`, `${-9 * amp}%`]));
   const metaY = useTransform(progress, ...rng([a, outB], [`${14 * amp}%`, `${-14 * amp}%`]));

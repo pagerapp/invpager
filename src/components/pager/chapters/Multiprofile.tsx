@@ -43,48 +43,26 @@ export function Multiprofile() {
         </div>
       </div>
 
-      {reduced ? (
-        <div className="shell mt-16 space-y-16">
-          {beats.map((b, i) => (
-            <div key={b.label} className="grid-12 items-center gap-y-6">
-              <div className="col-span-6 md:col-span-6">
-                <MediaSlot
-                  name={states[i]!}
-                  alt={`${t.multiprofile.altDesktop} ${i + 1}`}
-                  maxHeight="46svh"
-                  className="md:mx-0"
-                />
-              </div>
-              <div className="col-span-6 md:col-span-5 md:col-start-8">
-                <span className="label-tech">
-                  {String(i + 1).padStart(2, "0")} / {b.label}
-                </span>
-                <p className="display-md mt-5">{b.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div ref={ref} className="relative mt-14 md:mt-20" style={{ height: "280svh" }}>
-          <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
-            <div className="relative h-[86svh] w-full">
-              {beats.map((b, i) => (
-                <ProfileState
-                  key={b.label}
-                  index={i}
-                  count={beats.length}
-                  label={b.label}
-                  text={b.text}
-                  media={states[i]!}
-                  alt={`${t.multiprofile.altDesktop} ${i + 1}`}
-                  progress={scrollYProgress}
-                />
-              ))}
-              <StateAxis labels={beats.map((b) => b.label)} progress={scrollYProgress} />
-            </div>
+      <div ref={ref} className="relative mt-14 md:mt-20" style={{ height: "300svh" }}>
+        <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
+          <div className="relative h-[86svh] w-full">
+            {beats.map((b, i) => (
+              <ProfileState
+                key={b.label}
+                index={i}
+                count={beats.length}
+                label={b.label}
+                text={b.text}
+                media={states[i]!}
+                alt={`${t.multiprofile.altDesktop} ${i + 1}`}
+                progress={scrollYProgress}
+                motionScale={reduced ? 0.25 : 1}
+              />
+            ))}
+            <StateAxis labels={beats.map((b) => b.label)} progress={scrollYProgress} />
           </div>
         </div>
-      )}
+      </div>
 
       <div className="shell mt-16 pb-[var(--chapter-space)] md:mt-24">
         {exit ? (
@@ -115,6 +93,7 @@ function ProfileState({
   media,
   alt,
   progress,
+  motionScale,
 }: {
   index: number;
   count: number;
@@ -123,6 +102,7 @@ function ProfileState({
   media: string;
   alt: string;
   progress: MotionValue<number>;
+  motionScale: number;
 }) {
   const span = 1 / count;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
@@ -141,10 +121,12 @@ function ProfileState({
     ),
   );
   // The final state settles: no residual drift once control is established.
-  const amp = last ? 0.2 : first ? 1 : 0.6;
+  const amp = (last ? 0.2 : first ? 1 : 0.6) * motionScale;
+  const up = 1 + 0.025 * motionScale;
+  const down = 1 - 0.03 * motionScale;
   const scale = useTransform(
     progress,
-    ...rng([a, b, c, d], last ? [1.02, 1, 1, 1] : [1.025, 1, 1, 0.97]),
+    ...rng([a, b, c, d], last ? [up, 1, 1, 1] : [up, 1, 1, down]),
   );
   const mediaY = useTransform(progress, ...rng([a, d], [`${3 * amp}%`, `${-3 * amp}%`]));
   const textY = useTransform(progress, ...rng([a, d], [`${8 * amp}%`, `${-8 * amp}%`]));
