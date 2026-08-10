@@ -48,8 +48,8 @@ export function Multiprofile() {
         </div>
       </div>
 
-      {/* Desktop screens — horizontal drift with subtle depth */}
-      <div ref={ref} className="mt-20 overflow-hidden md:mt-28">
+      {/* Desktop screens — desktop breakpoint only */}
+      <div ref={ref} className="mt-20 hidden overflow-hidden md:mt-28 md:block">
         <motion.div className="flex w-max gap-4 px-[clamp(1.25rem,4vw,4rem)]" style={{ x }}>
           {DESKTOP.map((m, i) => (
             <MediaSlot
@@ -57,11 +57,28 @@ export function Multiprofile() {
               name={m}
               alt={`Мультипрофиль — экран ${i + 1}`}
               label={`MPF DESKTOP ${i + 1}`}
-              className="w-[78vw] max-w-[52rem] md:w-[44vw]"
+              className="w-[52vw] max-w-[56rem]"
             />
           ))}
         </motion.div>
       </div>
+
+      {/* Mobile screens — mobile breakpoint only */}
+      <div className="mt-16 md:hidden">
+        <p className="shell label-tech mb-4">MOBILE / ПРОФИЛИ</p>
+        <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-[clamp(1.25rem,4vw,4rem)] pb-2">
+          {MOBILE.map((m, i) => (
+            <MediaSlot
+              key={m}
+              name={m}
+              alt={`Мультипрофиль мобильный экран ${i + 1}`}
+              label={`M${i + 1}`}
+              className="w-[74vw] shrink-0 snap-center"
+            />
+          ))}
+        </div>
+      </div>
+
 
       <div className="shell mt-16 md:mt-24">
         <ol className="grid grid-cols-1 gap-px bg-[color:var(--color-hairline)] md:grid-cols-4">
