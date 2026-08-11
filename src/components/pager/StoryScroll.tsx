@@ -208,7 +208,7 @@ function Panel({
       {/* CENTER ROW — media anchor, contained, never cropped. */}
       <div className="flex min-h-0 items-center justify-center px-0 py-4 md:px-6">
         {state.media ? (
-          <motion.div style={{ scale, filter }} className="flex w-full justify-center">
+          <motion.div style={{ scale, filter }} className="w-full">
             <MediaSlot
               name={state.media}
               alt={state.alt ?? state.title.join(" ")}
