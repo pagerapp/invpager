@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import logo from "@/assets/pager_logo.png.asset.json";
 import { LOCALES, useLocale } from "@/i18n";
+
+const logo = { url: "favicon.png" };
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -28,8 +29,8 @@ export function Nav() {
           <img
             src={logo.url}
             alt="PAGER"
-            width={420}
-            height={376}
+            width={43}
+            height={43}
             className="h-6 w-auto object-contain"
           />
           <span className="font-mono text-sm font-bold tracking-[0.28em]">PAGER</span>
@@ -102,7 +103,7 @@ export function Nav() {
   );
 }
 
-/** Compact three-state locale selector — an instrument switch, not a dropdown. */
+/** Compact three-state locale selector вЂ” an instrument switch, not a dropdown. */
 function LangSwitch() {
   const { locale, setLocale, t } = useLocale();
   return (
@@ -135,3 +136,4 @@ function LangSwitch() {
     </div>
   );
 }
+
