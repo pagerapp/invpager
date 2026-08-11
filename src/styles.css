@@ -161,17 +161,18 @@
 
 @utility display-xl {
   font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.86;
-  font-size: clamp(2.4rem, 8.4vw, 8.5rem);
+  letter-spacing: -0.032em;
+  /* Cyrillic descenders (Щ, Д, Ц) need real leading — 0.86 collided. */
+  line-height: 1.02;
+  font-size: clamp(2.3rem, 7.4vw, 7.4rem);
   text-transform: uppercase;
 }
 
 @utility display-lg {
   font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-  font-size: clamp(1.8rem, 4.5vw, 4.25rem);
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  font-size: clamp(1.8rem, 3.6vw, 3.4rem);
   text-transform: uppercase;
 }
 
