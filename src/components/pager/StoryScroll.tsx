@@ -9,7 +9,8 @@ import { rng } from "@/lib/scroll-range";
  * - the parent is multi-screen tall, the stage is sticky and exactly 100svh
  * - native scroll owns position; JS only derives a normalized progress and
  *   smooths it with requestAnimationFrame (never hijacks wheel/touch)
- * - three spatially stable zones: rail+title / media / description
+ * - stage geometry is a true three-row grid: auto / minmax(0,1fr) / auto,
+ *   so a three-line headline can never be clipped
  * - media is always object-contain, never cropped (see MediaSlot)
  */
 
@@ -31,13 +32,14 @@ export type StoryState = {
 export function StoryScroll({
   states,
   heightSvh,
-  railTitle,
   className = "",
+  /** Desktop media cap. Mobile always uses the near-100vw square. */
+  mediaHeight = "min(60svh, 92vw)",
 }: {
   states: StoryState[];
   heightSvh: number;
-  railTitle: string;
   className?: string;
+  mediaHeight?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = !!useReducedMotion();
@@ -88,7 +90,7 @@ export function StoryScroll({
     <div ref={ref} className={`relative ${className}`} style={{ height: `${heightSvh}svh` }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div className="relative h-[100svh]">
-          <Rail states={states} progress={progress} title={railTitle} />
+          <Rail states={states} progress={progress} />
           {states.map((s, i) => (
             <Panel
               key={s.label}
@@ -97,6 +99,7 @@ export function StoryScroll({
               count={states.length}
               progress={progress}
               reduced={reduced}
+              mediaHeight={mediaHeight}
             />
           ))}
         </div>
@@ -124,12 +127,14 @@ function Panel({
   count,
   progress,
   reduced,
+  mediaHeight,
 }: {
   state: StoryState;
   index: number;
   count: number;
   progress: MotionValue<number>;
   reduced: boolean;
+  mediaHeight: string;
 }) {
   const { a, b, c, d, first, last } = windowFor(index, count);
 
@@ -162,31 +167,46 @@ function Panel({
 
   const pointer = useTransform(opacity, (v) => (v > 0.5 ? "auto" : "none"));
 
+  // Release polish: the final state's copy clears out before the stage releases,
+  // so nothing travels underneath the sticky global header.
+  const copyOpacity = useTransform(progress, ...rng(last ? [0.9, 0.98] : [0, 1], [1, last ? 0 : 1]));
+
+  const hasBottom = Boolean(state.body || state.footer);
+
   return (
     <motion.div
-      className="absolute inset-0 z-10 flex flex-col"
+      className="absolute inset-0 z-10 grid grid-rows-[auto_minmax(0,1fr)_auto]"
       style={{ opacity, pointerEvents: pointer }}
     >
-      {/* TOP ZONE — stable height, holds the frame title. */}
-      <div className="shell shrink-0 pt-[calc(7rem+env(safe-area-inset-top))] md:pt-28">
-        <div className="min-h-[4.5rem] md:min-h-[6rem]">
-          {state.kicker ? (
-            <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
-          ) : null}
-          <h2
-            className={`${state.media ? "display-md" : "display-xl"} max-w-[24ch] overflow-hidden uppercase`}
-          >
-            {state.title.map((line, i) => (
-              <ClipLine key={line} progress={progress} a={a} b={b} c={c} d={d} delay={i * 0.06}>
-                {line}
-              </ClipLine>
-            ))}
-          </h2>
-        </div>
-      </div>
+      {/* TOP ROW — content-driven, never clipped. */}
+      <motion.div
+        className="shell pt-[calc(6.5rem+env(safe-area-inset-top))] md:pt-28"
+        style={{ opacity: copyOpacity }}
+      >
+        {state.kicker ? (
+          <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
+        ) : null}
+        <h2 className={`${state.media ? "display-md" : "display-xl"} max-w-[24ch] uppercase`}>
+          {state.title.map((line, i) => (
+            <ClipLine
+              key={line}
+              progress={progress}
+              a={a}
+              b={b}
+              c={c}
+              d={d}
+              delay={i * 0.06}
+              first={first}
+              last={last}
+            >
+              {line}
+            </ClipLine>
+          ))}
+        </h2>
+      </motion.div>
 
-      {/* CENTER ZONE — media anchor, contained, never cropped. */}
-      <div className="flex min-h-0 flex-1 items-center justify-center px-0 md:px-6">
+      {/* CENTER ROW — media anchor, contained, never cropped. */}
+      <div className="flex min-h-0 items-center justify-center px-0 py-4 md:px-6">
         {state.media ? (
           <motion.div style={{ scale, filter }} className="w-full">
             <MediaSlot
@@ -194,20 +214,25 @@ function Panel({
               alt={state.alt ?? state.title.join(" ")}
               label={`STATE ${state.code ?? ""}`}
               priority={index <= 1}
-              maxHeight="min(46svh, 100vw)"
+              maxHeight={mediaHeight}
               className="md:mx-auto"
             />
           </motion.div>
         ) : null}
       </div>
 
-      {/* BOTTOM ZONE — description / launch info. */}
-      <div className="shell shrink-0 pb-[calc(2rem+env(safe-area-inset-bottom))] md:pb-12">
-        <div className="rule-t min-h-[5.5rem] pt-4 md:min-h-[6rem]">
-          {state.body ? <p className="lead max-w-[46ch]">{state.body}</p> : null}
-          {state.footer}
-        </div>
-      </div>
+      {/* BOTTOM ROW — content-driven; fully collapsed for media-only states. */}
+      <motion.div
+        className={`shell ${hasBottom ? "pb-[calc(2rem+env(safe-area-inset-bottom))] md:pb-12" : "pb-[calc(1rem+env(safe-area-inset-bottom))]"}`}
+        style={{ opacity: copyOpacity }}
+      >
+        {hasBottom ? (
+          <div className="rule-t pt-4">
+            {state.body ? <p className="lead max-w-[46ch]">{state.body}</p> : null}
+            {state.footer}
+          </div>
+        ) : null}
+      </motion.div>
     </motion.div>
   );
 }
@@ -220,6 +245,8 @@ function ClipLine({
   c,
   d,
   delay,
+  first,
+  last,
   children,
 }: {
   progress: MotionValue<number>;
@@ -228,12 +255,19 @@ function ClipLine({
   c: number;
   d: number;
   delay: number;
+  first?: boolean;
+  last?: boolean;
   children: ReactNode;
 }) {
   const shift = Math.min(0.05, delay);
+  // The intro state is fully composed at progress 0 — no reveal latency.
+  const out = last ? "0%" : "-45%";
   const y = useTransform(
     progress,
-    ...rng([a + shift, b + shift, c, d], ["105%", "0%", "0%", "-45%"]),
+    ...rng(
+      [a + shift, b + shift, c, d],
+      first ? ["0%", "0%", "0%", "-45%"] : ["105%", "0%", "0%", out],
+    ),
   );
   return (
     <span className="mask-line block">
@@ -244,24 +278,28 @@ function ClipLine({
   );
 }
 
-/** Restrained top progress rail — hairlines and tiny mono labels only. */
-function Rail({
-  states,
-  progress,
-  title,
-}: {
-  states: StoryState[];
-  progress: MotionValue<number>;
-  title: string;
-}) {
-  const scaleX = useTransform(progress, [0, 1], [0, 1]);
+/** Restrained progress rail — appears only once the media states begin. */
+function Rail({ states, progress }: { states: StoryState[]; progress: MotionValue<number> }) {
+  const coded = states.map((s, i) => ({ s, i })).filter(({ s }) => Boolean(s.code));
+  const introEnd = 1 / states.length;
+  const railOpacity = useTransform(
+    progress,
+    ...rng([introEnd * 0.72, introEnd * 1.02], [0, 1]),
+  );
+  const scaleX = useTransform(progress, ...rng([introEnd, 1], [0, 1]));
+
+  if (coded.length === 0) return null;
+
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
+    <motion.div
+      className="pointer-events-none absolute inset-x-0 top-0 z-20 pt-[calc(4.25rem+env(safe-area-inset-top))] md:pt-20"
+      style={{ opacity: railOpacity }}
+      aria-hidden
+    >
       <div className="shell">
         <div className="flex items-center justify-between pb-2">
-          <span className="label-tech truncate">{title}</span>
           <span className="label-tech hidden gap-5 md:flex">
-            {states.map((s, i) => (
+            {coded.map(({ s, i }) => (
               <RailItem key={s.label} index={i} count={states.length} progress={progress}>
                 {s.code ? `${s.code} / ${s.label}` : s.label}
               </RailItem>
@@ -278,7 +316,7 @@ function Rail({
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -293,7 +331,7 @@ function RailCurrent({
   const idx = useTransform(progress, (v) => {
     const i = Math.min(states.length - 1, Math.floor(v * states.length + 0.0001));
     const s = states[i]!;
-    return s.code ? `${s.code} / ${s.label}` : s.label;
+    return s.code ? `${s.code} / ${s.label}` : "";
   });
   return <motion.span className="whitespace-nowrap text-[color:var(--color-foreground)]">{idx}</motion.span>;
 }
@@ -310,7 +348,7 @@ function RailItem({
   children: ReactNode;
 }) {
   const { a, d } = windowFor(index, count);
-  const opacity = useTransform(progress, (v) => (v >= a - 0.001 && v <= d + 0.001 ? 1 : 0.38));
+  const opacity = useTransform(progress, (v) => (v >= a - 0.001 && v <= d + 0.001 ? 1 : 0.55));
   return (
     <motion.span style={{ opacity }} className="whitespace-nowrap">
       {children}
