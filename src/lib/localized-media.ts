@@ -15,7 +15,7 @@ export type Locale = string;
 /** Language buckets used by the asset filenames. */
 function langKeys(locale: Locale): string[] {
   if (locale === "ru") return ["RU", "RU_ENG", "ENG"];
-  if (locale === "zh") return ["ZH", "CN", "ENG", "RU_ENG"]; // ZH falls back to English
+  if (locale === "zh") return ["ZH", "CN", "ENG", "RU_ENG"];
   return ["ENG", "RU_ENG"];
 }
 
@@ -38,20 +38,30 @@ export function localizedMedia(template: string, locale: Locale, fallback: strin
 
 /** Hero StoryScroll frames — 01 PROBLEM, 02 RELATIONSHIPS, 03 CONTROL. */
 export function heroMedia(locale: Locale): string[] {
+  const frameTwo = locale === "zh"
+    ? localizedMedia("Hero_storyscroll_img_{lang}_2.png", locale, "Hero_storyscroll_img_ENG_2.jpg")
+    : localizedMedia("Hero_storyscroll_img_{lang}_2.jpg", locale, "Hero_storyscroll_img_ENG_2.jpg");
+  const frameThree = locale === "zh"
+    ? localizedMedia("Hero_storyscroll_img_{lang}_3.png", locale, "Hero_storyscroll_img_ENG_3.jpg")
+    : localizedMedia("Hero_storyscroll_img_{lang}_3.jpg", locale, "Hero_storyscroll_img_ENG_3.jpg");
   return [
     localizedMedia("Hero_storyscroll_img_{lang}_1.jpg", locale, "Hero_storyscroll_img_RU_ENG_1.jpg"),
-    localizedMedia("Hero_storyscroll_img_{lang}_2.jpg", locale, "Hero_storyscroll_img_ENG_2.jpg"),
-    localizedMedia("Hero_storyscroll_img_{lang}_3.jpg", locale, "Hero_storyscroll_img_ENG_3.jpg"),
+    frameTwo,
+    frameThree,
   ];
 }
 
-/** Multiprofile StoryScroll frames — localized variants used when they exist. */
-export function multiprofileMedia(locale: Locale): string[] {
-  return [1, 2, 3].map((n) =>
-    localizedMedia(
-      `Multiprofile_img_{lang}_0${n}.jpg`,
-      locale,
-      `Multiprofile_img_0${n}.jpg`,
-    ),
-  );
+/** Multiprofile StoryScroll frames — the approved three-scene sequence. */
+export function multiprofileMedia(_locale: Locale): string[] {
+  return [1, 2, 3].map((n) => `mpf_desktop_${n}.png`);
 }
+
+/** Mobile-specific vertical sources for the same three scenes. */
+export function multiprofileMobileMedia(_locale: Locale): string[] {
+  return [
+    "Multiprofiles_mobile_img_1.png",
+    "Multiprofiles_mobile_img_2.png",
+    "Multiprofiles_mobile_img_3.png",
+  ];
+}
+

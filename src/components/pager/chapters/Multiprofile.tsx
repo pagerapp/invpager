@@ -1,6 +1,6 @@
 import { StoryScroll, type StoryState } from "../StoryScroll";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
-import { multiprofileMedia } from "@/lib/localized-media";
+import { multiprofileMedia, multiprofileMobileMedia } from "@/lib/localized-media";
 import { useLocale, useT } from "@/i18n";
 
 /**
@@ -12,6 +12,7 @@ export function Multiprofile() {
   const t = useT();
   const { locale } = useLocale();
   const mpMedia = multiprofileMedia(locale);
+  const mpMobileMedia = multiprofileMobileMedia(locale);
   const beats = t.multiprofile.beats.slice(0, 3);
   const exit = t.multiprofile.beats[3];
 
@@ -27,6 +28,7 @@ export function Multiprofile() {
     label: b.label,
     title: [b.text],
     media: mpMedia[i]!,
+    mobileMedia: mpMobileMedia[i]!,
     alt: `${t.multiprofile.altDesktop} ${i + 1}`,
   }));
 

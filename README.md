@@ -81,8 +81,8 @@ Subtitle: Один аккаунт. Разные профили общения. �
 Frame 01 / ХАОС:
 ВАШЕ ПРОСТРАНСТВО — НЕ ДЛЯ ВСЕХ.
 Один номер открывает доступ всем — семье, коллегам и случайным контактам.
-Frame 02 / КОНТЕКСТ:
-ОДИН ЧЕЛОВЕК — РАЗНЫЕ КОНТЕКСТЫ.
+Frame 02 / ОТНОШЕНИЯ:
+ОДИН ЧЕЛОВЕК — РАЗНЫЕ ОТНОШЕНИЯ.
 Для каждого контакта — свой профиль, свои правила и свой уровень доступа.
 Frame 03 / КОНТРОЛЬ:
 PAGER ВОЗВРАЩАЕТ КОНТРОЛЬ.
@@ -150,12 +150,13 @@ CTA: Запросить презентацию и материалы
 Footer: PAGER © 2026 / Private communication / Наверх
 
 MEDIA STRATEGY
-The final media assets will be supplied separately. Build intentional media slots/components now using these exact filenames/roles so replacement is straightforward:
-Hero: Hero_storyscroll_img_RU_ENG_1.jpg, Hero_storyscroll_img_RU_2.jpg, Hero_storyscroll_img_RU_3.jpg
+The approved media set is bundled under `public/media/` and is referenced by these exact filenames/roles:
+Hero: Hero_storyscroll_img_RU_ENG_1.jpg (shared), Hero_storyscroll_img_RU_2.jpg / Hero_storyscroll_img_RU_3.jpg (RU), Hero_storyscroll_img_ENG_2.jpg / Hero_storyscroll_img_ENG_3.jpg (EN), Hero_storyscroll_img_ZH_2.png / Hero_storyscroll_img_ZH_3.png (ZH)
 Evolution: 1_email.png, 2_sms.png, 3_chat.png, 4_pager.png
 PAGER ID: pager_id_variation_002.jpg
-Multiprofile desktop: mpf_desktop_1.png, mpf_desktop_2.png, mpf_desktop_3.png, mpf_desktop_4.png
-Multiprofile mobile: Multiprofiles_mobile_img_1.png, Multiprofiles_mobile_img_2.png, Multiprofiles_mobile_img_3.png, Multiprofiles_mobile_img_.png
+Multiprofile desktop (three active scenes): mpf_desktop_1.png, mpf_desktop_2.png, mpf_desktop_3.png
+Multiprofile mobile (three active scenes): Multiprofiles_mobile_img_1.png, Multiprofiles_mobile_img_2.png, Multiprofiles_mobile_img_3.png
+Multiprofiles_mobile_img_.png and mpf_desktop_4.png remain unreferenced reference variants.
 Contact context portraits: Hero_man_personal_1x.png, Hero_man_work_3x.png, Hero_man_guest_4x.png, Hero_man_alter_ego_5x.png. These portraits are cut-outs and must use contain, never object-cover.
 Product candidate media will be integrated later.
 
@@ -191,3 +192,8 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+
+## Localization status
+
+The interface and Hero artwork are localized in Russian, English and Chinese. Chinese uses dedicated `Hero_storyscroll_img_ZH_2.png` and `Hero_storyscroll_img_ZH_3.png` assets; frame 01 is shared because it contains no language-specific copy.

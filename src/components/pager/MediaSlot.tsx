@@ -1,19 +1,16 @@
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { media } from "@/lib/media";
 
 /**
  * MediaSlot — full-frame media holder.
  *
  * NON-NEGOTIABLE: supplied media is never cropped, zoomed or clipped.
- * - object-fit is always `contain`
- * - the container is BUILT AROUND the media's true intrinsic aspect ratio
- *   (from the generated manifest, or read from the file on load)
- * - `maxHeight` caps the frame by scaling the WHOLE image down; the width cap
- *   is derived from the ratio so no letterboxing or cropping occurs
- * - transparent PNGs keep their alpha (nothing paints over the media)
+ * Desktop and mobile may use different supplied source files, but both keep
+ * their native intrinsic ratio.
  */
 export function MediaSlot({
   name,
+  mobileName,
   alt,
   ratio,
   label,
@@ -23,50 +20,71 @@ export function MediaSlot({
   children,
 }: {
   name: string;
+  /** Optional mobile-specific media source. */
+  mobileName?: string;
   alt: string;
   /** Fallback aspect ratio, used only when the file is unknown to the manifest. */
   ratio?: string;
   label?: string;
   className?: string;
   priority?: boolean;
-  /** Optional cap, e.g. "58vh". Scales the entire frame down — never crops. */
+  /** Optional cap, e.g. "58vh". Scales the entire image down — never crops. */
   maxHeight?: string;
   children?: ReactNode;
 }) {
   const entry = media(name);
+  const mobileEntry = mobileName ? media(mobileName) : undefined;
   const [measured, setMeasured] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
 
-  const src = entry?.url ?? `/media/${name}`;
+  const src = entry?.url ?? "media/" + name;
+  const mobileSrc = mobileEntry?.url ?? (mobileName ? "media/" + mobileName : undefined);
   const aspect = entry?.ratio ?? measured ?? ratio ?? "4 / 5";
+  const mobileAspect = mobileEntry?.ratio;
   const [rw, rh] = aspect.split("/").map((v) => Number(v.trim()));
-  const maxWidth =
-    maxHeight && rw && rh ? `calc(${maxHeight} * ${(rw / rh).toFixed(6)})` : undefined;
+  const [mrw, mrh] = mobileAspect?.split("/").map((v) => Number(v.trim())) ?? [];
+  const maxWidth = maxHeight && rw && rh
+    ? "calc(" + maxHeight + " * " + (rw / rh).toFixed(6) + ")"
+    : undefined;
+  const mobileMaxWidth = maxHeight && mrw && mrh
+    ? "calc(" + maxHeight + " * " + (mrw / mrh).toFixed(6) + ")"
+    : undefined;
+
+  const slotStyle = {
+    aspectRatio: aspect,
+    maxHeight,
+    maxWidth,
+    ...(mobileAspect ? { "--media-mobile-ratio": mobileAspect } : {}),
+    ...(mobileMaxWidth ? { "--media-mobile-max-width": mobileMaxWidth } : {}),
+  } as CSSProperties;
 
   return (
     <figure
-      className={`relative mx-auto ${className}`}
-      style={{ aspectRatio: aspect, maxHeight, maxWidth }}
+      className={"relative mx-auto " + className}
+      style={slotStyle}
       data-media-slot={name}
+      {...(mobileEntry ? { "data-mobile-media": mobileName } : {})}
     >
-      {/* Sits behind the media — visible only while the file is en route or missing. */}
       <Placeholder name={name} label={label} />
       {!failed ? (
-        <img
-          src={src}
-          alt={alt}
-          {...(entry ? { width: entry.width, height: entry.height } : {})}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
-          onLoad={(e) => {
-            const img = e.currentTarget;
-            if (!entry && img.naturalWidth && img.naturalHeight) {
-              setMeasured(`${img.naturalWidth} / ${img.naturalHeight}`);
-            }
-          }}
-          onError={() => setFailed(true)}
-          className="absolute inset-0 z-10 h-full w-full object-contain"
-        />
+        <picture className="absolute inset-0 z-10 block">
+          {mobileEntry && mobileSrc ? <source media="(max-width: 767px)" srcSet={mobileSrc} /> : null}
+          <img
+            src={src}
+            alt={alt}
+            {...(entry ? { width: entry.width, height: entry.height } : {})}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              if (!entry && img.naturalWidth && img.naturalHeight) {
+                setMeasured(img.naturalWidth + " / " + img.naturalHeight);
+              }
+            }}
+            onError={() => setFailed(true)}
+            className="absolute inset-0 h-full w-full object-contain"
+          />
+        </picture>
       ) : null}
       {children}
     </figure>
@@ -86,7 +104,6 @@ function Placeholder({ name, label }: { name: string; label?: string | undefined
         }}
       />
       <div className="sr-only">{label ?? "MEDIA"} {name}</div>
-
     </div>
   );
 }

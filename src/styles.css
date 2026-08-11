@@ -230,6 +230,14 @@
   animation: pager-blink 1.6s steps(1, end) infinite;
 }
 
+/* Responsive media slots keep the supplied mobile artwork's native ratio. */
+@media (max-width: 767px) {
+  [data-mobile-media] {
+    aspect-ratio: var(--media-mobile-ratio, auto);
+    max-width: var(--media-mobile-max-width, 100%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -25,6 +25,8 @@ export type StoryState = {
   title: string[];
   body?: string;
   media?: string;
+  /** Optional mobile-specific media source. */
+  mobileMedia?: string;
   alt?: string;
   color?: string;
   footer?: ReactNode;
@@ -346,6 +348,7 @@ function Panel({
             <motion.div style={{ scale: releaseScale }}>
               <MediaSlot
                 name={state.media!}
+                mobileName={state.mobileMedia}
                 alt={state.alt ?? state.title.join(" ")}
                 label={`STATE ${state.code ?? ""}`}
                 priority={index <= 1}
