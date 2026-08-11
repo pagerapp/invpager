@@ -4,13 +4,14 @@ import { MediaSlot } from "./MediaSlot";
 import { rng } from "@/lib/scroll-range";
 
 /**
- * StoryScroll ENGINE — one pinned 100svh stage, states layered absolutely.
+ * StoryScroll ENGINE — one pinned 100svh stage, scenes layered absolutely.
  *
- * - the parent is multi-screen tall, the stage is sticky and exactly 100svh
+ * - the parent is a multi-screen runway, the stage is sticky and exactly 100svh
  * - native scroll owns position; JS only derives a normalized progress and
  *   smooths it with requestAnimationFrame (never hijacks wheel/touch)
- * - masking is WORD-LEVEL: a mask box can never contain an internal line wrap,
- *   so no glyph is ever sliced by a clipping box
+ * - every scene has HOLD → TRANSITION → HOLD: the transition band is a short
+ *   slice of the scene window, so the story reads as cut scenes, not a fade
+ * - masking is WORD-LEVEL: a mask box can never contain an internal line wrap
  * - media is always object-contain, never cropped (see MediaSlot)
  */
 
@@ -27,6 +28,13 @@ export type StoryState = {
   alt?: string;
   color?: string;
   footer?: ReactNode;
+  /**
+   * Transition character of the scene:
+   *  chaos    — arrives unsettled (more blur, wider scale delta)
+   *  order    — arrives organizing (moderate)
+   *  control  — arrives calm (almost no movement)
+   */
+  motionIntent?: "chaos" | "order" | "control";
 };
 
 export function StoryScroll({
@@ -35,11 +43,17 @@ export function StoryScroll({
   className = "",
   /** Desktop media cap. Mobile always uses the near-100vw square. */
   mediaHeight = "min(64svh, 92vw)",
+  /** Poster-style centered intro (Hero). */
+  introAlign = "start",
+  /** Keep the last scene readable through the release (no black hand-off). */
+  holdFinal = false,
 }: {
   states: StoryState[];
   heightSvh: number;
   className?: string;
   mediaHeight?: string;
+  introAlign?: "start" | "center";
+  holdFinal?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = !!useReducedMotion();
@@ -90,7 +104,7 @@ export function StoryScroll({
     <div ref={ref} className={`relative ${className}`} style={{ height: `${heightSvh}svh` }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div className="relative h-[100svh]">
-          <Rail states={states} progress={progress} />
+          <Rail states={states} progress={progress} holdFinal={holdFinal} />
           {states.map((s, i) => (
             <Panel
               key={s.label}
@@ -100,6 +114,8 @@ export function StoryScroll({
               progress={progress}
               reduced={reduced}
               mediaHeight={mediaHeight}
+              introAlign={introAlign}
+              holdFinal={holdFinal}
             />
           ))}
         </div>
@@ -108,22 +124,31 @@ export function StoryScroll({
   );
 }
 
-/** Window helper: each state owns an equal slice of the timeline. */
+/**
+ * Window helper — each scene owns an equal slice of the runway, and inside it
+ * only a SHORT band is spent transitioning. The rest is a hard hold.
+ */
+const TRANSITION = 0.17; // share of one scene window spent in motion
+
 function windowFor(index: number, count: number) {
   const span = 1 / count;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const first = index === 0;
   const last = index === count - 1;
-  const a = first ? 0 : clamp(index * span);
-  const b = first ? 0.0001 : clamp(index * span + span * 0.26);
-  const c = clamp((index + 1) * span - span * 0.26);
-  const d = last ? 1 : clamp((index + 1) * span);
+  const pad = span * TRANSITION;
+  const a = first ? 0 : clamp(index * span - pad * 0.5);
+  const b = first ? 0.0001 : clamp(index * span + pad * 0.5);
+  const c = clamp((index + 1) * span - pad * 0.5);
+  const d = last ? 1 : clamp((index + 1) * span + pad * 0.5);
   return { a, b, c, d, first, last };
 }
 
-/** Designed handoff window: the last state clears before the stage releases. */
+/** Designed handoff: copy clears, then media recedes — never a black void. */
 const COPY_OUT = [0.9, 0.96] as const;
 const MEDIA_OUT = [0.945, 0.999] as const;
+/** holdFinal variant: the last scene stays legible right into the release. */
+const COPY_OUT_HOLD = [0.965, 0.996] as const;
+const MEDIA_OUT_HOLD = [0.97, 1] as const;
 
 function Panel({
   state,
@@ -132,6 +157,8 @@ function Panel({
   progress,
   reduced,
   mediaHeight,
+  introAlign,
+  holdFinal,
 }: {
   state: StoryState;
   index: number;
@@ -139,21 +166,40 @@ function Panel({
   progress: MotionValue<number>;
   reduced: boolean;
   mediaHeight: string;
+  introAlign: "start" | "center";
+  holdFinal: boolean;
 }) {
   const { a, b, c, d, first, last } = windowFor(index, count);
   const isIntro = !state.media;
+  const intent = state.motionIntent ?? "order";
+  const copyOut = holdFinal ? COPY_OUT_HOLD : COPY_OUT;
+  const mediaOut = holdFinal ? MEDIA_OUT_HOLD : MEDIA_OUT;
+  const finalOpacity = holdFinal ? 0.28 : 0;
+
+  // Per-intent arrival/exit character: chaos is unsettled, control is calm.
+  const IN = {
+    chaos: { scale: 0.955, blur: 10, contrast: 0.88, y: "3.5%" },
+    order: { scale: 0.975, blur: 6, contrast: 0.94, y: "2%" },
+    control: { scale: 0.992, blur: 2.5, contrast: 0.98, y: "0.8%" },
+  }[intent];
 
   const opacity = useTransform(
     progress,
     ...rng([a, b, c, d], first ? [1, 1, 1, 0] : last ? [0, 1, 1, 1] : [0, 1, 1, 0]),
   );
 
-  // Incoming advances 0.98 → 1.00, outgoing recedes 1.00 → 0.975. Restrained.
   const scale = useTransform(
     progress,
     ...rng(
       [a, b, c, d],
-      reduced ? [1, 1, 1, 1] : last ? [0.98, 1, 1, 1] : [0.98, 1, 1, 0.975],
+      reduced ? [1, 1, 1, 1] : last ? [IN.scale, 1, 1, 1] : [IN.scale, 1, 1, 0.978],
+    ),
+  );
+  const y = useTransform(
+    progress,
+    ...rng(
+      [a, b, c, d],
+      reduced ? ["0%", "0%", "0%", "0%"] : last ? [IN.y, "0%", "0%", "0%"] : [IN.y, "0%", "0%", "-1.6%"],
     ),
   );
   const filter = useTransform(
@@ -163,9 +209,9 @@ function Panel({
       reduced
         ? ["none", "none", "none", "none"]
         : last
-          ? ["blur(6px) contrast(0.94)", "blur(0px) contrast(1)", "blur(0px) contrast(1)", "blur(0px) contrast(1)"]
+          ? [`blur(${IN.blur}px) contrast(${IN.contrast})`, "blur(0px) contrast(1)", "blur(0px) contrast(1)", "blur(0px) contrast(1)"]
           : [
-              "blur(6px) contrast(0.94)",
+              `blur(${IN.blur}px) contrast(${IN.contrast})`,
               "blur(0px) contrast(1)",
               "blur(0px) contrast(1)",
               "blur(5px) contrast(0.9)",
@@ -175,36 +221,38 @@ function Panel({
 
   const pointer = useTransform(opacity, (v) => (v > 0.5 ? "auto" : "none"));
 
-  // Release choreography: copy clears first, media then recedes and fades,
-  // so the stage never releases as a naked floating frame.
+  // Release choreography: copy clears first, media then recedes.
   const copyOpacity = useTransform(
     progress,
-    ...rng(last ? [COPY_OUT[0], COPY_OUT[1]] : [0, 1], [1, last ? 0 : 1]),
+    ...rng(last ? [copyOut[0], copyOut[1]] : [0, 1], [1, last ? (holdFinal ? 0.001 : 0) : 1]),
   );
   const releaseOpacity = useTransform(
     progress,
-    ...rng(last ? [MEDIA_OUT[0], MEDIA_OUT[1]] : [0, 1], [1, last ? 0 : 1]),
+    ...rng(last ? [mediaOut[0], mediaOut[1]] : [0, 1], [1, last ? finalOpacity : 1]),
   );
   const releaseScale = useTransform(
     progress,
     ...rng(
-      last && !reduced ? [MEDIA_OUT[0], MEDIA_OUT[1]] : [0, 1],
-      [1, last && !reduced ? 0.955 : 1],
+      last && !reduced ? [mediaOut[0], mediaOut[1]] : [0, 1],
+      [1, last && !reduced ? (holdFinal ? 0.978 : 0.955) : 1],
     ),
   );
 
   const hasBottom = Boolean(state.body || state.footer);
 
   if (isIntro) {
+    const centered = introAlign === "center";
     // INTRO VARIANT — a deliberate 100svh poster frame: one optically
-    // composed group, no accidental void between headline and lead.
+    // composed group, complete without scrolling.
     return (
       <motion.div
         className="absolute inset-0 z-10 flex flex-col justify-center"
         style={{ opacity, pointerEvents: pointer }}
       >
         <motion.div
-          className="shell pt-[calc(5rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] md:pt-24"
+          className={`shell pt-[calc(5rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] md:pt-24 ${
+            centered ? "text-center" : ""
+          }`}
           style={{ opacity: copyOpacity }}
         >
           {state.kicker ? (
@@ -212,7 +260,11 @@ function Panel({
               {state.kicker}
             </span>
           ) : null}
-          <h2 className="display-xl mt-5 max-w-[22ch] uppercase md:mt-6">
+          <h2
+            className={`display-xl mt-6 uppercase md:mt-8 ${
+              centered ? "mx-auto max-w-[18ch]" : "max-w-[22ch]"
+            }`}
+          >
             {state.title.map((line, i) => (
               <ClipLine
                 key={line}
@@ -224,14 +276,23 @@ function Panel({
                 delay={i * 0.06}
                 first={first}
                 last={last}
+                center={centered}
               >
                 {line}
               </ClipLine>
             ))}
           </h2>
           {hasBottom ? (
-            <div className="rule-t mt-8 max-w-[52ch] pt-4 md:mt-10">
-              {state.body ? <p className="lead max-w-[46ch]">{state.body}</p> : null}
+            <div
+              className={`mt-8 pt-4 md:mt-10 ${
+                centered ? "mx-auto max-w-[56ch] border-t border-[color:var(--color-hairline)]" : "rule-t max-w-[52ch]"
+              }`}
+            >
+              {state.body ? (
+                <p className={`lead ${centered ? "mx-auto max-w-[46ch]" : "max-w-[46ch]"}`}>
+                  {state.body}
+                </p>
+              ) : null}
               {state.footer}
             </div>
           ) : null}
@@ -248,7 +309,7 @@ function Panel({
       {/* TOP ROW — content-driven, never clipped. */}
       <motion.div
         className="shell pt-[calc(6.5rem+env(safe-area-inset-top))] md:pt-28"
-        style={{ opacity: copyOpacity }}
+        style={{ opacity: copyOpacity, y }}
       >
         {state.kicker ? (
           <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
@@ -272,12 +333,10 @@ function Panel({
         </h2>
       </motion.div>
 
-      {/* CENTER ROW — media anchor, contained, never cropped.
-          Mobile gets a small optical nudge downward so the square reads
-          centered in the perceived frame rather than the raw grid row. */}
+      {/* CENTER ROW — media anchor, contained, never cropped. */}
       <div className="flex min-h-0 items-center justify-center px-0 py-3 md:px-6 md:py-4">
         <motion.div
-          style={{ scale, filter, opacity: releaseOpacity }}
+          style={{ scale, filter, opacity: releaseOpacity, y }}
           className="w-full translate-y-[1.5vh] md:translate-y-0"
         >
           <motion.div style={{ scale: releaseScale }}>
@@ -293,14 +352,16 @@ function Panel({
         </motion.div>
       </div>
 
-      {/* BOTTOM ROW — content-driven; fully collapsed for media-only states. */}
+      {/* BOTTOM ROW — supporting copy reads as narrative, not metadata. */}
       <motion.div
         className={`shell ${hasBottom ? "pb-[calc(2rem+env(safe-area-inset-bottom))] md:pb-12" : "pb-[calc(1rem+env(safe-area-inset-bottom))]"}`}
-        style={{ opacity: copyOpacity }}
+        style={{ opacity: copyOpacity, y }}
       >
         {hasBottom ? (
           <div className="rule-t pt-4">
-            {state.body ? <p className="lead max-w-[46ch]">{state.body}</p> : null}
+            {state.body ? (
+              <p className="lead max-w-[52ch] text-[color:var(--color-foreground)]">{state.body}</p>
+            ) : null}
             {state.footer}
           </div>
         ) : null}
@@ -323,6 +384,7 @@ function ClipLine({
   delay,
   first,
   last,
+  center,
   children,
 }: {
   progress: MotionValue<number>;
@@ -333,9 +395,10 @@ function ClipLine({
   delay: number;
   first?: boolean;
   last?: boolean;
+  center?: boolean;
   children: ReactNode;
 }) {
-  const shift = Math.min(0.05, delay);
+  const shift = Math.min(0.02, delay);
   // The intro state is fully composed at progress 0 — no reveal latency.
   const out = last ? "0%" : "-45%";
   const y = useTransform(
@@ -353,7 +416,7 @@ function ClipLine({
   const words = cjk ? Array.from(text).filter((ch) => ch.trim()) : text.split(/\s+/).filter(Boolean);
 
   return (
-    <span className="block">
+    <span className={`block ${center ? "text-center" : ""}`}>
       {words.map((w, i) => (
         <span
           key={`${w}-${i}`}
@@ -374,14 +437,23 @@ function ClipLine({
 }
 
 /** Restrained progress rail — appears only once the media states begin. */
-function Rail({ states, progress }: { states: StoryState[]; progress: MotionValue<number> }) {
+function Rail({
+  states,
+  progress,
+  holdFinal,
+}: {
+  states: StoryState[];
+  progress: MotionValue<number>;
+  holdFinal: boolean;
+}) {
   const coded = states.map((s, i) => ({ s, i })).filter(({ s }) => Boolean(s.code));
   const introEnd = 1 / states.length;
+  const out = holdFinal ? COPY_OUT_HOLD : COPY_OUT;
   const railOpacity = useTransform(
     progress,
-    ...rng([introEnd * 0.72, introEnd * 1.02, COPY_OUT[0], COPY_OUT[1]], [0, 1, 1, 0]),
+    ...rng([introEnd * 0.72, introEnd * 1.02, out[0], out[1]], [0, 1, 1, 0]),
   );
-  const scaleX = useTransform(progress, ...rng([introEnd, COPY_OUT[0]], [0, 1]));
+  const scaleX = useTransform(progress, ...rng([introEnd, out[0]], [0, 1]));
 
   if (coded.length === 0) return null;
 
