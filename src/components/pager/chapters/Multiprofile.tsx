@@ -32,11 +32,7 @@ export function Multiprofile() {
     <Section id="chapter-04" className="pt-[var(--chapter-space)]">
       <ChapterHead index="04" title={t.multiprofile.head.title} meta={t.multiprofile.head.meta} />
 
-      <StoryScroll
-        states={[intro, ...states]}
-        heightSvh={340}
-        railTitle="MULTIPROFILE / STORYSCROLL"
-      />
+      <StoryScroll states={[intro, ...states]} heightSvh={340} mediaHeight="min(66svh, 94vw)" />
 
       <div className="shell mt-14 pb-[var(--chapter-space)] md:mt-20">
         {exit ? (

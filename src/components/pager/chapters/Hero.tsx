@@ -72,6 +72,10 @@ export function Hero() {
   }));
 
   return (
-    <StoryScroll states={[intro, ...frames]} heightSvh={400} railTitle="HERO / STORYSCROLL" />
+    <StoryScroll
+      states={[intro, ...frames]}
+      heightSvh={400}
+      mediaHeight="min(60svh, 92vw)"
+    />
   );
 }
