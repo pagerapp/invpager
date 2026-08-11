@@ -1,4 +1,4 @@
-// Bundled media manifest — local GitHub Pages paths + intrinsic dimensions.
+// Bundled media manifest вЂ” local GitHub Pages paths + intrinsic dimensions.
 // Dimensions are the true source pixel sizes; layout is built around them so
 // media is never cropped, zoomed or clipped.
 
@@ -20,6 +20,9 @@ export const MEDIA = {
   "Hero_storyscroll_img_RU_ENG_1.jpg": { url: "media/Hero_storyscroll_img_RU_ENG_1.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Hero_storyscroll_img_ZH_2.png": { url: "media/Hero_storyscroll_img_ZH_2.png", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Hero_storyscroll_img_ZH_3.png": { url: "media/Hero_storyscroll_img_ZH_3.png", width: 1254, height: 1254, ratio: "1254 / 1254" },
+  "Multiprofile_img_01.jpg": { url: "media/Multiprofile_img_01.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
+  "Multiprofile_img_02.jpg": { url: "media/Multiprofile_img_02.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
+  "Multiprofile_img_03.jpg": { url: "media/Multiprofile_img_03.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Multiprofiles_mobile_img_1.png": { url: "media/Multiprofiles_mobile_img_1.png", width: 941, height: 1672, ratio: "941 / 1672" },
   "Multiprofiles_mobile_img_2.png": { url: "media/Multiprofiles_mobile_img_2.png", width: 941, height: 1672, ratio: "941 / 1672" },
   "Multiprofiles_mobile_img_3.png": { url: "media/Multiprofiles_mobile_img_3.png", width: 941, height: 1672, ratio: "941 / 1672" },
@@ -39,3 +42,4 @@ export type MediaName = keyof typeof MEDIA;
 export function media(name: string): MediaEntry | undefined {
   return (MEDIA as Record<string, MediaEntry>)[name];
 }
+

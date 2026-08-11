@@ -4,9 +4,9 @@ import { media } from "./media";
  * LOCALIZED MEDIA RESOLVER.
  *
  * Some supplied frames contain baked-in typography, so localization must swap
- * the SOURCE FILE — never overlay translated HTML on top of the artwork.
+ * the SOURCE FILE вЂ” never overlay translated HTML on top of the artwork.
  *
- * Resolution order: current language → English variant → shared/neutral variant.
+ * Resolution order: current language в†’ English variant в†’ shared/neutral variant.
  * The first name that exists in the generated manifest wins.
  */
 
@@ -36,7 +36,7 @@ export function localizedMedia(template: string, locale: Locale, fallback: strin
   );
 }
 
-/** Hero StoryScroll frames — 01 PROBLEM, 02 RELATIONSHIPS, 03 CONTROL. */
+/** Hero StoryScroll frames вЂ” 01 PROBLEM, 02 RELATIONSHIPS, 03 CONTROL. */
 export function heroMedia(locale: Locale): string[] {
   const frameTwo = locale === "zh"
     ? localizedMedia("Hero_storyscroll_img_{lang}_2.png", locale, "Hero_storyscroll_img_ENG_2.jpg")
@@ -51,17 +51,22 @@ export function heroMedia(locale: Locale): string[] {
   ];
 }
 
-/** Multiprofile StoryScroll frames — the approved three-scene sequence. */
+/** Multiprofile StoryScroll frames вЂ” the approved three-scene sequence. */
 export function multiprofileMedia(_locale: Locale): string[] {
-  return [1, 2, 3].map((n) => `mpf_desktop_${n}.png`);
-}
-
-/** Mobile-specific vertical sources for the same three scenes. */
-export function multiprofileMobileMedia(_locale: Locale): string[] {
   return [
-    "Multiprofiles_mobile_img_1.png",
-    "Multiprofiles_mobile_img_2.png",
-    "Multiprofiles_mobile_img_3.png",
+    "Multiprofile_img_01.jpg",
+    "Multiprofile_img_02.jpg",
+    "Multiprofile_img_03.jpg",
   ];
 }
+
+/** The approved Multiprofile artwork is square and shared across breakpoints. */
+export function multiprofileMobileMedia(_locale: Locale): string[] {
+  return [
+    "Multiprofile_img_01.jpg",
+    "Multiprofile_img_02.jpg",
+    "Multiprofile_img_03.jpg",
+  ];
+}
+
 
