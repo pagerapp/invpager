@@ -346,7 +346,11 @@ function ClipLine({
     ),
   );
 
-  const words = String(children).split(/\s+/).filter(Boolean);
+  // CJK has no spaces: a whole line would wrap inside one mask, so it is
+  // split per character. Latin/Cyrillic split on spaces.
+  const text = String(children);
+  const cjk = /[\u3400-\u9FFF\u3000-\u303F\uFF00-\uFFEF]/.test(text);
+  const words = cjk ? Array.from(text).filter((ch) => ch.trim()) : text.split(/\s+/).filter(Boolean);
 
   return (
     <span className="block">
@@ -354,7 +358,11 @@ function ClipLine({
         <span
           key={`${w}-${i}`}
           className="inline-block overflow-hidden align-bottom"
-          style={{ paddingBottom: "0.16em", marginBottom: "-0.16em", marginRight: "0.25em" }}
+          style={{
+            paddingBottom: "0.16em",
+            marginBottom: "-0.16em",
+            marginRight: cjk ? "0" : "0.25em",
+          }}
         >
           <motion.span className="block whitespace-pre" style={{ y }}>
             {w}
