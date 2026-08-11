@@ -122,8 +122,8 @@ function windowFor(index: number, count: number) {
 }
 
 /** Designed handoff window: the last state clears before the stage releases. */
-const COPY_OUT = [0.86, 0.93] as const;
-const MEDIA_OUT = [0.9, 0.985] as const;
+const COPY_OUT = [0.9, 0.96] as const;
+const MEDIA_OUT = [0.945, 0.999] as const;
 
 function Panel({
   state,
