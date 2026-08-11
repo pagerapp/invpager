@@ -1,0 +1,66 @@
+name: Deploy PAGER to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Find static output
+        id: output
+        shell: bash
+        run: |
+          for candidate in .output/public dist/client dist; do
+            if [ -f "$candidate/_shell.html" ] || [ -f "$candidate/index.html" ]; then
+              echo "path=$candidate" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "No static HTML output found" >&2
+          find . -maxdepth 4 -type f \( -name 'index.html' -o -name '_shell.html' \) -print
+          exit 1
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.output.outputs.path }}
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

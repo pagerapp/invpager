@@ -7,7 +7,14 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // GitHub Pages serves this project from /invpager/ rather than the domain root.
+  // Keep generated scripts, styles, and media on the repository base path.
+  vite: {
+    base: "/invpager/",
+  },
   tanstackStart: {
+    // The investor page is a static, client-rendered experience for GitHub Pages.
+    spa: { enabled: true },
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
