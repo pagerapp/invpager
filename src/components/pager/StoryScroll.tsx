@@ -4,21 +4,21 @@ import { MediaSlot } from "./MediaSlot";
 import { rng } from "@/lib/scroll-range";
 
 /**
- * StoryScroll ENGINE — one pinned 100svh stage, scenes layered absolutely.
+ * StoryScroll ENGINE вЂ” one pinned 100svh stage, scenes layered absolutely.
  *
  * - the parent is a multi-screen runway, the stage is sticky and exactly 100svh
  * - native scroll owns position; JS only derives a normalized progress and
  *   smooths it with requestAnimationFrame (never hijacks wheel/touch)
- * - every scene has HOLD → TRANSITION → HOLD: the transition band is a short
+ * - every scene has HOLD в†’ TRANSITION в†’ HOLD: the transition band is a short
  *   slice of the scene window, so the story reads as cut scenes, not a fade
  * - masking is WORD-LEVEL: a mask box can never contain an internal line wrap
  * - media is always object-contain, never cropped (see MediaSlot)
  */
 
 export type StoryState = {
-  /** "01", "02"… — omitted for the intro state. */
+  /** "01", "02"вЂ¦ вЂ” omitted for the intro state. */
   code?: string;
-  /** Rail label, e.g. ХАОС. */
+  /** Rail label, e.g. РҐРђРћРЎ. */
   label: string;
   kicker?: string;
   /** Title lines. */
@@ -32,9 +32,9 @@ export type StoryState = {
   footer?: ReactNode;
   /**
    * Transition character of the scene:
-   *  chaos    — arrives unsettled (more blur, wider scale delta)
-   *  order    — arrives organizing (moderate)
-   *  control  — arrives calm (almost no movement)
+   *  chaos    вЂ” arrives unsettled (more blur, wider scale delta)
+   *  order    вЂ” arrives organizing (moderate)
+   *  control  вЂ” arrives calm (almost no movement)
    */
   motionIntent?: "chaos" | "order" | "control";
 };
@@ -49,6 +49,8 @@ export function StoryScroll({
   introAlign = "start",
   /** Keep the last scene readable through the release (no black hand-off). */
   holdFinal = false,
+  /** Preload every media layer when a story is a pinned hero sequence. */
+  preloadMedia = false,
 }: {
   states: StoryState[];
   heightSvh: number;
@@ -56,6 +58,7 @@ export function StoryScroll({
   mediaHeight?: string;
   introAlign?: "start" | "center";
   holdFinal?: boolean;
+  preloadMedia?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = !!useReducedMotion();
@@ -118,6 +121,7 @@ export function StoryScroll({
               mediaHeight={mediaHeight}
               introAlign={introAlign}
               holdFinal={holdFinal}
+              preloadMedia={preloadMedia}
             />
           ))}
         </div>
@@ -127,7 +131,7 @@ export function StoryScroll({
 }
 
 /**
- * Window helper — each scene owns an equal slice of the runway, and inside it
+ * Window helper вЂ” each scene owns an equal slice of the runway, and inside it
  * only a SHORT band is spent transitioning. The rest is a hard hold.
  */
 const TRANSITION = 0.11; // share of one scene window spent in motion
@@ -145,10 +149,10 @@ function windowFor(index: number, count: number) {
   return { a, b, c, d, first, last };
 }
 
-/** Designed handoff: copy clears, then media recedes — never a black void. */
+/** Designed handoff: copy clears, then media recedes вЂ” never a black void. */
 const COPY_OUT = [0.9, 0.96] as const;
 const MEDIA_OUT = [0.945, 0.999] as const;
-/** holdFinal variant: the last scene never releases — it stays fully composed. */
+/** holdFinal variant: the last scene never releases вЂ” it stays fully composed. */
 const COPY_OUT_HOLD = [0.999, 1] as const;
 
 function Panel({
@@ -160,6 +164,7 @@ function Panel({
   mediaHeight,
   introAlign,
   holdFinal,
+  preloadMedia,
 }: {
   state: StoryState;
   index: number;
@@ -169,6 +174,7 @@ function Panel({
   mediaHeight: string;
   introAlign: "start" | "center";
   holdFinal: boolean;
+  preloadMedia: boolean;
 }) {
   const { a, b, c, d, first, last } = windowFor(index, count);
   const isIntro = !state.media;
@@ -186,7 +192,7 @@ function Panel({
   }[intent];
 
   // Staged choreography inside the scene window:
-  // settle (a→b) → headline mask → media depth → supporting copy.
+  // settle (aв†’b) в†’ headline mask в†’ media depth в†’ supporting copy.
   const span = b - a || 1e-4;
   const hold = c - b || 1e-4;
   const bodyIn = [b - span * 0.1, b + hold * 0.1] as const;
@@ -253,7 +259,7 @@ function Panel({
     ),
   );
 
-  // Supporting copy arrives AFTER the frame settles — never as one preset fade.
+  // Supporting copy arrives AFTER the frame settles вЂ” never as one preset fade.
   const bodyOpacity = useTransform(
     progress,
     ...rng(
@@ -270,7 +276,7 @@ function Panel({
 
   if (isIntro) {
     const centered = introAlign === "center";
-    // INTRO VARIANT — a deliberate 100svh poster frame: one optically
+    // INTRO VARIANT вЂ” a deliberate 100svh poster frame: one optically
     // composed group, complete without scrolling.
     return (
       <motion.div
@@ -339,7 +345,7 @@ function Panel({
       style={{ opacity, pointerEvents: pointer }}
     >
       <div className="shell grid h-full grid-rows-[auto_minmax(0,1fr)_auto] pt-[calc(6rem+env(safe-area-inset-top))] pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:grid-cols-12 md:grid-rows-1 md:items-center md:gap-x-10 md:pt-24 md:pb-12">
-        {/* MEDIA — the dominant anchor of the composed frame. */}
+        {/* MEDIA вЂ” the dominant anchor of the composed frame. */}
         <div className="order-2 flex min-h-0 items-center justify-center py-3 md:order-1 md:col-span-7 md:py-0">
           <motion.div
             style={{ scale, filter, opacity: releaseOpacity, y, x }}
@@ -351,7 +357,7 @@ function Panel({
                 mobileName={state.mobileMedia}
                 alt={state.alt ?? state.title.join(" ")}
                 label={`STATE ${state.code ?? ""}`}
-                priority={index <= 1}
+                priority={preloadMedia || index <= 1}
                 maxHeight={mediaHeight}
                 className="md:mx-auto"
               />
@@ -359,7 +365,7 @@ function Panel({
           </motion.div>
         </div>
 
-        {/* COPY COLUMN — headline and supporting text read as one editorial unit. */}
+        {/* COPY COLUMN вЂ” headline and supporting text read as one editorial unit. */}
         <div className="order-1 md:order-2 md:col-span-5">
           <motion.div style={{ opacity: copyOpacity, y }}>
             {state.kicker ? (
@@ -406,7 +412,7 @@ function Panel({
 /**
  * Typographic mask reveal, WORD BY WORD.
  * Each word owns its own clipping box, so a wrapped headline can never be
- * sliced mid-glyph — the mask always matches exactly one visual line fragment.
+ * sliced mid-glyph вЂ” the mask always matches exactly one visual line fragment.
  */
 function ClipLine({
   progress,
@@ -432,7 +438,7 @@ function ClipLine({
   children: ReactNode;
 }) {
   const shift = Math.min(0.02, delay);
-  // The intro state is fully composed at progress 0 — no reveal latency.
+  // The intro state is fully composed at progress 0 вЂ” no reveal latency.
   const out = last ? "0%" : "-45%";
   const y = useTransform(
     progress,
@@ -469,7 +475,7 @@ function ClipLine({
   );
 }
 
-/** Restrained progress rail — appears only once the media states begin. */
+/** Restrained progress rail вЂ” appears only once the media states begin. */
 function Rail({
   states,
   progress,
@@ -555,3 +561,4 @@ function RailItem({
     </motion.span>
   );
 }
+
