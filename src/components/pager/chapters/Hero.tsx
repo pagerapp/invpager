@@ -3,8 +3,8 @@ import { heroMedia } from "@/lib/localized-media";
 import { useLocale, useT } from "@/i18n";
 
 /**
- * HERO — one pinned 100svh cinematic stage.
- * SCENE 0 MANIFESTO (poster) → 01 ХАОС → 02 ОТНОШЕНИЯ → 03 КОНТРОЛЬ.
+ * HERO вЂ” one pinned 100svh cinematic stage.
+ * SCENE 0 MANIFESTO (poster) в†’ 01 РҐРђРћРЎ в†’ 02 РћРўРќРћРЁР•РќРРЇ в†’ 03 РљРћРќРўР РћР›Р¬.
  * Media is language-resolved at the SOURCE level (never overlaid text).
  */
 
@@ -76,6 +76,8 @@ export function Hero() {
       mediaHeight="min(70svh, 92vw)"
       introAlign="center"
       holdFinal
+      preloadMedia
     />
   );
 }
+
