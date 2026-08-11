@@ -32,6 +32,18 @@ jobs:
       - name: Build static site
         run: npm run build
 
+      - name: Prepare GitHub Pages shell
+        shell: bash
+        run: |
+          output=".output/public"
+          if [ -f "$output/_shell.html" ] && [ ! -f "$output/index.html" ]; then
+            cp "$output/_shell.html" "$output/index.html"
+          fi
+          if [ -f "$output/index.html" ] && [ ! -f "$output/404.html" ]; then
+            cp "$output/index.html" "$output/404.html"
+          fi
+          test -f "$output/index.html"
+
       - name: Find static output
         id: output
         shell: bash
