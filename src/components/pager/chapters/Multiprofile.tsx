@@ -1,7 +1,7 @@
 import { StoryScroll, type StoryState } from "../StoryScroll";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
-import { MULTIPROFILE_FINAL } from "@/lib/multiprofile-media";
-import { useT } from "@/i18n";
+import { multiprofileMedia } from "@/lib/localized-media";
+import { useLocale, useT } from "@/i18n";
 
 /**
  * MULTIPROFILE — second pinned StoryScroll.
@@ -10,6 +10,8 @@ import { useT } from "@/i18n";
  */
 export function Multiprofile() {
   const t = useT();
+  const { locale } = useLocale();
+  const mpMedia = multiprofileMedia(locale);
   const beats = t.multiprofile.beats.slice(0, 3);
   const exit = t.multiprofile.beats[3];
 
@@ -24,7 +26,7 @@ export function Multiprofile() {
     code: String(i + 1).padStart(2, "0"),
     label: b.label,
     title: [b.text],
-    media: MULTIPROFILE_FINAL[i]!,
+    media: mpMedia[i]!,
     alt: `${t.multiprofile.altDesktop} ${i + 1}`,
   }));
 
