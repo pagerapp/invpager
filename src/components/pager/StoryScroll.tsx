@@ -128,7 +128,7 @@ export function StoryScroll({
  * Window helper — each scene owns an equal slice of the runway, and inside it
  * only a SHORT band is spent transitioning. The rest is a hard hold.
  */
-const TRANSITION = 0.17; // share of one scene window spent in motion
+const TRANSITION = 0.11; // share of one scene window spent in motion
 
 function windowFor(index: number, count: number) {
   const span = 1 / count;
@@ -146,9 +146,8 @@ function windowFor(index: number, count: number) {
 /** Designed handoff: copy clears, then media recedes — never a black void. */
 const COPY_OUT = [0.9, 0.96] as const;
 const MEDIA_OUT = [0.945, 0.999] as const;
-/** holdFinal variant: the last scene stays legible right into the release. */
-const COPY_OUT_HOLD = [0.965, 0.996] as const;
-const MEDIA_OUT_HOLD = [0.97, 1] as const;
+/** holdFinal variant: the last scene never releases — it stays fully composed. */
+const COPY_OUT_HOLD = [0.999, 1] as const;
 
 function Panel({
   state,
@@ -172,16 +171,23 @@ function Panel({
   const { a, b, c, d, first, last } = windowFor(index, count);
   const isIntro = !state.media;
   const intent = state.motionIntent ?? "order";
-  const copyOut = holdFinal ? COPY_OUT_HOLD : COPY_OUT;
-  const mediaOut = holdFinal ? MEDIA_OUT_HOLD : MEDIA_OUT;
-  const finalOpacity = holdFinal ? 0.28 : 0;
+  const heldFinal = last && holdFinal;
+  const copyOut = heldFinal ? COPY_OUT_HOLD : COPY_OUT;
+  const mediaOut = heldFinal ? COPY_OUT_HOLD : MEDIA_OUT;
+  const finalOpacity = heldFinal ? 1 : 0;
 
   // Per-intent arrival/exit character: chaos is unsettled, control is calm.
   const IN = {
-    chaos: { scale: 0.955, blur: 10, contrast: 0.88, y: "3.5%" },
-    order: { scale: 0.975, blur: 6, contrast: 0.94, y: "2%" },
-    control: { scale: 0.992, blur: 2.5, contrast: 0.98, y: "0.8%" },
+    chaos: { scale: 0.94, blur: 14, contrast: 0.82, y: "4.5%", x: "-2.5%" },
+    order: { scale: 0.968, blur: 7, contrast: 0.92, y: "2.4%", x: "1.6%" },
+    control: { scale: 1.03, blur: 3, contrast: 1.04, y: "0.6%", x: "0%" },
   }[intent];
+
+  // Staged choreography inside the scene window:
+  // settle (a→b) → headline mask → media depth → supporting copy.
+  const span = b - a || 1e-4;
+  const hold = c - b || 1e-4;
+  const bodyIn = [b - span * 0.1, b + hold * 0.1] as const;
 
   const opacity = useTransform(
     progress,
@@ -192,14 +198,21 @@ function Panel({
     progress,
     ...rng(
       [a, b, c, d],
-      reduced ? [1, 1, 1, 1] : last ? [IN.scale, 1, 1, 1] : [IN.scale, 1, 1, 0.978],
+      reduced ? [1, 1, 1, 1] : last ? [IN.scale, 1, 1, 1] : [IN.scale, 1, 1, 0.972],
     ),
   );
   const y = useTransform(
     progress,
     ...rng(
       [a, b, c, d],
-      reduced ? ["0%", "0%", "0%", "0%"] : last ? [IN.y, "0%", "0%", "0%"] : [IN.y, "0%", "0%", "-1.6%"],
+      reduced ? ["0%", "0%", "0%", "0%"] : last ? [IN.y, "0%", "0%", "0%"] : [IN.y, "0%", "0%", "-2%"],
+    ),
+  );
+  const x = useTransform(
+    progress,
+    ...rng(
+      [a, b, c, d],
+      reduced ? ["0%", "0%", "0%", "0%"] : last ? [IN.x, "0%", "0%", "0%"] : [IN.x, "0%", "0%", "0%"],
     ),
   );
   const filter = useTransform(
@@ -214,7 +227,7 @@ function Panel({
               `blur(${IN.blur}px) contrast(${IN.contrast})`,
               "blur(0px) contrast(1)",
               "blur(0px) contrast(1)",
-              "blur(5px) contrast(0.9)",
+              "blur(6px) contrast(0.88)",
             ],
     ),
   );
@@ -224,7 +237,7 @@ function Panel({
   // Release choreography: copy clears first, media then recedes.
   const copyOpacity = useTransform(
     progress,
-    ...rng(last ? [copyOut[0], copyOut[1]] : [0, 1], [1, last ? (holdFinal ? 0.001 : 0) : 1]),
+    ...rng(last ? [copyOut[0], copyOut[1]] : [0, 1], [1, last ? (heldFinal ? 1 : 0) : 1]),
   );
   const releaseOpacity = useTransform(
     progress,
@@ -233,9 +246,22 @@ function Panel({
   const releaseScale = useTransform(
     progress,
     ...rng(
-      last && !reduced ? [mediaOut[0], mediaOut[1]] : [0, 1],
-      [1, last && !reduced ? (holdFinal ? 0.978 : 0.955) : 1],
+      last && !reduced && !heldFinal ? [mediaOut[0], mediaOut[1]] : [0, 1],
+      [1, last && !reduced && !heldFinal ? 0.955 : 1],
     ),
+  );
+
+  // Supporting copy arrives AFTER the frame settles — never as one preset fade.
+  const bodyOpacity = useTransform(
+    progress,
+    ...rng(
+      last ? [bodyIn[0], bodyIn[1], copyOut[0], copyOut[1]] : [bodyIn[0], bodyIn[1], c, d],
+      last ? [0, 1, 1, heldFinal ? 1 : 0] : [0, 1, 1, 0],
+    ),
+  );
+  const bodyY = useTransform(
+    progress,
+    ...rng(bodyIn as unknown as number[], reduced ? ["0%", "0%"] : ["36%", "0%"]),
   );
 
   const hasBottom = Boolean(state.body || state.footer);
@@ -261,8 +287,8 @@ function Panel({
             </span>
           ) : null}
           <h2
-            className={`display-xl mt-6 uppercase md:mt-8 ${
-              centered ? "mx-auto max-w-[18ch]" : "max-w-[22ch]"
+            className={`display-xl mt-7 uppercase md:mt-10 ${
+              centered ? "mx-auto max-w-[16ch]" : "max-w-[22ch]"
             }`}
           >
             {state.title.map((line, i) => (
@@ -284,12 +310,16 @@ function Panel({
           </h2>
           {hasBottom ? (
             <div
-              className={`mt-8 pt-4 md:mt-10 ${
+              className={`mt-10 pt-5 md:mt-12 ${
                 centered ? "mx-auto max-w-[56ch] border-t border-[color:var(--color-hairline)]" : "rule-t max-w-[52ch]"
               }`}
             >
               {state.body ? (
-                <p className={`lead ${centered ? "mx-auto max-w-[46ch]" : "max-w-[46ch]"}`}>
+                <p
+                  className={`text-[clamp(1.05rem,1.6vw,1.45rem)] leading-[1.45] text-[color:var(--color-foreground)]/85 ${
+                    centered ? "mx-auto max-w-[42ch]" : "max-w-[46ch]"
+                  }`}
+                >
                   {state.body}
                 </p>
               ) : null}
@@ -303,69 +333,69 @@ function Panel({
 
   return (
     <motion.div
-      className="absolute inset-0 z-10 grid grid-rows-[auto_minmax(0,1fr)_auto]"
+      className="absolute inset-0 z-10 flex flex-col justify-center"
       style={{ opacity, pointerEvents: pointer }}
     >
-      {/* TOP ROW — content-driven, never clipped. */}
-      <motion.div
-        className="shell pt-[calc(6.5rem+env(safe-area-inset-top))] md:pt-28"
-        style={{ opacity: copyOpacity, y }}
-      >
-        {state.kicker ? (
-          <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
-        ) : null}
-        <h2 className="display-md max-w-[24ch] uppercase">
-          {state.title.map((line, i) => (
-            <ClipLine
-              key={line}
-              progress={progress}
-              a={a}
-              b={b}
-              c={c}
-              d={d}
-              delay={i * 0.06}
-              first={first}
-              last={last}
-            >
-              {line}
-            </ClipLine>
-          ))}
-        </h2>
-      </motion.div>
-
-      {/* CENTER ROW — media anchor, contained, never cropped. */}
-      <div className="flex min-h-0 items-center justify-center px-0 py-3 md:px-6 md:py-4">
-        <motion.div
-          style={{ scale, filter, opacity: releaseOpacity, y }}
-          className="w-full translate-y-[1.5vh] md:translate-y-0"
-        >
-          <motion.div style={{ scale: releaseScale }}>
-            <MediaSlot
-              name={state.media!}
-              alt={state.alt ?? state.title.join(" ")}
-              label={`STATE ${state.code ?? ""}`}
-              priority={index <= 1}
-              maxHeight={mediaHeight}
-              className="md:mx-auto"
-            />
+      <div className="shell grid h-full grid-rows-[auto_minmax(0,1fr)_auto] pt-[calc(6rem+env(safe-area-inset-top))] pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:grid-cols-12 md:grid-rows-1 md:items-center md:gap-x-10 md:pt-24 md:pb-12">
+        {/* MEDIA — the dominant anchor of the composed frame. */}
+        <div className="order-2 flex min-h-0 items-center justify-center py-3 md:order-1 md:col-span-7 md:py-0">
+          <motion.div
+            style={{ scale, filter, opacity: releaseOpacity, y, x }}
+            className="w-full"
+          >
+            <motion.div style={{ scale: releaseScale }}>
+              <MediaSlot
+                name={state.media!}
+                alt={state.alt ?? state.title.join(" ")}
+                label={`STATE ${state.code ?? ""}`}
+                priority={index <= 1}
+                maxHeight={mediaHeight}
+                className="md:mx-auto"
+              />
+            </motion.div>
           </motion.div>
-        </motion.div>
-      </div>
+        </div>
 
-      {/* BOTTOM ROW — supporting copy reads as narrative, not metadata. */}
-      <motion.div
-        className={`shell ${hasBottom ? "pb-[calc(2rem+env(safe-area-inset-bottom))] md:pb-12" : "pb-[calc(1rem+env(safe-area-inset-bottom))]"}`}
-        style={{ opacity: copyOpacity, y }}
-      >
-        {hasBottom ? (
-          <div className="rule-t pt-4">
-            {state.body ? (
-              <p className="lead max-w-[52ch] text-[color:var(--color-foreground)]">{state.body}</p>
+        {/* COPY COLUMN — headline and supporting text read as one editorial unit. */}
+        <div className="order-1 md:order-2 md:col-span-5">
+          <motion.div style={{ opacity: copyOpacity, y }}>
+            {state.kicker ? (
+              <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
             ) : null}
-            {state.footer}
-          </div>
-        ) : null}
-      </motion.div>
+            <h2 className="display-lg mt-3 max-w-[16ch] uppercase">
+              {state.title.map((line, i) => (
+                <ClipLine
+                  key={line}
+                  progress={progress}
+                  a={a}
+                  b={b}
+                  c={c}
+                  d={d}
+                  delay={i * 0.06}
+                  first={first}
+                  last={last}
+                >
+                  {line}
+                </ClipLine>
+              ))}
+            </h2>
+          </motion.div>
+
+          {hasBottom ? (
+            <motion.div
+              className="rule-t mt-5 pt-5 md:mt-7 md:pt-6"
+              style={{ opacity: bodyOpacity, y: bodyY }}
+            >
+              {state.body ? (
+                <p className="max-w-[42ch] text-[clamp(1rem,1.35vw,1.3rem)] leading-[1.5] text-[color:var(--color-foreground)]/85">
+                  {state.body}
+                </p>
+              ) : null}
+              {state.footer}
+            </motion.div>
+          ) : null}
+        </div>
+      </div>
     </motion.div>
   );
 }
