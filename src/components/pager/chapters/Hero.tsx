@@ -75,7 +75,7 @@ export function Hero() {
     <StoryScroll
       states={[intro, ...frames]}
       heightSvh={400}
-      mediaHeight="min(60svh, 92vw)"
+      mediaHeight="min(65svh, 92vw)"
     />
   );
 }
