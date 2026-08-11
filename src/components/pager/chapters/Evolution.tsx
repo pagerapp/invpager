@@ -5,7 +5,7 @@ import { useT } from "@/i18n";
 
 const MEDIA = ["Evo_1.png", "Evo_2.png", "Evo_3.png", "Evo_4.png"];
 
-type Stage = { name: string; role: string; q: string };
+type Stage = { name: string; role: string; q: string; body: string };
 
 /**
  * EVOLUTION — an editorial index, not a story scroll.
@@ -51,6 +51,13 @@ export function Evolution() {
             <StageCard key={stage.name} stage={stage} media={MEDIA[i]!} index={i} />
           ))}
         </div>
+
+        <Rise className="mt-14 border-y border-[color:var(--color-hairline)] py-8 md:mt-20 md:grid md:grid-cols-12 md:gap-8 md:py-12">
+          <p className="label-tech md:col-span-3">{t.evolution.whyNow.title}</p>
+          <p className="mt-5 max-w-[68ch] text-lg leading-relaxed text-[color:var(--color-foreground)] md:col-span-8 md:col-start-5 md:mt-0 md:text-xl">
+            {t.evolution.whyNow.body}
+          </p>
+        </Rise>
       </div>
 
       <div className="pb-[var(--chapter-space)]" />
@@ -64,7 +71,7 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
       role="listitem"
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex min-h-[25rem] min-w-[82vw] snap-start flex-col justify-between overflow-hidden border border-[color:var(--color-hairline)] bg-[color:var(--color-background)] px-5 py-5 md:min-h-[28rem] md:min-w-0 md:border-0 md:px-8 md:py-7"
+      className="group relative flex min-h-[25rem] min-w-[88vw] snap-start flex-col overflow-hidden border border-[color:var(--color-hairline)] bg-[color:var(--color-background)] px-5 py-5 md:min-h-[31rem] md:min-w-0 md:border-0 md:px-8 md:py-7"
     >
       <div className="flex items-start justify-between gap-4">
         <span className="label-tech transition-colors duration-300 group-hover:text-[color:var(--color-foreground)]">
@@ -75,23 +82,31 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center py-8">
-        <MediaSlot
-          name={media}
-          alt={stage.name}
-          label={stage.role}
-          priority={index === 0}
-          maxHeight="min(14rem, 42vw)"
-          className="evolution-media w-full max-w-[14rem] transition-transform duration-500 ease-out group-hover:scale-[1.04] [&>div:first-child]:opacity-0"
-        />
-      </div>
+      <div className="grid flex-1 grid-cols-[34%_minmax(0,1fr)] items-center gap-5 py-6 md:grid-cols-[38%_minmax(0,1fr)] md:gap-8 md:py-9">
+        <div className="flex min-w-0 items-center justify-center">
+          <MediaSlot
+            name={media}
+            alt={stage.name}
+            label={stage.role}
+            priority={index === 0}
+            maxHeight="min(12rem, 32vw)"
+            className="evolution-media w-full max-w-[12rem] transition-transform duration-500 ease-out group-hover:scale-[1.04] [&>div:first-child]:opacity-0"
+          />
+        </div>
 
-      <div className="border-t border-[color:var(--color-hairline)] pt-4">
-        <h3 className="display-md uppercase">{stage.name}</h3>
-        <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-[color:var(--color-muted-foreground)]">
-          {stage.q}
-        </p>
+        <div className="min-w-0 border-l border-[color:var(--color-hairline)] pl-5 md:pl-8">
+          <h3 className="text-xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] md:text-3xl">
+            {stage.name}
+          </h3>
+          <p className="mt-4 text-sm font-medium leading-snug text-[color:var(--color-foreground)] md:text-base">
+            {stage.q}
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-muted-foreground)] md:text-[15px]">
+            {stage.body}
+          </p>
+        </div>
       </div>
     </motion.article>
   );
 }
+
