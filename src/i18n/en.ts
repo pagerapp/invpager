@@ -57,12 +57,13 @@ export const en: Dict = {
       h: ["FROM MESSAGE", "TO CONTEXT"],
       lead: "Communication got faster. Now it can become more precise: you choose the format, the profile and the boundaries of access.",
       stages: [
-        { name: "Delivery", role: "01 / MESSAGE", q: "At first, a message simply had to arrive." },
-        { name: "Connection", role: "02 / NETWORK", q: "Then connection became constant and available." },
-        { name: "Media", role: "03 / FORMATS", q: "Now one conversation can hold text, voice, video and files." },
-        { name: "Context", role: "04 / CONTROL", q: "PAGER adds the final layer: who gets access, how, and on what terms." },
+        { name: "E-mail", role: "01 / E-MAIL", q: "Information transfer. How do you send a message?", body: "Early digital communication solved the core problem: moving information between people regardless of distance. The key change: a message no longer depended on a physical medium." },
+        { name: "SMS", role: "02 / SMS", q: "Accessible connection. How do you reach someone faster?", body: "Mobile messages made people reachable at any moment and brought communication closer to real time. The key change: reaching someone became simpler and faster." },
+        { name: "Chats, voice, video", role: "03 / CHATS, VOICE, VIDEO", q: "Instant communication. How do you communicate in real time?", body: "Messengers brought different modes of communication into one space and made constant connection habitual. The key change: communication became continuous." },
+        { name: "Multiprofile", role: "04 / MULTIPROFILE", q: "Controlled communication. How do you choose the format of a connection?", body: "PAGER adds a new level: different profiles, personal rules, and control over how every interaction unfolds. The key change: communication becomes personal." },
       ],
-      progression: ["Message", "Connection", "Media", "Context"],
+      progression: ["E-mail", "SMS", "Chats", "Multiprofile"],
+      whyNow: { title: "Why now?", body: "One profile no longer reflects modern life. Digital communication once solved the problem of sending messages. Today, one person exists in several contexts at once: work, family, friends, communities, and new connections. Yet the digital representation remains one." },
   },
   pagerId: {
     head: { title: "PAGER ID", meta: "IDENTITY OBJECT" },
@@ -195,3 +196,4 @@ export const en: Dict = {
     top: "Back to top ↑",
   },
 };
+
