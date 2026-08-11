@@ -5,7 +5,7 @@ import { useT } from "@/i18n";
 
 const MEDIA = ["Evo_1.png", "Evo_2.png", "Evo_3.png", "Evo_4.png"];
 
-type Stage = { name: string; role: string; q: string; body: string };
+type Stage = { name: string; role: string; prompt: string; q: string; body: string };
 
 /**
  * EVOLUTION — an editorial index, not a story scroll.
@@ -23,7 +23,7 @@ export function Evolution() {
       <ChapterHead index="02" title={t.evolution.head.title} meta={t.evolution.head.meta} />
 
       <div className="shell mt-14 md:mt-20">
-        <div className="grid-12 items-end gap-y-8 md:gap-x-12">
+        <div className="grid-12 items-start gap-y-8 md:gap-x-12">
           <h2 className="display-lg col-span-6 max-w-[15ch] md:col-span-7">
             {t.evolution.h.map((line, i) => (
               <MaskLine key={line} delay={i * 0.09} className={i === 1 ? "md:pl-[10%]" : ""}>
@@ -31,21 +31,15 @@ export function Evolution() {
               </MaskLine>
             ))}
           </h2>
-          <Rise className="col-span-6 md:col-span-5">
+          <Rise className="col-span-6 pt-1 md:col-span-5">
             <p className="lead rule-t pt-4">{t.evolution.lead}</p>
           </Rise>
-        </div>
-
-        <div className="mt-12 flex items-center justify-between border-y border-[color:var(--color-hairline)] py-4 font-mono text-[10px] uppercase tracking-[0.16em] text-[color:var(--color-muted-foreground)] md:mt-16">
-          <span>04 / {t.evolution.head.title}</span>
-          <span className="hidden md:inline">{t.evolution.progression.join("  /  ")}</span>
-          <span className="md:hidden">SWIPE / 04</span>
         </div>
 
         <div
           aria-label={t.evolution.head.title}
           role="list"
-          className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
+          className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-16 md:grid md:grid-cols-2 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
         >
           {stages.map((stage, i) => (
             <StageCard key={stage.name} stage={stage} media={MEDIA[i]!} index={i} />
@@ -53,7 +47,9 @@ export function Evolution() {
         </div>
 
         <Rise className="mt-14 border-y border-[color:var(--color-hairline)] py-8 md:mt-20 md:grid md:grid-cols-12 md:gap-8 md:py-12">
-          <p className="label-tech md:col-span-3">{t.evolution.whyNow.title}</p>
+          <p className="font-mono text-sm font-medium uppercase tracking-[0.16em] text-[color:var(--color-foreground)] md:col-span-3 md:text-base">
+            {t.evolution.whyNow.title}
+          </p>
           <p className="mt-5 max-w-[68ch] text-lg leading-relaxed text-[color:var(--color-foreground)] md:col-span-8 md:col-start-5 md:mt-0 md:text-xl">
             {t.evolution.whyNow.body}
           </p>
@@ -95,6 +91,7 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
         </div>
 
         <div className="min-w-0 border-l border-[color:var(--color-hairline)] pl-5 md:pl-8">
+          <p className="label-tech mb-4 text-[color:var(--color-foreground)]">{stage.prompt}</p>
           <h3 className="text-xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] md:text-3xl">
             {stage.name}
           </h3>
