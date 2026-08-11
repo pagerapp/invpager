@@ -478,7 +478,7 @@ function Rail({
 }) {
   const coded = states.map((s, i) => ({ s, i })).filter(({ s }) => Boolean(s.code));
   const introEnd = 1 / states.length;
-  const out = holdFinal ? COPY_OUT_HOLD : COPY_OUT;
+  const out = holdFinal ? ([0.94, 0.985] as const) : COPY_OUT;
   const railOpacity = useTransform(
     progress,
     ...rng([introEnd * 0.72, introEnd * 1.02, out[0], out[1]], [0, 1, 1, 0]),
