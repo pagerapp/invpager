@@ -53,7 +53,7 @@ export const zh: Dict = {
     },
   },
   evolution: {
-      head: { title: "沟通的演进", meta: "FROM MESSAGE / TO CONTEXT" },
+      head: { title: "沟通的演进", meta: "从消息 / 到情境" },
       h: ["从消息", "到情境"],
       lead: "沟通变得更快，也可以变得更准确：由你选择沟通方式、身份和访问边界。",
       stages: [
