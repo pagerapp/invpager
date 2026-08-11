@@ -452,8 +452,8 @@ function ClipLine({
           key={`${w}-${i}`}
           className="inline-block overflow-hidden align-bottom"
           style={{
-            paddingBottom: "0.16em",
-            marginBottom: "-0.16em",
+            paddingBottom: "0.26em",
+            marginBottom: "-0.26em",
             marginRight: cjk ? "0" : "0.25em",
           }}
         >
