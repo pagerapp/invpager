@@ -9,8 +9,8 @@ import { rng } from "@/lib/scroll-range";
  * - the parent is multi-screen tall, the stage is sticky and exactly 100svh
  * - native scroll owns position; JS only derives a normalized progress and
  *   smooths it with requestAnimationFrame (never hijacks wheel/touch)
- * - stage geometry is a true three-row grid: auto / minmax(0,1fr) / auto,
- *   so a three-line headline can never be clipped
+ * - masking is WORD-LEVEL: a mask box can never contain an internal line wrap,
+ *   so no glyph is ever sliced by a clipping box
  * - media is always object-contain, never cropped (see MediaSlot)
  */
 
@@ -34,7 +34,7 @@ export function StoryScroll({
   heightSvh,
   className = "",
   /** Desktop media cap. Mobile always uses the near-100vw square. */
-  mediaHeight = "min(60svh, 92vw)",
+  mediaHeight = "min(64svh, 92vw)",
 }: {
   states: StoryState[];
   heightSvh: number;
@@ -121,6 +121,10 @@ function windowFor(index: number, count: number) {
   return { a, b, c, d, first, last };
 }
 
+/** Designed handoff window: the last state clears before the stage releases. */
+const COPY_OUT = [0.86, 0.93] as const;
+const MEDIA_OUT = [0.9, 0.985] as const;
+
 function Panel({
   state,
   index,
@@ -137,6 +141,7 @@ function Panel({
   mediaHeight: string;
 }) {
   const { a, b, c, d, first, last } = windowFor(index, count);
+  const isIntro = !state.media;
 
   const opacity = useTransform(
     progress,
@@ -146,7 +151,10 @@ function Panel({
   // Incoming advances 0.98 → 1.00, outgoing recedes 1.00 → 0.975. Restrained.
   const scale = useTransform(
     progress,
-    ...rng([a, b, c, d], reduced ? [1, 1, 1, 1] : last ? [0.98, 1, 1, 1] : [0.98, 1, 1, 0.975]),
+    ...rng(
+      [a, b, c, d],
+      reduced ? [1, 1, 1, 1] : last ? [0.98, 1, 1, 1] : [0.98, 1, 1, 0.975],
+    ),
   );
   const filter = useTransform(
     progress,
@@ -167,11 +175,70 @@ function Panel({
 
   const pointer = useTransform(opacity, (v) => (v > 0.5 ? "auto" : "none"));
 
-  // Release polish: the final state's copy clears out before the stage releases,
-  // so nothing travels underneath the sticky global header.
-  const copyOpacity = useTransform(progress, ...rng(last ? [0.9, 0.98] : [0, 1], [1, last ? 0 : 1]));
+  // Release choreography: copy clears first, media then recedes and fades,
+  // so the stage never releases as a naked floating frame.
+  const copyOpacity = useTransform(
+    progress,
+    ...rng(last ? [COPY_OUT[0], COPY_OUT[1]] : [0, 1], [1, last ? 0 : 1]),
+  );
+  const releaseOpacity = useTransform(
+    progress,
+    ...rng(last ? [MEDIA_OUT[0], MEDIA_OUT[1]] : [0, 1], [1, last ? 0 : 1]),
+  );
+  const releaseScale = useTransform(
+    progress,
+    ...rng(
+      last && !reduced ? [MEDIA_OUT[0], MEDIA_OUT[1]] : [0, 1],
+      [1, last && !reduced ? 0.955 : 1],
+    ),
+  );
 
   const hasBottom = Boolean(state.body || state.footer);
+
+  if (isIntro) {
+    // INTRO VARIANT — a deliberate 100svh poster frame: one optically
+    // composed group, no accidental void between headline and lead.
+    return (
+      <motion.div
+        className="absolute inset-0 z-10 flex flex-col justify-center"
+        style={{ opacity, pointerEvents: pointer }}
+      >
+        <motion.div
+          className="shell pt-[calc(5rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] md:pt-24"
+          style={{ opacity: copyOpacity }}
+        >
+          {state.kicker ? (
+            <span className="label-tech block text-[color:var(--color-foreground)]">
+              {state.kicker}
+            </span>
+          ) : null}
+          <h2 className="display-xl mt-5 max-w-[22ch] uppercase md:mt-6">
+            {state.title.map((line, i) => (
+              <ClipLine
+                key={line}
+                progress={progress}
+                a={a}
+                b={b}
+                c={c}
+                d={d}
+                delay={i * 0.06}
+                first={first}
+                last={last}
+              >
+                {line}
+              </ClipLine>
+            ))}
+          </h2>
+          {hasBottom ? (
+            <div className="rule-t mt-8 max-w-[52ch] pt-4 md:mt-10">
+              {state.body ? <p className="lead max-w-[46ch]">{state.body}</p> : null}
+              {state.footer}
+            </div>
+          ) : null}
+        </motion.div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -186,7 +253,7 @@ function Panel({
         {state.kicker ? (
           <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
         ) : null}
-        <h2 className={`${state.media ? "display-md" : "display-xl"} max-w-[24ch] uppercase`}>
+        <h2 className="display-md max-w-[24ch] uppercase">
           {state.title.map((line, i) => (
             <ClipLine
               key={line}
@@ -205,12 +272,17 @@ function Panel({
         </h2>
       </motion.div>
 
-      {/* CENTER ROW — media anchor, contained, never cropped. */}
-      <div className="flex min-h-0 items-center justify-center px-0 py-4 md:px-6">
-        {state.media ? (
-          <motion.div style={{ scale, filter }} className="w-full">
+      {/* CENTER ROW — media anchor, contained, never cropped.
+          Mobile gets a small optical nudge downward so the square reads
+          centered in the perceived frame rather than the raw grid row. */}
+      <div className="flex min-h-0 items-center justify-center px-0 py-3 md:px-6 md:py-4">
+        <motion.div
+          style={{ scale, filter, opacity: releaseOpacity }}
+          className="w-full translate-y-[1.5vh] md:translate-y-0"
+        >
+          <motion.div style={{ scale: releaseScale }}>
             <MediaSlot
-              name={state.media}
+              name={state.media!}
               alt={state.alt ?? state.title.join(" ")}
               label={`STATE ${state.code ?? ""}`}
               priority={index <= 1}
@@ -218,7 +290,7 @@ function Panel({
               className="md:mx-auto"
             />
           </motion.div>
-        ) : null}
+        </motion.div>
       </div>
 
       {/* BOTTOM ROW — content-driven; fully collapsed for media-only states. */}
@@ -237,7 +309,11 @@ function Panel({
   );
 }
 
-/** Title lines clip in and out of their own mask — never a generic fade. */
+/**
+ * Typographic mask reveal, WORD BY WORD.
+ * Each word owns its own clipping box, so a wrapped headline can never be
+ * sliced mid-glyph — the mask always matches exactly one visual line fragment.
+ */
 function ClipLine({
   progress,
   a,
@@ -269,11 +345,22 @@ function ClipLine({
       first ? ["0%", "0%", "0%", "-45%"] : ["105%", "0%", "0%", out],
     ),
   );
+
+  const words = String(children).split(/\s+/).filter(Boolean);
+
   return (
-    <span className="mask-line block">
-      <motion.span className="block" style={{ y }}>
-        {children}
-      </motion.span>
+    <span className="block">
+      {words.map((w, i) => (
+        <span
+          key={`${w}-${i}`}
+          className="inline-block overflow-hidden align-bottom"
+          style={{ paddingBottom: "0.16em", marginBottom: "-0.16em", marginRight: "0.25em" }}
+        >
+          <motion.span className="block whitespace-pre" style={{ y }}>
+            {w}
+          </motion.span>
+        </span>
+      ))}
     </span>
   );
 }
@@ -284,9 +371,9 @@ function Rail({ states, progress }: { states: StoryState[]; progress: MotionValu
   const introEnd = 1 / states.length;
   const railOpacity = useTransform(
     progress,
-    ...rng([introEnd * 0.72, introEnd * 1.02], [0, 1]),
+    ...rng([introEnd * 0.72, introEnd * 1.02, COPY_OUT[0], COPY_OUT[1]], [0, 1, 1, 0]),
   );
-  const scaleX = useTransform(progress, ...rng([introEnd, 1], [0, 1]));
+  const scaleX = useTransform(progress, ...rng([introEnd, COPY_OUT[0]], [0, 1]));
 
   if (coded.length === 0) return null;
 
