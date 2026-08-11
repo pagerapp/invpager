@@ -15,8 +15,5 @@ export default defineConfig({
   tanstackStart: {
     // The investor page is a static, client-rendered experience for GitHub Pages.
     spa: { enabled: true },
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
   },
 });
