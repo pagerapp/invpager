@@ -53,16 +53,16 @@ export const en: Dict = {
     },
   },
   evolution: {
-    head: { title: "EVOLUTION", meta: "DIGITAL COMMUNICATION / 1971—2026" },
-    h: ["NOT SPEED.", "CHOICE!"],
-    lead: "Digital communication made us available to everyone. Now it is time to choose how we communicate. We are adding a new layer — separate profiles, personal rules and control over every connection.",
-    stages: [
-      { name: "E-mail", role: "Delivering information", q: "How do I send a message?" },
-      { name: "SMS", role: "Accessible contact", q: "How do I reach someone faster?" },
-      { name: "Chat, voice, video", role: "Instant communication", q: "How do I talk in real time?" },
-      { name: "Multiprofile", role: "Governed communication", q: "How do I choose the format?" },
-    ],
-    progression: ["Deliver", "Connect", "Talk", "Govern"],
+      head: { title: "EVOLUTION OF COMMUNICATION", meta: "FROM MESSAGE / TO CONTEXT" },
+      h: ["FROM MESSAGE", "TO CONTEXT"],
+      lead: "Communication got faster. Now it can become more precise: you choose the format, the profile and the boundaries of access.",
+      stages: [
+        { name: "Delivery", role: "01 / MESSAGE", q: "At first, a message simply had to arrive." },
+        { name: "Connection", role: "02 / NETWORK", q: "Then connection became constant and available." },
+        { name: "Media", role: "03 / FORMATS", q: "Now one conversation can hold text, voice, video and files." },
+        { name: "Context", role: "04 / CONTROL", q: "PAGER adds the final layer: who gets access, how, and on what terms." },
+      ],
+      progression: ["Message", "Connection", "Media", "Context"],
   },
   pagerId: {
     head: { title: "PAGER ID", meta: "IDENTITY OBJECT" },

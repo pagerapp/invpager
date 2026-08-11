@@ -1,4 +1,4 @@
-// Bundled media manifest вЂ” local GitHub Pages paths + intrinsic dimensions.
+// Bundled media manifest — local GitHub Pages paths + intrinsic dimensions.
 // Dimensions are the true source pixel sizes; layout is built around them so
 // media is never cropped, zoomed or clipped.
 
@@ -9,6 +9,10 @@ export const MEDIA = {
   "2_sms.png": { url: "media/2_sms.png", width: 512, height: 512, ratio: "512 / 512" },
   "3_chat.png": { url: "media/3_chat.png", width: 512, height: 512, ratio: "512 / 512" },
   "4_pager.png": { url: "media/4_pager.png", width: 512, height: 512, ratio: "512 / 512" },
+  "Evo_1.png": { url: "media/Evo_1.png", width: 512, height: 512, ratio: "512 / 512" },
+  "Evo_2.png": { url: "media/Evo_2.png", width: 512, height: 512, ratio: "512 / 512" },
+  "Evo_3.png": { url: "media/Evo_3.png", width: 512, height: 512, ratio: "512 / 512" },
+  "Evo_4.png": { url: "media/Evo_4.png", width: 512, height: 512, ratio: "512 / 512" },
   "Hero_man_alter_ego_5x.png": { url: "media/Hero_man_alter_ego_5x.png", width: 543, height: 724, ratio: "543 / 724" },
   "Hero_man_guest_4x.png": { url: "media/Hero_man_guest_4x.png", width: 543, height: 724, ratio: "543 / 724" },
   "Hero_man_personal_1x.png": { url: "media/Hero_man_personal_1x.png", width: 543, height: 724, ratio: "543 / 724" },
@@ -42,4 +46,3 @@ export type MediaName = keyof typeof MEDIA;
 export function media(name: string): MediaEntry | undefined {
   return (MEDIA as Record<string, MediaEntry>)[name];
 }
-

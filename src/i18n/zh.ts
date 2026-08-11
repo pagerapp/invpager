@@ -53,16 +53,16 @@ export const zh: Dict = {
     },
   },
   evolution: {
-    head: { title: "演进", meta: "DIGITAL COMMUNICATION / 1971—2026" },
-    h: ["重点不是速度。", "而是选择！"],
-    lead: "数字通讯让我们随时可被找到。现在，该由我们选择沟通的方式。我们为通讯增加新的一层：不同的身份、个人化的规则，以及对每一次连接的掌控。",
-    stages: [
-      { name: "电子邮件", role: "信息传递", q: "如何发送一条消息？" },
-      { name: "短信", role: "触手可及的联系", q: "如何更快地取得联系？" },
-      { name: "聊天、语音、视频", role: "即时沟通", q: "如何实时交流？" },
-      { name: "多重身份", role: "可控的沟通", q: "如何选择连接的方式？" },
-    ],
-    progression: ["传递", "连接", "沟通", "掌控"],
+      head: { title: "沟通的演进", meta: "FROM MESSAGE / TO CONTEXT" },
+      h: ["从消息", "到情境"],
+      lead: "沟通变得更快，也可以变得更准确：由你选择沟通方式、身份和访问边界。",
+      stages: [
+        { name: "传递", role: "01 / 消息", q: "最初，消息只需要抵达。" },
+        { name: "连接", role: "02 / 网络", q: "后来，连接变得持续而触手可及。" },
+        { name: "媒介", role: "03 / 格式", q: "现在，一段对话可以容纳文字、语音、视频和文件。" },
+        { name: "情境", role: "04 / 控制", q: "PAGER 增加了最后一层：谁能访问、如何访问，以及在什么条件下访问。" },
+      ],
+      progression: ["消息", "连接", "媒介", "情境"],
   },
   pagerId: {
     head: { title: "PAGER ID", meta: "IDENTITY OBJECT" },
