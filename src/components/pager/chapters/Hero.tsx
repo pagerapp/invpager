@@ -18,25 +18,20 @@ export function Hero() {
 
   const intro: StoryState = {
     label: "INTRO",
+    introMark: (
+      <div className="flex justify-center" aria-label="PAGER">
+        <img
+          src="media/pager_logo.png"
+          alt="PAGER"
+          width={420}
+          height={370}
+          className="h-20 w-auto object-contain md:h-24"
+        />
+      </div>
+    ),
     kicker: t.hero.kicker,
     title: t.hero.h1,
     body: t.hero.lead,
-    footer: (
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
-        <a
-          href="#chapter-08"
-          className="focus-instrument border border-[color:var(--color-border)] px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200 hover:bg-[color:var(--color-accent)]"
-        >
-          {t.hero.ctaPrimary}
-        </a>
-        <a
-          href="#chapter-03"
-          className="focus-instrument px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)] underline-offset-4 transition-colors duration-200 hover:text-[color:var(--color-foreground)] hover:underline"
-        >
-          {t.hero.ctaSecondary}
-        </a>
-      </div>
-    ),
   };
 
   const frames: StoryState[] = t.hero.frames.map((f, i) => ({
@@ -50,20 +45,20 @@ export function Hero() {
     motionIntent: INTENT[i]!,
     ...(i === t.hero.frames.length - 1
       ? {
-          footer: (
-            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <a
-                href="#chapter-08"
-                className="focus-instrument bg-[color:var(--color-foreground)] px-5 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-background)] transition-transform duration-200 hover:-translate-y-0.5"
-              >
-                {t.hero.ctaPrimary}
-              </a>
-              <span className="label-tech">{t.hero.launch.label}</span>
-              <span className="label-tech text-[color:var(--color-foreground)]">
-                {t.hero.launch.beta}
-              </span>
-              <span className="label-tech">{t.hero.launch.stores}</span>
+          finaleLaunch: (
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-[#f6c86f]">{t.hero.launch.label}</span>
+              <span className="text-[#fff2d8]">{t.hero.launch.beta}</span>
+              <span className="text-[#b7aa92]">{t.hero.launch.stores}</span>
             </div>
+          ),
+          finaleCta: (
+            <a
+              href="#chapter-08"
+              className="focus-instrument inline-flex bg-[color:var(--color-foreground)] px-8 py-4 font-mono text-[clamp(0.75rem,0.9vw,0.9rem)] uppercase tracking-[0.14em] text-[color:var(--color-background)] transition-transform duration-200 hover:-translate-y-0.5"
+            >
+              {t.hero.ctaPrimary}
+            </a>
           ),
         }
       : {}),

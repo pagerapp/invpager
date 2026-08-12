@@ -38,14 +38,16 @@ export function localizedMedia(template: string, locale: Locale, fallback: strin
 
 /** Hero StoryScroll frames — 01 PROBLEM, 02 RELATIONSHIPS, 03 CONTROL. */
 export function heroMedia(locale: Locale): string[] {
-  const frameTwo = locale === "zh"
-    ? localizedMedia("Hero_storyscroll_img_{lang}_2.png", locale, "Hero_storyscroll_img_ENG_2.jpg")
-    : localizedMedia("Hero_storyscroll_img_{lang}_2.jpg", locale, "Hero_storyscroll_img_ENG_2.jpg");
+  const frameTwo = locale === "ru"
+    ? "Hero_storyscroll_img_RU_2_001.jpg"
+    : locale === "zh"
+      ? "Hero_storyscroll_img_ZH_2_001.jpg"
+      : "Hero_storyscroll_img_EN_03.jpg";
   const frameThree = locale === "zh"
     ? localizedMedia("Hero_storyscroll_img_{lang}_3.png", locale, "Hero_storyscroll_img_ENG_3.jpg")
     : localizedMedia("Hero_storyscroll_img_{lang}_3.jpg", locale, "Hero_storyscroll_img_ENG_3.jpg");
   return [
-    localizedMedia("Hero_storyscroll_img_{lang}_1.jpg", locale, "Hero_storyscroll_img_RU_ENG_1.jpg"),
+    "Hero_storyscroll_img_RU_ENG_ZH_003.jpg",
     frameTwo,
     frameThree,
   ];
