@@ -103,7 +103,7 @@ export function Nav() {
   );
 }
 
-/** Compact three-state locale selector вЂ” an instrument switch, not a dropdown. */
+/** Compact three-state locale selector — an instrument switch, not a dropdown. */
 function LangSwitch() {
   const { locale, setLocale, t } = useLocale();
   return (
@@ -136,4 +136,3 @@ function LangSwitch() {
     </div>
   );
 }
-

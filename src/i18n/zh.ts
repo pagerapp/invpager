@@ -84,9 +84,15 @@ export const zh: Dict = {
   },
   multiprofile: {
     head: { title: "多重身份", meta: "ONE ACCOUNT / MANY SPACES" },
-    h: ["同一个人。", "多种", "做自己的方式。"],
+    h: ["一个账号。", "多种做自己的方式。"],
     quote: "我依然是我，只是敞开的方式不同。",
     body: "多重身份改变了既有的数字沟通模式。一个人可以在同一个账号内建立不同的沟通空间，同时保有对自我呈现方式与每一次互动过程的掌控。",
+    heroAlt: "同一个人在不同沟通空间中的呈现",
+    cards: [
+      { title: "一个账号", body: "无需再注册多个号码或账号。" },
+      { title: "不同情境", body: "工作、亲密关系、新连接与社群彼此分明。" },
+      { title: "自定规则", body: "可为每位联系人设定沟通方式与访问边界。" },
+    ],
     mobileLabel: "MOBILE / 身份",
     altDesktop: "多重身份 — 界面",
     altMobile: "多重身份 — 移动端界面",
@@ -180,4 +186,3 @@ export const zh: Dict = {
     top: "回到顶部 ↑",
   },
 };
-

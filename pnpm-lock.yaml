@@ -1,0 +1,313 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@hookform/resolvers':
+        specifier: ^5.2.2
+        version: 5.7.1(react-hook-form@7.85.0(react@19.2.8))(zod@3.25.76)
+      '@radix-ui/react-accordion':
+        specifier: ^1.2.12
+        version: 1.2.20(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-alert-dialog':
+        specifier: ^1.1.15
+        version: 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-aspect-ratio':
+        specifier: ^1.1.8
+        version: 1.1.15(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-avatar':
+        specifier: ^1.1.11
+        version: 1.2.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-checkbox':
+        specifier: ^1.3.3
+        version: 1.3.11(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-collapsible':
+        specifier: ^1.1.12
+        version: 1.1.20(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-context-menu':
+        specifier: ^2.2.16
+        version: 2.3.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-dropdown-menu':
+        specifier: ^2.1.16
+        version: 2.1.24(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-hover-card':
+        specifier: ^1.1.15
+        version: 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-label':
+        specifier: ^2.1.8
+        version: 2.1.15(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-menubar':
+        specifier: ^1.1.16
+        version: 1.1.24(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-navigation-menu':
+        specifier: ^1.2.14
+        version: 1.2.22(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-popover':
+        specifier: ^1.1.15
+        version: 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-progress':
+        specifier: ^1.1.8
+        version: 1.1.16(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-radio-group':
+        specifier: ^1.3.8
+        version: 1.4.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-scroll-area':
+        specifier: ^1.2.10
+        version: 1.2.18(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-select':
+        specifier: ^2.2.6
+        version: 2.3.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-separator':
+        specifier: ^1.1.8
+        version: 1.1.15(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-slider':
+        specifier: ^1.3.6
+        version: 1.4.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.3.3(@types/react@19.2.18)(react@19.2.8)
+      '@radix-ui/react-switch':
+        specifier: ^1.2.6
+        version: 1.3.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-tabs':
+        specifier: ^1.1.13
+        version: 1.1.21(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-toggle':
+        specifier: ^1.1.10
+        version: 1.1.18(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-toggle-group':
+        specifier: ^1.1.11
+        version: 1.1.19(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-tooltip':
+        specifier: ^1.2.8
+        version: 1.2.16(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@tailwindcss/vite':
+        specifier: ^4.2.1
+        version: 4.3.3(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      '@tanstack/react-query':
+        specifier: ^5.101.1
+        version: 5.101.4(react@19.2.8)
+      '@tanstack/react-router':
+        specifier: 1.170.18
+        version: 1.170.18(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@tanstack/react-start':
+        specifier: 1.168.32
+        version: 1.168.32(crossws@0.4.10(srvx@0.11.22))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(rolldown@1.2.3)(supports-color@7.2.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      '@tanstack/router-plugin':
+        specifier: 1.168.23
+        version: 1.168.23(@tanstack/react-router@1.170.18(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(rolldown@1.2.3)(supports-color@7.2.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      cmdk:
+        specifier: ^1.1.1
+        version: 1.1.1(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.4.0
+      embla-carousel-react:
+        specifier: ^8.6.0
+        version: 8.6.0(react@19.2.8)
+      input-otp:
+        specifier: ^1.4.2
+        version: 1.4.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      lucide-react:
+        specifier: ^0.575.0
+        version: 0.575.0(react@19.2.8)
+      motion:
+        specifier: ^13.0.0
+        version: 13.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-day-picker:
+        specifier: ^9.14.0
+        version: 9.14.0(react@19.2.8)
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
+      react-hook-form:
+        specifier: ^7.71.2
+        version: 7.85.0(react@19.2.8)
+      react-resizable-panels:
+        specifier: ^4.6.5
+        version: 4.12.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      recharts:
+        specifier: ^2.15.4
+        version: 2.15.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      tailwind-merge:
+        specifier: ^3.5.0
+        version: 3.6.0
+      tailwindcss:
+        specifier: ^4.2.1
+        version: 4.3.3
+      tw-animate-css:
+        specifier: ^1.3.4
+        version: 1.4.0
+      vaul:
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      vite-tsconfig-paths:
+        specifier: ^6.0.2
+        version: 6.1.1(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.76
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.32.0
+        version: 9.39.5
+      '@lovable.dev/vite-tanstack-config':
+        specifier: ^2.10.0
+        version: 2.10.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@tailwindcss/vite@4.3.3(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0)))(@tanstack/react-start@1.168.32(crossws@0.4.10(srvx@0.11.22))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(rolldown@1.2.3)(supports-color@7.2.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0)))(@vitejs/plugin-react@5.2.0(supports-color@7.2.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0)))(nitro@3.0.260603-beta(chokidar@5.0.0)(jiti@2.7.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0)))(vite-tsconfig-paths@6.1.1(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0)))(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.2.4(@types/react@19.2.18)
+      '@vitejs/plugin-react':
+        specifier: ^5.2.0
+        version: 5.2.0(supports-color@7.2.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      eslint:
+        specifier: ^9.32.0
+        version: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      eslint-config-prettier:
+        specifier: ^10.1.1
+        version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      eslint-plugin-prettier:
+        specifier: ^5.2.6
+        version: 5.5.6(eslint-config-prettier@10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)))(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(prettier@3.9.6)
+      eslint-plugin-react-hooks:
+        specifier: ^5.2.0
+        version: 5.2.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.20
+        version: 0.4.26(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      globals:
+        specifier: ^15.15.0
+        version: 15.15.0
+      nitro:
+        specifier: 3.0.260603-beta
+        version: 3.0.260603-beta(chokidar@5.0.0)(jiti@2.7.0)(vite@8.2.1(@types/node@22.20.1)(jiti@2.7.0))
+      prettier:
+        specifier: ^3.7.3
+        version: 3.9.6
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.56.1
+        version: 8.66.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
+      vite:
+        specifier: ^8.2.0
+        version: 8.2.1(@types/node@22.20.1)(jiti@2.7.0)
+
+packages:
+
+  '@babel/code-frame@7.27.1':
+    resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/code-frame@7.29.7':
+    resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/compat-data@7.29.7':
+    resolution: {integrity: sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/core@7.29.7':
+    resolution: {integrity: sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/generator@7.29.8':
+    resolution: {integrity: sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-compilation-targets@7.29.7':
+    resolution: {integrity: sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-globals@7.29.7':
+    resolution: {integrity: sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-module-imports@7.29.7':
+    resolution: {integrity: sha512-ejHwrQQYcm9xnTivShn2IDOlIzInN34AXskvq9QicvCtEzq1Vzclu/tKF8Jq1Cg8JG2GL6/EmjgsCT7lXepE3g==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-module-transforms@7.29.7':
+    resolution: {integrity: sha512-UPUVSyXbOh627KiCIGQSgwWzGeBKLkaJ9PJEdrngIwMSzxLR4jS4+f1f1jb7VzBbg8nFLaYotvVPFCTqdrmTAg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+
+  '@babel/helper-plugin-utils@7.29.7':
+    resolution: {integrity: sha512-G7sHYigPY17oO5SYWnfD/0MTBwVR781S/JI643e/JhUYgVgWE/61SoW3NH9KWUKyKq5LVh3npif99Wkt6j86Jw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-string-parser@7.29.7':
+    resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-validator-identifier@7.29.7':
+    resolution: {integrity: sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-validator-option@7.29.7':
+    resolution: {integrity: sha512-N9ZErrD+yW5geCDtBqnOoxmR8+tNKiGuxKlDpuJxfsqpa2dFcexaziGAE/qoHLiDDreVNMupxGmSoNlyvsA3gw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helpers@7.29.7':
+    resolution: {integrity: sha512-1k2lAGRMfHTcwuNYcCNUmaUffmQv8KWMfh2iJUUeRlwlwH4FdNG7mfPI10NPfLHJFThE4Tyr4mv7kTNZOiPuBg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/parser@7.29.8':
+    resolution: {integrity: sha512-E8lTAYNB1KW+FH+VGJuZM1ioAx2E6oVlvQFRrf5P8ZZmsiJXYAD9vTFV7yyEURNzgh1dFqMZuO6tUwcARbqFCA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/plugin-transform-react-jsx-self@7.29.7':
+    resolution: {integrity: sha512-TL0hMc9xzy86VD31nUiwzd5otRAcyEPcsegCxolO0PvcXuH1v0kECe/UIznYFihpkvU5wg/jk4v0TTEFfm53fw==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-transform-react-jsx-source@7.29.7':
+    resolution: {integrity: sha512-06IyK09H3wi4cGbhDBwp5gUGo0IKtnYa8tyTiephirPCK6fbobVGiXMMI5zLQ4aKEYP3wZ3ArU44o+8KMrSG/Q==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/runtime@7.29.7':
+    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/template@7.29.7':
+    resolution: {integrity: sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/traverse@7.29.8':
+    resolution: {integrity: sha512-I5z7H3bf/41ktsNVLtpN0wAa336HkqIHQ5BuPLEhTkt1jVSyZpeNKIzTgEWmlxjdg81R0IgUCcaE+Ok3NvrfZg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.29.8':
+    resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlëŽvÖÚ$z{-®éÜj×–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖvçTã32ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖ×W6Äã3"ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖ×W6Äã32ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772×v–ã3"Ö&ÓcBÖ×7f4ã3"ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772×v–ã3"Ö&ÓcBÖ×7f4ã32ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772×v–ã3"×ƒcBÖ×7f4ã3"ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv772×v–ã3"×ƒcBÖ×7f4ã32ã ¢÷F–öæÃ¢G'VP ¢Æ–v‡Fæ–æv774ã3"ã ¢FWVæFVæ6–W3 ¢FWFV7BÖÆ–&3¢"ãã ¢÷F–öæÄFWVæFVæ6–W3 ¢Æ–v‡Fæ–æv772ÖæG&ö–BÖ&ÓcC¢ã3"ã ¢Æ–v‡Fæ–æv772ÖF'v–âÖ&ÓcC¢ã3"ã ¢Æ–v‡Fæ–æv772ÖF'v–â×ƒcC¢ã3"ã ¢Æ–v‡Fæ–æv772Ög&VV'6B×ƒcC¢ã3"ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚Ö&ÒÖvçVV&–†c¢ã3"ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚Ö&ÓcBÖvçS¢ã3"ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚Ö&ÓcBÖ×W6Ã¢ã3"ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖvçS¢ã3"ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖ×W6Ã¢ã3"ã ¢Æ–v‡Fæ–æv772×v–ã3"Ö&ÓcBÖ×7f3¢ã3"ã ¢Æ–v‡Fæ–æv772×v–ã3"×ƒcBÖ×7f3¢ã3"ã  ¢Æ–v‡Fæ–æv774ã32ã ¢FWVæFVæ6–W3 ¢FWFV7BÖÆ–&3¢"ãã ¢÷F–öæÄFWVæFVæ6–W3 ¢Æ–v‡Fæ–æv772ÖæG&ö–BÖ&ÓcC¢ã32ã ¢Æ–v‡Fæ–æv772ÖF'v–âÖ&ÓcC¢ã32ã ¢Æ–v‡Fæ–æv772ÖF'v–â×ƒcC¢ã32ã ¢Æ–v‡Fæ–æv772Ög&VV'6B×ƒcC¢ã32ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚Ö&ÒÖvçVV&–†c¢ã32ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚Ö&ÓcBÖvçS¢ã32ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚Ö&ÓcBÖ×W6Ã¢ã32ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖvçS¢ã32ã ¢Æ–v‡Fæ–æv772ÖÆ–çW‚×ƒcBÖ×W6Ã¢ã32ã ¢Æ–v‡Fæ–æv772×v–ã3"Ö&ÓcBÖ×7f3¢ã32ã ¢Æ–v‡Fæ–æv772×v–ã3"×ƒcBÖ×7f3¢ã32ã  ¢Æö6FR×F„bãã ¢FWVæFVæ6–W3 ¢ÖÆö6FS¢Rãã  ¢ÆöF6‚æÖW&vTBãbã#¢·Ð ¢ÆöF6„Bã‚ã¢·Ð ¢Æö÷6RÖVçf–g”ãBã ¢FWVæFVæ6–W3 ¢§2×Fö¶Vç3¢Bãã  ¢Ç'RÖ66†TRãã ¢FWVæFVæ6–W3 ¢–ÆÆ—7C¢2ãã ¢ÇV6–FR×&V7DãSsRã‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€ ¢Öv–2×7G&–ætã3ã# ¢FWVæFVæ6–W3 ¢t§&–FvWvVÆÂ÷6÷W&6VÖÖ6öFV2s¢ãRãP ¢Ö–æ–ÖF6„ã"ãc ¢FWVæFVæ6–W3 ¢'&6RÖW‡ç6–öã¢Rãã ¢Ö–æ–ÖF6„2ããS ¢FWVæFVæ6–W3 ¢'&6RÖW‡ç6–öã¢ãã€ ¢Ö÷F–öâÖFöÔ2ãã ¢FWVæFVæ6–W3 ¢Ö÷F–öâ×WF–Ç3¢2ãã  ¢Ö÷F–öâ×WF–Ç42ãã¢·Ð ¢Ö÷F–öä2ãã‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢g&ÖW"ÖÖ÷F–öã¢2ãã‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚¢G6Æ–#¢"ã‚ã¢÷F–öæÄFWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚ ¢×4"ãã3¢·Ð ¢ææö–D2ã2ãƒ¢·Ð ¢æGW&ÂÖ6ö×&TãBã¢·Ð ¢æc4ã2ã#3¢·Ð ¢æ—G&ô2ãã#cc2Ö&WF†6†ö¶–F$Rãã’†¦—F”"ãrã’‡f—FT‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã’“ ¢FWVæFVæ6–W3 ¢6öç6öÆ¢2ãBã ¢7&÷77w3¢ãBã‡7'g„ãã#"¢F#¢ã2ã@¢Vçb×'VææW#¢ãã`¢ƒ3¢"ãã×&2ã#b†7&÷77w4ãBã‡7'g„ãã#"’¢†öö¶&ÆS¢bãã¢æc3¢ã2ã#0¢ö66†S¢ããP¢öfWF6ƒ¢"ããÖÇ†ã0¢ö†6ƒ¢"ãã¢&öÆÆF÷vã¢ã"ã0¢7'gƒ¢ãã# ¢VæVçc¢"ãã×&2ã#@¢Vç7F÷&vS¢"ããÖÇ†ãr†6†ö¶–F$Rãã’†F#ã2ãB’†öfWF6„"ããÖÇ†ã2¢÷F–öæÄFWVæFVæ6–W3 ¢¦—F“¢"ãrã ¢f—FS¢‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã¢G&ç6—F—fUVW$FWVæFVæ6–W3 ¢Òt§W&RöÖ6öæf–wW&F–öâp¢Òt§W&Rö6÷6Ö÷2p¢Òt§W&RöFF×F&ÆW2p¢Òt§W&Rö–FVçF—G’p¢Òt§W&Rö¶W—fVÇB×6V7&WG2p¢Òt§W&R÷7F÷&vRÖ&Æö"p¢Òt66—F÷"÷&VfW&Væ6W2p¢ÒtFVæòö·bp¢ÒtVÆV7G&–2×7Â÷vÆ—FRp¢ÒtÆ–'7Âö6Æ–VçBp¢ÒtæWFÆ–g’ö&Æö'2p¢ÒtæWFÆ–g’÷'VçF–ÖRp¢ÒtÆæWG66ÆRöFF&6Rp¢ÒtW7F6‚÷&VF—2p¢ÒtfW&6VÂö&Æö"p¢ÒtfW&6VÂögVæ7F–öç2p¢ÒtfW&6VÂö·bp¢Òw3FfWF6€¢Ò&WGFW"×7Æ—FS0¢Ò6†ö¶–F ¢ÒG&—§¦ÆRÖ÷&Ð¢Ò–F"Ö¶W—fÀ¢Ò–÷&VF—0¢ÒÇ'RÖ66†P¢ÒÖ–æ–fÆ&P¢ÒÖöævöF ¢Ò×—7Ã ¢Ò7Æ—FS0¢ÒWÆöGF†–æp¢Òw&ævÆW  ¢æöFR×&VÆV6W4"ããS3¢·Ð ¢ö&¦V7BÖ76–väBãã¢·Ð ¢ö66†TããS ¢FWVæFVæ6–W3 ¢ö†6ƒ¢"ãã ¢öfWF6„"ããÖÇ†ã3¢·Ð ¢ö†6„"ãã¢·Ð ¢÷F–öæF÷$ã’ãC ¢FWVæFVæ6–W3 ¢FVWÖ—3¢ãã@¢f7BÖÆWfVç6‡FV–ã¢"ãã`¢ÆWfã¢ãBã¢&VÇVFRÖÇ3¢ã"ã¢G—RÖ6†V6³¢ãBã ¢v÷&B×w&¢ã"ãP ¢÷†2×'6W$ã#ã„VÖæ’ö6÷&Tãã2’„VÖæ’÷'VçF–ÖTãã2“ ¢FWVæFVæ6–W3 ¢t÷†2×&ö¦V7B÷G—W2s¢ã#ã ¢÷F–öæÄFWVæFVæ6–W3 ¢t÷†2×'6W"ö&–æF–ærÖæG&ö–BÖ&ÒÖV&’s¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖæG&ö–BÖ&ÓcBs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖF'v–âÖ&ÓcBs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖF'v–â×ƒcBs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖg&VV'6B×ƒcBs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚Ö&ÒÖvçVV&–†bs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚Ö&ÒÖ×W6ÆV&–†bs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚Ö&ÓcBÖvçRs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚Ö&ÓcBÖ×W6Âs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚×3cBÖvçRs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚×&—67ccBÖvçRs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚×&—67ccBÖ×W6Âs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚×33“‚ÖvçRs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚×ƒcBÖvçRs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖÆ–çW‚×ƒcBÖ×W6Âs¢ã#ã ¢t÷†2×'6W"ö&–æF–ærÖ÷Væ†&Ööç’Ö&ÓcBs¢ã#ã ¢t÷†2×'6W"ö&–æF–ær×v6Ó3"×v6’s¢ã#ã„VÖæ’ö6÷&Tãã2’„VÖæ’÷'VçF–ÖTãã2¢t÷†2×'6W"ö&–æF–ær×v–ã3"Ö&ÓcBÖ×7f2s¢ã#ã ¢t÷†2×'6W"ö&–æF–ær×v–ã3"Ö–3"Ö×7f2s¢ã#ã ¢t÷†2×'6W"ö&–æF–ær×v–ã3"×ƒcBÖ×7f2s¢ã#ã ¢G&ç6—F—fUVW$FWVæFVæ6–W3 ¢ÒtVÖæ’ö6÷&Rp¢ÒtVÖæ’÷'VçF–ÖRp ¢ÖÆ–Ö—D2ãã ¢FWVæFVæ6–W3 ¢–ö7Fò×VWVS¢ãã  ¢ÖÆö6FTRãã ¢FWVæFVæ6–W3 ¢ÖÆ–Ö—C¢2ãã  ¢&VçBÖÖöGVÆTãã ¢FWVæFVæ6–W3 ¢6ÆÇ6—FW3¢2ãã  ¢F‚ÖW†—7G4Bãã¢·Ð ¢F‚Ö¶W”2ãã¢·Ð ¢F†T"ãã3¢·Ð ¢–6ö6öÆ÷'4ãã¢·Ð ¢–6öÖF6„BããS¢·Ð ¢÷7F774‚ãRã#c ¢FWVæFVæ6–W3 ¢ææö–C¢2ã2ã€¢–6ö6öÆ÷'3¢ãã¢6÷W&6RÖÖÖ§3¢ã"ã ¢&VÇVFRÖÇ4ã"ã¢·Ð ¢&WGF–W"ÖÆ–çFW"Ö†VÇW'4ãã ¢FWVæFVæ6–W3 ¢f7BÖF–fc¢ã2ã  ¢&WGF–W$2ã’ãc¢·Ð ¢&÷×G—W4Rã‚ã ¢FWVæFVæ6–W3 ¢Æö÷6RÖVçf–g“¢ãBã ¢ö&¦V7BÖ76–vã¢Bãã¢&V7BÖ—3¢bã2ã ¢Vç–6öFT"ã2ã¢·Ð ¢&V7BÖF’×–6¶W$’ãBã‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢tFFRÖfç2÷G¢s¢ãRã ¢tF&'•ö’ö†–§&’Ö6öçfW'FW"s¢ããP¢FFRÖfç3¢BãBã ¢FFRÖfç2Ö¦ÆÆ“¢BããÓ ¢&V7C¢’ã"ã€ ¢&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢66†VGVÆW#¢ã#rã  ¢&V7BÖ†öö²Öf÷&ÔrãƒRã‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€ ¢&V7BÖ—4bã2ã¢·Ð ¢&V7BÖ—4‚ã2ã¢·Ð ¢&V7B×&Vg&W6„ã‚ã¢·Ð ¢&V7B×&VÖ÷fR×67&öÆÂÖ&$"ã2ã‚„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢&V7B×7G–ÆR×6–ævÆWFöã¢"ã"ã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚¢G6Æ–#¢"ã‚ã¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2÷&V7Bs¢’ã"ã€ ¢&V7B×&VÖ÷fR×67&öÆÄ"ãrã"„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢&V7B×&VÖ÷fR×67&öÆÂÖ&#¢"ã2ã‚„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚¢&V7B×7G–ÆR×6–ævÆWFöã¢"ã"ã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚¢G6Æ–#¢"ã‚ã¢W6RÖ6ÆÆ&6²×&Vc¢ã2ã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚¢W6R×6–FV6#¢ãã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2÷&V7Bs¢’ã"ã€ ¢&V7B×&W6—¦&ÆR×æVÇ4Bã"ã"‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚ ¢&V7B×6Öö÷F„BããB‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢f7BÖWVÇ3¢RãBã¢&÷×G—W3¢Rã‚ã¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚¢&V7B×G&ç6—F–öâÖw&÷W¢BãBãR‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚ ¢&V7B×7G–ÆR×6–ævÆWFöä"ã"ã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢vWBÖæöæ6S¢ãã¢&V7C¢’ã"ã€¢G6Æ–#¢"ã‚ã¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2÷&V7Bs¢’ã"ã€ ¢&V7B×G&ç6—F–öâÖw&÷WBãBãR‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢t&&VÂ÷'VçF–ÖRs¢rã#’ãp¢FöÒÖ†VÇW'3¢Rã"ã¢Æö÷6RÖVçf–g“¢ãBã ¢&÷×G—W3¢Rã‚ã¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚ ¢&V7D’ã"ãƒ¢·Ð ¢&VFF—'Rãã¢·Ð ¢&V6†'G2×66ÆTãBãS ¢FWVæFVæ6–W3 ¢FV6–ÖÂæ§2ÖÆ–v‡C¢"ãRã ¢&V6†'G4"ãRãB‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢6Ç7ƒ¢"ãã¢WfVçFVÖ—GFW#3¢Bããp¢ÆöF6ƒ¢Bã‚ã¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚¢&V7BÖ—3¢‚ã2ã¢&V7B×6Öö÷Fƒ¢BããB‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚¢&V6†'G2×66ÆS¢ãBãP¢F–ç’Ö–çf&–çC¢ã2ã0¢f–7F÷'’×fVæF÷#¢3bã’ã  ¢&W6öÇfRÖg&öÔBãã¢·Ð ¢&öÆÆF÷väã"ã3 ¢FWVæFVæ6–W3 ¢t÷†2×&ö¦V7B÷G—W2s¢ãC2ã ¢t&öÆÆF÷vâ÷ÇVv–çWF–Ç2s¢ãã¢÷F–öæÄFWVæFVæ6–W3 ¢t&öÆÆF÷vâö&–æF–ærÖæG&ö–BÖ&ÓcBs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖF'v–âÖ&ÓcBs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖF'v–â×ƒcBs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖg&VV'6B×ƒcBs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚Ö&ÒÖvçVV&–†bs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚Ö&ÓcBÖvçRs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚Ö&ÓcBÖ×W6Âs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚×3cBÖvçRs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚×33“‚ÖvçRs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚×ƒcBÖvçRs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖÆ–çW‚×ƒcBÖ×W6Âs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ærÖ÷Væ†&Ööç’Ö&ÓcBs¢ã"ã0¢t&öÆÆF÷vâö&–æF–ær×v–ã3"Ö&ÓcBÖ×7f2s¢ã"ã0¢t&öÆÆF÷vâö&–æF–ær×v–ã3"×ƒcBÖ×7f2s¢ã"ã0 ¢&÷S4ã‚ã¢·Ð ¢&÷S4ã’ã¢·Ð ¢66†VGVÆW$ã#rã¢·Ð ¢6V×fW$bã2ã¢·Ð ¢6V×fW$rã‚ãS¢·Ð ¢6W&÷fÂ×ÇVv–ç4ãbã"‡6W&÷fÄãbã"“ ¢FWVæFVæ6–W3 ¢6W&÷fÃ¢ãbã  ¢6W&÷fÄãbã#¢·Ð ¢6†V&ærÖ6öÖÖæD"ãã ¢FWVæFVæ6–W3 ¢6†V&ær×&VvWƒ¢2ãã  ¢6†V&ær×&VvW„2ãã¢·Ð ¢6†VÆÂ×V÷FTãã¢·Ð ¢6öææW$"ãã‚„G—W2÷&V7D’ã"ã‚’‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2÷&V7Bs¢’ã"ã€ ¢6÷W&6RÖÖÖ§4ã"ã¢·Ð ¢6÷W&6RÖÖãrãc¢·Ð ¢7'g„ãã##¢·Ð ¢7'g„ã"ãS¢·Ð ¢7G&—Ö§6öâÖ6öÖÖVçG42ãã¢·Ð ¢7W÷'G2Ö6öÆ÷$rã"ã ¢FWVæFVæ6–W3 ¢†2ÖfÆs¢Bãã  ¢7–æ6¶—Dãã3 ¢FWVæFVæ6–W3 ¢t¶w"ö6÷&Rs¢ã2ã` ¢F–Çv–æBÖÖW&vT2ãbã¢·Ð ¢F–Çv–æF774Bã2ã3¢·Ð ¢F&ÆT"ã2ã3¢·Ð ¢F–ç’Ö–çf&–çDã2ã3¢·Ð ¢F–ç–vÆö&'”ã"ãs ¢FWVæFVæ6–W3 ¢fF—#¢bãRã‡–6öÖF6„BããR¢–6öÖF6ƒ¢BããP ¢G2Ö’×WF–Ç4"ãRã‡G—W67&—DRã’ã2“ ¢FWVæFVæ6–W3 ¢G—W67&—C¢Rã’ã0 ¢G66öæf6´2ããb‡G—W67&—DRã’ã2“ ¢÷F–öæÄFWVæFVæ6–W3 ¢G—W67&—C¢Rã’ã0 ¢G6Æ–$"ã‚ã¢·Ð ¢GrÖæ–ÖFRÖ774ãBã¢·Ð ¢G—RÖ6†V6´ãBã ¢FWVæFVæ6–W3 ¢&VÇVFRÖÇ3¢ã"ã ¢G—W67&—BÖW6Æ–çD‚ãcbã†W6Æ–çD’ã3’ãR†¦—F”"ãrã’‡7W÷'G2Ö6öÆ÷$rã"ã’’‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2“ ¢FWVæFVæ6–W3 ¢tG—W67&—BÖW6Æ–çBöW6Æ–çB×ÇVv–âs¢‚ãcbã„G—W67&—BÖW6Æ–çB÷'6W$‚ãcbã†W6Æ–çD’ã3’ãR†¦—F”"ãrã’‡7W÷'G2Ö6öÆ÷$rã"ã’’‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2’’†W6Æ–çD’ã3’ãR†¦—F”"ãrã’‡7W÷'G2Ö6öÆ÷$rã"ã’’‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2¢tG—W67&—BÖW6Æ–çB÷'6W"s¢‚ãcbã†W6Æ–çD’ã3’ãR†¦—F”"ãrã’‡7W÷'G2Ö6öÆ÷$rã"ã’’‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2¢tG—W67&—BÖW6Æ–çB÷G—W67&—BÖW7G&VRs¢‚ãcbã‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2¢tG—W67&—BÖW6Æ–çB÷WF–Ç2s¢‚ãcbã†W6Æ–çD’ã3’ãR†¦—F”"ãrã’‡7W÷'G2Ö6öÆ÷$rã"ã’’‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2¢W6Æ–çC¢’ã3’ãR†¦—F”"ãrã’‡7W÷'G2Ö6öÆ÷$rã"ã¢G—W67&—C¢Rã’ã0¢G&ç6—F—fUVW$FWVæFVæ6–W3 ¢Ò7W÷'G2Ö6öÆ÷  ¢G—W67&—DRã’ã3¢·Ð ¢VfôãbãC¢·Ð ¢VæF–6’×G—W4bã#ã¢·Ð ¢VæVçd"ãã×&2ã#C ¢FWVæFVæ6–W3 ¢F†S¢"ãã0 ¢VçÇVv–ä2ã2ã‡&öÆÆF÷väã"ã2’‡f—FT‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã’“ ¢FWVæFVæ6–W3 ¢t§&–FvWvVÆÂ÷&VÖ–ærs¢"ã2ãP¢–6öÖF6ƒ¢BããP¢vV'6²×f—'GVÂÖÖöGVÆW3¢ãbã ¢÷F–öæÄFWVæFVæ6–W3 ¢&öÆÆF÷vã¢ã"ã0¢f—FS¢‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã ¢Vç7F÷&vT"ããÖÇ†ãr†6†ö¶–F$Rãã’†F#ã2ãB’†öfWF6„"ããÖÇ†ã2“ ¢÷F–öæÄFWVæFVæ6–W3 ¢6†ö¶–F#¢Rãã ¢F#¢ã2ã@¢öfWF6ƒ¢"ããÖÇ†ã0 ¢WFFRÖ'&÷w6W'6Æ—7BÖF$ã2ã†'&÷w6W'6Æ—7DBã#‚ã‚“ ¢FWVæFVæ6–W3 ¢'&÷w6W'6Æ—7C¢Bã#‚ã€¢W66ÆFS¢2ã"ã ¢–6ö6öÆ÷'3¢ãã ¢W&’Ö§4BãBã ¢FWVæFVæ6–W3 ¢Vç–6öFS¢"ã2ã ¢W6RÖ6ÆÆ&6²×&Vdã2ã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€¢G6Æ–#¢"ã‚ã¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2÷&V7Bs¢’ã"ã€ ¢W6R×6–FV6$ãã2„G—W2÷&V7D’ã"ã‚’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢FWFV7BÖæöFRÖW3¢ãã ¢&V7C¢’ã"ã€¢G6Æ–#¢"ã‚ã¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2÷&V7Bs¢’ã"ã€ ¢W6R×7–æ2ÖW‡FW&æÂ×7F÷&Tãbã‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢&V7C¢’ã"ã€ ¢fVÄãã"„G—W2÷&V7BÖFöÔ’ã"ãB„G—W2÷&V7D’ã"ã‚’’„G—W2÷&V7D’ã"ã‚’‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚“ ¢FWVæFVæ6–W3 ¢t&F—‚×V’÷&V7BÖF–Æörs¢ãã#2„G—W2÷&V7BÖFöÔ’ã"ãB„G—W2÷&V7D’ã"ã‚’’„G—W2÷&V7D’ã"ã‚’‡&V7BÖFöÔ’ã"ã‚‡&V7D’ã"ã‚’’‡&V7D’ã"ã‚¢&V7C¢’ã"ã€¢&V7BÖFöÓ¢’ã"ã‚‡&V7D’ã"ã‚¢G&ç6—F—fUVW$FWVæFVæ6–W3 ¢ÒtG—W2÷&V7Bp¢ÒtG—W2÷&V7BÖFöÒp ¢f–7F÷'’×fVæF÷$3bã’ã# ¢FWVæFVæ6–W3 ¢tG—W2öC2Ö'&’s¢2ã"ã ¢tG—W2öC2ÖV6Rs¢2ãã ¢tG—W2öC2Ö–çFW'öÆFRs¢2ãã@¢tG—W2öC2×66ÆRs¢Bãã¢tG—W2öC2×6†Rs¢2ãã€¢tG—W2öC2×F–ÖRs¢2ãã@¢tG—W2öC2×F–ÖW"s¢2ãã ¢C2Ö'&“¢2ã"ã@¢C2ÖV6S¢2ãã¢C2Ö–çFW'öÆFS¢2ãã¢C2×66ÆS¢Bãã ¢C2×6†S¢2ã"ã ¢C2×F–ÖS¢2ãã ¢C2×F–ÖW#¢2ãã ¢f—FR×G66öæf–r×F‡4bãã‡7W÷'G2Ö6öÆ÷$rã"ã’‡G—W67&—DRã’ã2’‡f—FT‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã’“ ¢FWVæFVæ6–W3 ¢FV'Vs¢BãBã2‡7W÷'G2Ö6öÆ÷$rã"ã¢vÆö'&Wƒ¢ãã ¢G66öæf6³¢2ããb‡G—W67&—DRã’ã2¢f—FS¢‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã¢G&ç6—F—fUVW$FWVæFVæ6–W3 ¢Ò7W÷'G2Ö6öÆ÷ ¢ÒG—W67&—@ ¢f—FT‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã“ ¢FWVæFVæ6–W3 ¢Æ–v‡Fæ–æv773¢ã32ã ¢–6öÖF6ƒ¢BããP¢÷7F773¢‚ãRã#`¢&öÆÆF÷vã¢ã"ã0¢F–ç–vÆö&'“¢ã"ãp¢÷F–öæÄFWVæFVæ6–W3 ¢tG—W2öæöFRs¢#"ã#ã¢g6WfVçG3¢"ã2ã0¢¦—F“¢"ãrã  ¢f—FVgTãã2‡f—FT‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã’“ ¢÷F–öæÄFWVæFVæ6–W3 ¢f—FS¢‚ã"ã„G—W2öæöFT#"ã#ã’†¦—F”"ãrã ¢vV'6²×f—'GVÂÖÖöGVÆW4ãbã#¢·Ð ¢v†–6„"ãã# ¢FWVæFVæ6–W3 ¢—6W†S¢"ãã  ¢v÷&B×w&ã"ãS¢·Ð ¢w4‚ã#ã3¢·Ð ¢†ÖÆ'V–ÆFW#$Bãã3 ¢FWVæFVæ6–W3 ¢tö÷¦6—F²öFöÒs¢"ãã ¢tö÷¦6—F²ö–æg&s¢"ãã ¢tö÷¦6—F²÷WF–Âs¢ãã ¢§2×–ÖÃ¢Bã2ã ¢–ÆÆ—7D2ãã¢·Ð ¢–ö7Fò×VWVTãã¢·Ð ¢¦öD2ã#Rãsc¢·Ð ¢¦öDBãBã3¢·Ð

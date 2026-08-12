@@ -106,4 +106,3 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
     </motion.article>
   );
 }
-

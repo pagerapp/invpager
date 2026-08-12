@@ -27,6 +27,7 @@ export const MEDIA = {
   "Multiprofile_img_01.jpg": { url: "media/Multiprofile_img_01.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Multiprofile_img_02.jpg": { url: "media/Multiprofile_img_02.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Multiprofile_img_03.jpg": { url: "media/Multiprofile_img_03.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
+  "Multiprofile_img_hero.jpg": { url: "media/Multiprofile_img_hero.jpg", width: 1672, height: 941, ratio: "1672 / 941" },
   "Multiprofiles_mobile_img_1.png": { url: "media/Multiprofiles_mobile_img_1.png", width: 941, height: 1672, ratio: "941 / 1672" },
   "Multiprofiles_mobile_img_2.png": { url: "media/Multiprofiles_mobile_img_2.png", width: 941, height: 1672, ratio: "941 / 1672" },
   "Multiprofiles_mobile_img_3.png": { url: "media/Multiprofiles_mobile_img_3.png", width: 941, height: 1672, ratio: "941 / 1672" },

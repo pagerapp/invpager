@@ -84,9 +84,15 @@ export const en: Dict = {
   },
   multiprofile: {
     head: { title: "MULTIPROFILE", meta: "ONE ACCOUNT / MANY SPACES" },
-    h: ["ONE PERSON.", "SEVERAL WAYS", "OF BEING YOURSELF."],
+    h: ["ONE ACCOUNT.", "SEVERAL WAYS OF BEING YOURSELF."],
     quote: "I stay myself — I just open up differently.",
     body: "Multiprofile changes the familiar model of digital communication. One person can create separate spaces inside a single account, keeping control over how they are presented and how each interaction unfolds.",
+    heroAlt: "One person across different communication spaces",
+    cards: [
+      { title: "ONE ACCOUNT", body: "No need for separate phone numbers or accounts." },
+      { title: "DIFFERENT CONTEXTS", body: "Work, close relationships, new connections and communities stay distinct." },
+      { title: "YOUR RULES", body: "Set the way you communicate and the access boundaries for every contact." },
+    ],
     mobileLabel: "MOBILE / PROFILES",
     altDesktop: "Multiprofile — screen",
     altMobile: "Multiprofile — mobile screen",
@@ -196,4 +202,3 @@ export const en: Dict = {
     top: "Back to top ↑",
   },
 };
-
