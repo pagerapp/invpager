@@ -448,7 +448,7 @@ function Panel({
 
         {/* COPY COLUMN — headline and supporting text read as one editorial unit. */}
         {hasBottom ? (
-          <motion.div className="order-3 mt-3 text-center md:hidden" style={{ opacity: supportOpacity, y: supportY }}>
+          <motion.div className="relative -top-9 order-3 mt-3 text-center md:hidden" style={{ opacity: supportOpacity, y: supportY }}>
             {state.body ? (
               <p className="mx-auto max-w-[34ch] text-[clamp(1rem,4.5vw,1.2rem)] leading-[1.48] text-[color:var(--color-foreground)]/88">
                 <ScrubbedBody text={state.body} progress={progress} start={supportStart} end={supportCruiseIn} />
@@ -458,7 +458,7 @@ function Panel({
           </motion.div>
         ) : null}
 
-        <div className="order-1 relative text-center md:order-2 md:col-span-5 md:text-left">
+        <div className="relative top-8 order-1 text-center md:top-0 md:order-2 md:col-span-5 md:text-left">
           <motion.div style={{ opacity: headlineOpacity, y: headlineY, filter: headlineBlur }}>
             {state.kicker ? (
               <span className="label-tech text-[color:var(--color-foreground)]">{state.kicker}</span>
