@@ -12,11 +12,9 @@ export default defineConfig({
   vite: {
     base: "/invpager/",
   },
-  // GitHub Pages is a static host; pin Nitro to its static preset instead of
-  // the Lovable/Cloudflare default so the generated client shell is deployable.
-  nitro: {
-    preset: "github-pages",
-  },
+  // GitHub Pages only needs the static SPA shell. Turning off Nitro prevents
+  // an unnecessary SSR bundle, which Vite 8 cannot create from index.html.
+  nitro: false,
   tanstackStart: {
     // The investor page is a static, client-rendered experience for GitHub Pages.
     spa: { enabled: true },

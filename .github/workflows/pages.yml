@@ -26,11 +26,14 @@ jobs:
         with:
           node-version: 22
 
+      - name: Enable pnpm
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build static site
-        run: npm run build
+        run: pnpm run build
 
       - name: Find static output
         id: output
