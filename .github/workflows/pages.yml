@@ -32,23 +32,6 @@ jobs:
       - name: Build static site
         run: npm run build
 
-      - name: Prepare GitHub Pages shell
-        shell: bash
-        run: |
-          for output in .output/public dist/client dist; do
-            if [ -f "$output/_shell.html" ] && [ ! -f "$output/index.html" ]; then
-              cp "$output/_shell.html" "$output/index.html"
-            fi
-            if [ -f "$output/index.html" ]; then
-              [ -f "$output/404.html" ] || cp "$output/index.html" "$output/404.html"
-              echo "Static output: $output"
-              exit 0
-            fi
-          done
-          echo "No index.html or _shell.html found in build output" >&2
-          find . -maxdepth 4 -type f \( -name 'index.html' -o -name '_shell.html' \) -print
-          exit 1
-
       - name: Find static output
         id: output
         shell: bash
