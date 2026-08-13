@@ -3,6 +3,7 @@ import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 import { useT } from "@/i18n";
 
 const IDS = ["A490 3880", "B117 4021", "C905 7714"];
+const STEP_MEDIA = ["find_001.png", "choose_profile_001.png", "secure_001.png"] as const;
 
 export function PagerId() {
   const t = useT();
@@ -99,9 +100,20 @@ export function PagerId() {
           {t.pagerId.steps.map((s, i) => (
             <li key={s.t} className="bg-[color:var(--color-background)] p-6">
               <Rise delay={i * 0.06}>
-                <span className="label-tech">{String(i + 1).padStart(2, "0")}</span>
-                <h3 className="mt-6 text-xl font-bold tracking-[-0.02em]">{s.t}</h3>
-                <p className="lead mt-2 text-sm">{s.d}</p>
+                <div className="flex items-start justify-between gap-5">
+                  <div className="min-w-0">
+                    <span className="label-tech">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="mt-6 text-xl font-bold tracking-[-0.02em]">{s.t}</h3>
+                    <p className="lead mt-2 text-sm">{s.d}</p>
+                  </div>
+                  <MediaSlot
+                    name={STEP_MEDIA[i]!}
+                    alt=""
+                    label={s.t}
+                    maxHeight="7.5rem"
+                    className="w-[6.5rem] shrink-0 [&>div:first-child]:opacity-0"
+                  />
+                </div>
               </Rise>
             </li>
           ))}
