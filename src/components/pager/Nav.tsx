@@ -2,10 +2,17 @@ import { useEffect, useState } from "react";
 import { LOCALES, useLocale } from "@/i18n";
 
 const logo = { url: "favicon.png" };
+const profileIcons = [
+  "Pager_profile_icon2_01.png",
+  "Pager_profile_icon2_02.png",
+  "Pager_profile_icon2_03.png",
+  "Pager_profile_icon2_04.png",
+];
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeProfile, setActiveProfile] = useState(0);
   const { t } = useLocale();
 
   useEffect(() => {
@@ -13,6 +20,13 @@ export function Nav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const cycle = window.setInterval(() => {
+      setActiveProfile((current) => (current + 1) % profileIcons.length);
+    }, 1200);
+    return () => window.clearInterval(cycle);
   }, []);
 
   return (
@@ -34,7 +48,24 @@ export function Nav() {
             className="h-6 w-auto object-contain"
           />
           <span className="font-mono text-sm font-bold tracking-[0.28em]">PAGER</span>
-          <span aria-hidden className="blink h-1.5 w-1.5 bg-personal" />
+          <span
+            aria-hidden
+            className="profile-signal relative block h-3 w-3 shrink-0"
+            title="Мультипрофиль"
+          >
+            {profileIcons.map((icon, index) => (
+              <img
+                key={icon}
+                src={`media/${icon}`}
+                alt=""
+                width={25}
+                height={25}
+                className={`absolute inset-0 h-full w-full object-contain transition-all duration-500 ease-in-out motion-reduce:transition-none ${
+                  activeProfile === index ? "scale-100 opacity-100" : "scale-90 opacity-0"
+                }`}
+              />
+            ))}
+          </span>
         </a>
 
         <ul className="hidden items-center gap-7 md:flex">
