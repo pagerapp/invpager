@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Locale } from "@/i18n";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type SceneCopy = {
   profiles: string;
@@ -112,35 +113,53 @@ type SceneRange = { a: number; b: number; c: number; d: number };
 
 export function SceneThreeCards({ locale, progress, range }: { locale: Locale; progress: MotionValue<number>; range: SceneRange }) {
   const c = COPY[locale];
+  const isMobile = useIsMobile();
+  // Mobile is a presentation mode, not a miniature desktop collage: a card
+  // must be readable while it is active, then compact only after its action.
+  // On phones the active card is deliberately rendered as a full interface,
+  // rather than a miniature version of the final collage. A narrower layout
+  // width plus a temporary scale keeps its typography legible without making
+  // the settled four-card layout overflow.
+  const activeCardWidth = isMobile ? "59%" : "35%";
+  const settledCardWidth = isMobile ? "42%" : "35%";
+  const activeCardScale = isMobile ? 1.7 : 1;
+  const finalLeft = isMobile ? { left: "3%", right: "55%" } : { left: "1.2%", right: "63.75%" };
+  const finalTop = isMobile ? { top: "9%", bottom: "56%" } : { top: "16%", bottom: "54%" };
   const scene = useTransform(progress, (value) => Math.max(0, Math.min(1, (value - range.a) / Math.max(0.001, range.c - range.a))));
-  // The profile selector is the first card in the narrative and must own the
-  // centre immediately. The remaining cards settle behind it a beat later.
-  const profileOpacity = useTransform(scene, [0, 0.012], [0, 1]);
-  const deckOpacity = useTransform(scene, [0.012, 0.06], [0, 1]);
+  // All four real cards arrive together as one centred deck. The profile
+  // selector is simply the top card — never a separate, delayed reveal.
+  const deckOpacity = useTransform(scene, [0, 0.02], [0, 1]);
+  const profileOpacity = deckOpacity;
   // First the card holds in the centre for its own interaction. Only after
   // the profile choice is clear does it travel to its final place.
-  const profileLeft = useTransform(scene, [0, 0.42, 0.52], ["50%", "50%", "1.2%"]);
-  const profileTop = useTransform(scene, [0, 0.42, 0.52], ["50%", "50%", "16%"]);
+  const profileLeft = useTransform(scene, [0, 0.42, 0.52], ["50%", "50%", finalLeft.left]);
+  const profileTop = useTransform(scene, [0, 0.42, 0.52], ["50%", "50%", finalTop.top]);
   const profileX = useTransform(scene, [0, 0.42, 0.52], ["-50%", "-50%", "0%"]);
   const profileY = useTransform(scene, [0, 0.42, 0.52], ["-50%", "-50%", "0%"]);
   // The UI is deliberately larger while it is centred and interactive, then
   // settles back to the scale required by the final four-card composition.
-  const profileScale = useTransform(scene, [0, 0.08, 0.42, 0.52], [1, 1, 1.04, 1]);
+  const profileScale = useTransform(scene, [0, 0.08, 0.42, 0.52], [activeCardScale, activeCardScale, activeCardScale * 1.02, 1]);
+  const profileWidth = useTransform(scene, [0, 0.42, 0.52], [activeCardWidth, activeCardWidth, settledCardWidth]);
+  const profileZIndex = useTransform(scene, [0, 0.52], [70, 18]);
   const profileBlur = useTransform(scene, [0, 0.08], ["blur(7px)", "blur(0px)"]);
   // The scene opens as a genuine deck made from the four actual interface
   // cards. Supporting cards recede while the top card is being explained.
   const companionCardOpacity = deckOpacity;
-  const permissionLeft = useTransform(scene, [0, 0.84, 0.92], ["50%", "50%", "1.15%"]);
-  const permissionTop = useTransform(scene, [0, 0.84, 0.92], ["50%", "50%", "54%"]);
+  const permissionLeft = useTransform(scene, [0, 0.84, 0.92], ["50%", "50%", finalLeft.left]);
+  const permissionTop = useTransform(scene, [0, 0.84, 0.92], ["50%", "50%", finalTop.bottom]);
   const permissionX = useTransform(scene, [0, 0.77, 0.84, 0.92], ["calc(-50% + 7px)", "calc(-50% + 7px)", "-50%", "0%"]);
   const permissionY = useTransform(scene, [0, 0.77, 0.84, 0.92], ["calc(-50% + 8px)", "calc(-50% + 8px)", "-50%", "0%"]);
-  const permissionScale = useTransform(scene, [0, 0.84, 0.92], [1, 1, 1]);
+  const permissionScale = useTransform(scene, [0, 0.84, 0.92], [activeCardScale, activeCardScale, 1]);
+  const permissionWidth = useTransform(scene, [0, 0.84, 0.92], [activeCardWidth, activeCardWidth, settledCardWidth]);
+  const permissionZIndex = useTransform(scene, [0, 0.77, 0.92], [50, 70, 20]);
   const permissionRotateY = useTransform(scene, [0, 0.84, 0.92], [0, 0, 14]);
-  const annaLeft = useTransform(scene, [0, 0.94, 1], ["50%", "50%", "63.75%"]);
-  const annaTop = useTransform(scene, [0, 0.94, 1], ["50%", "50%", "16%"]);
+  const annaLeft = useTransform(scene, [0, 0.94, 1], ["50%", "50%", finalLeft.right]);
+  const annaTop = useTransform(scene, [0, 0.94, 1], ["50%", "50%", finalTop.top]);
   const annaX = useTransform(scene, [0, 0.86, 0.94, 1], ["calc(-50% + 12px)", "calc(-50% + 12px)", "-50%", "0%"]);
   const annaY = useTransform(scene, [0, 0.86, 0.94, 1], ["calc(-50% + 14px)", "calc(-50% + 14px)", "-50%", "0%"]);
-  const annaScale = useTransform(scene, [0, 0.94, 1], [1, 1, 1]);
+  const annaScale = useTransform(scene, [0, 0.94, 1], [activeCardScale, activeCardScale, 1]);
+  const annaWidth = useTransform(scene, [0, 0.94, 1], [activeCardWidth, activeCardWidth, settledCardWidth]);
+  const annaZIndex = useTransform(scene, [0, 0.86, 1], [40, 70, 21]);
   const annaRotateY = useTransform(scene, [0, 0.94, 1], [0, 0, -14]);
   // The final composition is spatial: each card turns its inside edge slightly
   // toward the viewer, so both card pairs read as facing the person in the centre.
@@ -154,11 +173,13 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
   // After the profile has been chosen, the guest identity becomes the second
   // focused interaction before it takes its place in the composition.
   const guestCardOpacity = companionCardOpacity;
-  const guestLeft = useTransform(scene, [0, 0.67, 0.75], ["50%", "50%", "63.9%"]);
-  const guestTop = useTransform(scene, [0, 0.67, 0.75], ["50%", "50%", "54%"]);
+  const guestLeft = useTransform(scene, [0, 0.67, 0.75], ["50%", "50%", finalLeft.right]);
+  const guestTop = useTransform(scene, [0, 0.67, 0.75], ["50%", "50%", finalTop.bottom]);
   const guestCardX = useTransform(scene, [0, 0.55, 0.67, 0.75], ["calc(-50% + 4px)", "calc(-50% + 4px)", "-50%", "0%"]);
   const guestCardY = useTransform(scene, [0, 0.55, 0.67, 0.75], ["calc(-50% + 5px)", "calc(-50% + 5px)", "-50%", "0%"]);
-  const guestCardScale = useTransform(scene, [0, 0.52, 0.67, 0.75], [1, 1, 1.04, 1]);
+  const guestCardScale = useTransform(scene, [0, 0.52, 0.67, 0.75], [activeCardScale, activeCardScale, activeCardScale * 1.02, 1]);
+  const guestCardWidth = useTransform(scene, [0, 0.67, 0.75], [activeCardWidth, activeCardWidth, settledCardWidth]);
+  const guestCardZIndex = useTransform(scene, [0, 0.55, 0.75], [60, 70, 19]);
   const guestCardRotateY = useTransform(scene, [0, 0.67, 0.75], [0, 0, -14]);
   // A restrained, one-pass confirmation of the guest PAGER ID.
   const guestIdScan = useTransform(scene, [0.55, 0.58, 0.63, 0.65], [0, 1, 1, 0]);
@@ -172,7 +193,7 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
 
   return (
     <div className="relative h-full w-full font-sans text-white [perspective:1200px] [text-shadow:0_1px_8px_rgba(0,0,0,.7)]">
-      <motion.div className="absolute z-30 aspect-[1.25] w-[35%]" style={{ opacity: profileOpacity, left: profileLeft, top: profileTop, x: profileX, y: profileY, scale: profileScale, filter: profileBlur, rotateY: profileRotateY }}>
+      <motion.div className="absolute aspect-[1.25]" style={{ opacity: profileOpacity, width: profileWidth, left: profileLeft, top: profileTop, x: profileX, y: profileY, scale: profileScale, filter: profileBlur, rotateY: profileRotateY, zIndex: profileZIndex }}>
       <section className="h-full rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md">
         <p className="text-center text-[clamp(.35rem,1.05vw,1rem)] font-semibold uppercase tracking-[.08em]">{c.profiles}</p>
         <p className="mt-1 text-center text-[clamp(.25rem,.65vw,.62rem)] leading-[1.35] text-white/74">{c.profilesLead}</p>
@@ -195,11 +216,11 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
         </div>
       </section></motion.div>
 
-      <PermissionCard copy={c} locale={locale} scene={scene} opacity={companionCardOpacity} left={permissionLeft} top={permissionTop} x={permissionX} y={permissionY} scale={permissionScale} rotateY={permissionRotateY} />
+      <PermissionCard copy={c} locale={locale} scene={scene} opacity={companionCardOpacity} width={permissionWidth} left={permissionLeft} top={permissionTop} x={permissionX} y={permissionY} scale={permissionScale} rotateY={permissionRotateY} zIndex={permissionZIndex} />
 
       <motion.section
-        className="absolute z-10 aspect-[1.25] w-[35%] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
-        style={{ opacity: companionCardOpacity, left: annaLeft, top: annaTop, x: annaX, y: annaY, scale: annaScale, rotateY: annaRotateY }}
+        className="absolute aspect-[1.25] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
+        style={{ opacity: companionCardOpacity, width: annaWidth, left: annaLeft, top: annaTop, x: annaX, y: annaY, scale: annaScale, rotateY: annaRotateY, zIndex: annaZIndex }}
       >
         <div className="flex gap-[clamp(.35rem,.9vw,.8rem)]">
           <Portrait src={PORTRAITS.anna} className="w-[34%]" />
@@ -216,8 +237,8 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
       </motion.section>
 
       <motion.section
-        className="absolute z-20 aspect-[1.25] w-[35%] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
-        style={{ opacity: guestCardOpacity, left: guestLeft, top: guestTop, x: guestCardX, y: guestCardY, scale: guestCardScale, rotateY: guestCardRotateY }}
+        className="absolute aspect-[1.25] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
+        style={{ opacity: guestCardOpacity, width: guestCardWidth, left: guestLeft, top: guestTop, x: guestCardX, y: guestCardY, scale: guestCardScale, rotateY: guestCardRotateY, zIndex: guestCardZIndex }}
       >
         <div className="flex items-end gap-[clamp(.35rem,.8vw,.75rem)]">
           <div className="min-w-0 flex-1">
@@ -233,7 +254,7 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
   );
 }
 
-function PermissionCard({ copy, locale, scene, opacity, left, top, x, y, scale, rotateY }: { copy: SceneCopy; locale: Locale; scene: MotionValue<number>; opacity: MotionValue<number>; left: MotionValue<string>; top: MotionValue<string>; x: MotionValue<string>; y: MotionValue<string>; scale: MotionValue<number>; rotateY: MotionValue<number> }) {
+function PermissionCard({ copy, locale, scene, opacity, width, left, top, x, y, scale, rotateY, zIndex }: { copy: SceneCopy; locale: Locale; scene: MotionValue<number>; opacity: MotionValue<number>; width: MotionValue<string>; left: MotionValue<string>; top: MotionValue<string>; x: MotionValue<string>; y: MotionValue<string>; scale: MotionValue<number>; rotateY: MotionValue<number>; zIndex: MotionValue<number> }) {
   // The card starts as an open channel. During its focused moment, the four
   // non-essential permissions close together, then a timed-access rule turns on.
   const openUntilRule = useTransform(scene, [0, 0.77, 0.81], [1, 1, 0]);
@@ -251,8 +272,8 @@ function PermissionCard({ copy, locale, scene, opacity, left, top, x, y, scale, 
   ];
   return (
     <motion.section
-      className="absolute z-[15] aspect-[1.25] w-[35%] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.42rem,1vw,.95rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
-      style={{ opacity, left, top, x, y, scale, rotateY }}
+      className="absolute aspect-[1.25] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.42rem,1vw,.95rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
+      style={{ opacity, width, left, top, x, y, scale, rotateY, zIndex }}
     >
       <p className="mb-[clamp(.25rem,.65vw,.65rem)] text-center text-[clamp(.35rem,.95vw,.9rem)] font-semibold uppercase tracking-[.08em]">{copy.permissions}</p>
       <div className="space-y-[clamp(.16rem,.42vw,.42rem)]">
