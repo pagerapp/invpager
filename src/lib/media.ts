@@ -31,6 +31,7 @@ export const MEDIA = {
   "Hero_storyscroll_img_ZH_2_001.jpg": { url: "media/Hero_storyscroll_img_ZH_2_001.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Hero_storyscroll_img_ZH_2.png": { url: "media/Hero_storyscroll_img_ZH_2.png", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Hero_storyscroll_img_ZH_3.png": { url: "media/Hero_storyscroll_img_ZH_3.png", width: 1254, height: 1254, ratio: "1254 / 1254" },
+  "Hero_img_scene_3_All_Lang.jpg": { url: "media/Hero_img_scene_3_All_Lang.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Multiprofile_img_01.jpg": { url: "media/Multiprofile_img_01.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Multiprofile_img_02.jpg": { url: "media/Multiprofile_img_02.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },
   "Multiprofile_img_03.jpg": { url: "media/Multiprofile_img_03.jpg", width: 1254, height: 1254, ratio: "1254 / 1254" },

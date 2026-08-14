@@ -28,6 +28,10 @@ export type StoryState = {
   title: string[];
   body?: string;
   media?: string;
+  /** Optional scroll-driven DOM interface rendered above the key art. */
+  mediaOverlay?: (progress: MotionValue<number>, range: SceneRange) => ReactNode;
+  /** Holds the key art back while an interface sequence establishes the scene. */
+  mediaLateReveal?: boolean;
   /** Optional mobile-specific media source. */
   mobileMedia?: string;
   alt?: string;
@@ -149,6 +153,8 @@ const TRANSITION = 0.08; // share of one scene window spent in motion
 /** The manifesto is an invitation, not a full scroll chapter. */
 const INTRO_SHARE = 0.12;
 
+type SceneRange = { a: number; b: number; c: number; d: number };
+
 function windowFor(index: number, count: number) {
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
   const first = index === 0;
@@ -198,6 +204,10 @@ function Panel({
   const { a, b, c, d, first, last } = windowFor(index, count);
   const isIntro = !state.media;
   const heldFinal = last && holdFinal;
+  const lateMedia = Boolean(state.mediaLateReveal);
+  // The hero subject stays hidden while the interface tells its story and
+  // becomes visible only as the scene resolves into its final composition.
+  const lateMediaStart = b + (c - b) * 0.72;
   const copyOut = heldFinal ? COPY_OUT_HOLD : COPY_OUT;
 
   // Staged choreography inside the scene window:
@@ -217,7 +227,9 @@ function Panel({
     progress,
     ...rng(
       [a, b, c, d],
-      reduced
+      lateMedia
+        ? ["14%", "14%", "8%", "0%"]
+        : reduced
         ? ["0%", "0%", "0%", "0%"]
         : heldFinal
           ? ["10%", "0%", "0%", "0%"]
@@ -226,17 +238,28 @@ function Panel({
   );
   const mediaOpacity = useTransform(
     progress,
-    ...rng([a, b, c, d], heldFinal ? [0, 1, 1, 1] : [0, 1, 1, 0]),
+    ...(lateMedia
+      ? rng([lateMediaStart, c], [0, 1])
+      : rng([a, b, c, d], heldFinal ? [0, 1, 1, 1] : [0, 1, 1, 0])),
   );
   const mediaFilter = useTransform(
     progress,
     ...rng(
       [a, b, c, d],
-      reduced
+      lateMedia
+        ? ["blur(10px) brightness(0.28)", "blur(10px) brightness(0.28)", "blur(5px) brightness(0.45)", "blur(0px) brightness(1)"]
+        : reduced
         ? ["none", "none", "none", "none"]
         : heldFinal
           ? ["blur(7px) brightness(0.82)", "blur(0px) brightness(1)", "blur(0px) brightness(1)", "blur(0px) brightness(1)"]
           : ["blur(7px) brightness(0.82)", "blur(0px) brightness(1)", "blur(0px) brightness(1)", "blur(7px) brightness(0.82)"],
+    ),
+  );
+  const mediaScale = useTransform(
+    progress,
+    ...rng(
+      [a, b, c, d],
+      lateMedia ? [0.92, 0.92, 0.96, 1] : reduced ? [1, 1, 1, 1] : heldFinal ? [0.93, 1, 1, 1] : [0.96, 1, 1, 0.97],
     ),
   );
   const entryVeilOpacity = useTransform(progress, ...rng([a, b, c, d], [1, 0, 0, 0]));
@@ -415,7 +438,8 @@ function Panel({
       <div className="shell grid h-full grid-rows-[auto_minmax(0,1fr)_auto] pt-[calc(6rem+env(safe-area-inset-top))] pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:grid-cols-12 md:grid-rows-1 md:items-center md:gap-x-10 md:pt-24 md:pb-12">
         {/* MEDIA — the dominant anchor of the composed frame. */}
         <div className="order-2 flex min-h-0 items-center justify-center py-3 md:order-1 md:col-span-7 md:py-0">
-          <motion.div style={{ filter: mediaFilter, opacity: mediaOpacity, y: mediaY }} className="relative w-full">
+          <div className="relative w-full">
+            <motion.div style={{ filter: mediaFilter, opacity: mediaOpacity, scale: mediaScale, y: mediaY }} className="relative w-full">
             <MediaSlot
               name={state.media!}
               mobileName={state.mobileMedia}
@@ -443,7 +467,13 @@ function Panel({
                   "linear-gradient(to bottom, var(--color-background) 3%, color-mix(in srgb, var(--color-background) 84%, transparent) 48%, transparent 100%)",
               }}
             />
-          </motion.div>
+            </motion.div>
+            {state.mediaOverlay ? (
+              <div className="pointer-events-none absolute inset-0 z-20">
+                {state.mediaOverlay(progress, { a, b, c, d })}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {/* COPY COLUMN — headline and supporting text read as one editorial unit. */}

@@ -43,13 +43,10 @@ export function heroMedia(locale: Locale): string[] {
     : locale === "zh"
       ? "Hero_storyscroll_img_ZH_2_001.jpg"
       : "Hero_storyscroll_img_EN_03.jpg";
-  const frameThree = locale === "zh"
-    ? localizedMedia("Hero_storyscroll_img_{lang}_3.png", locale, "Hero_storyscroll_img_ENG_3.jpg")
-    : localizedMedia("Hero_storyscroll_img_{lang}_3.jpg", locale, "Hero_storyscroll_img_ENG_3.jpg");
   return [
     "Hero_storyscroll_img_RU_ENG_ZH_003.jpg",
     frameTwo,
-    frameThree,
+    "Hero_img_scene_3_All_Lang.jpg",
   ];
 }
 
