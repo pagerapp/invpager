@@ -32,6 +32,8 @@ export type StoryState = {
   mediaOverlay?: (progress: MotionValue<number>, range: SceneRange) => ReactNode;
   /** Holds the key art back while an interface sequence establishes the scene. */
   mediaLateReveal?: boolean;
+  /** Keeps key art present from the entrance but lets it resolve across the whole scene. */
+  mediaGradualReveal?: boolean;
   /** Optional mobile-specific media source. */
   mobileMedia?: string;
   alt?: string;
@@ -205,6 +207,7 @@ function Panel({
   const isIntro = !state.media;
   const heldFinal = last && holdFinal;
   const lateMedia = Boolean(state.mediaLateReveal);
+  const gradualMedia = Boolean(state.mediaGradualReveal);
   // The hero subject stays hidden while the interface tells its story and
   // becomes visible only as the scene resolves into its final composition.
   const lateMediaStart = b + (c - b) * 0.72;
@@ -240,6 +243,8 @@ function Panel({
     progress,
     ...(lateMedia
       ? rng([lateMediaStart, c], [0, 1])
+      : gradualMedia
+        ? rng([a, b, c, d], [0.18, 0.38, 1, 1])
       : rng([a, b, c, d], heldFinal ? [0, 1, 1, 1] : [0, 1, 1, 0])),
   );
   const mediaFilter = useTransform(
@@ -248,6 +253,8 @@ function Panel({
       [a, b, c, d],
       lateMedia
         ? ["blur(10px) brightness(0.28)", "blur(10px) brightness(0.28)", "blur(5px) brightness(0.45)", "blur(0px) brightness(1)"]
+        : gradualMedia
+          ? ["blur(4px) brightness(0.42)", "blur(3px) brightness(0.58)", "blur(0px) brightness(1)", "blur(0px) brightness(1)"]
         : reduced
         ? ["none", "none", "none", "none"]
         : heldFinal
@@ -259,7 +266,15 @@ function Panel({
     progress,
     ...rng(
       [a, b, c, d],
-      lateMedia ? [0.92, 0.92, 0.96, 1] : reduced ? [1, 1, 1, 1] : heldFinal ? [0.93, 1, 1, 1] : [0.96, 1, 1, 0.97],
+      lateMedia
+        ? [0.92, 0.92, 0.96, 1]
+        : gradualMedia
+          ? [0.95, 0.965, 1, 1]
+          : reduced
+            ? [1, 1, 1, 1]
+            : heldFinal
+              ? [0.93, 1, 1, 1]
+              : [0.96, 1, 1, 0.97],
     ),
   );
   const entryVeilOpacity = useTransform(progress, ...rng([a, b, c, d], [1, 0, 0, 0]));

@@ -45,7 +45,7 @@ export function Hero() {
     color: COLORS[i]!,
     motionIntent: INTENT[i]!,
     ...(i === 2 ? { mediaOverlay: (progress, range) => <SceneThreeCards locale={locale} progress={progress} range={range} /> } : {}),
-    ...(i === 2 ? { mediaLateReveal: true } : {}),
+    ...(i === 2 ? { mediaGradualReveal: true } : {}),
     ...(i === t.hero.frames.length - 1
       ? {
           finaleLaunch: (
