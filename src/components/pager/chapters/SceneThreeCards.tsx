@@ -116,15 +116,14 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
   const isMobile = useIsMobile();
   // Mobile is a presentation mode, not a miniature desktop collage: a card
   // must be readable while it is active, then compact only after its action.
-  // On phones the active card is deliberately rendered as a full interface,
-  // rather than a miniature version of the final collage. A narrower layout
-  // width plus a temporary scale keeps its typography legible without making
-  // the settled four-card layout overflow.
-  const activeCardWidth = isMobile ? "59%" : "35%";
+  // On phones the active card is rendered at its readable width directly,
+  // instead of being magnified from a miniature desktop layout.
+  const activeCardWidth = isMobile ? "84%" : "35%";
   const settledCardWidth = isMobile ? "42%" : "35%";
-  const activeCardScale = isMobile ? 1.7 : 1;
+  const activeCardScale = 1;
+  const cardRatio = isMobile ? "aspect-[1.42]" : "aspect-[1.25]";
   const finalLeft = isMobile ? { left: "3%", right: "55%" } : { left: "1.2%", right: "63.75%" };
-  const finalTop = isMobile ? { top: "9%", bottom: "56%" } : { top: "16%", bottom: "54%" };
+  const finalTop = isMobile ? { top: "12%", bottom: "57%" } : { top: "16%", bottom: "54%" };
   const scene = useTransform(progress, (value) => Math.max(0, Math.min(1, (value - range.a) / Math.max(0.001, range.c - range.a))));
   // All four real cards arrive together as one centred deck. The profile
   // selector is simply the top card — never a separate, delayed reveal.
@@ -193,10 +192,10 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
 
   return (
     <div className="relative h-full w-full font-sans text-white [perspective:1200px] [text-shadow:0_1px_8px_rgba(0,0,0,.7)]">
-      <motion.div className="absolute aspect-[1.25]" style={{ opacity: profileOpacity, width: profileWidth, left: profileLeft, top: profileTop, x: profileX, y: profileY, scale: profileScale, filter: profileBlur, rotateY: profileRotateY, zIndex: profileZIndex }}>
+      <motion.div className={`absolute ${cardRatio}`} style={{ opacity: profileOpacity, width: profileWidth, left: profileLeft, top: profileTop, x: profileX, y: profileY, scale: profileScale, filter: profileBlur, rotateY: profileRotateY, zIndex: profileZIndex }}>
       <section className="h-full rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md">
-        <p className="text-center text-[clamp(.35rem,1.05vw,1rem)] font-semibold uppercase tracking-[.08em]">{c.profiles}</p>
-        <p className="mt-1 text-center text-[clamp(.25rem,.65vw,.62rem)] leading-[1.35] text-white/74">{c.profilesLead}</p>
+        <p className={`text-center font-semibold uppercase tracking-[.08em] ${isMobile ? "text-[.82rem]" : "text-[clamp(.35rem,1.05vw,1rem)]"}`}>{c.profiles}</p>
+        <p className={`mt-1 text-center leading-[1.35] text-white/74 ${isMobile ? "text-[.52rem]" : "text-[clamp(.25rem,.65vw,.62rem)]"}`}>{c.profilesLead}</p>
         <div className="relative mt-[clamp(.28rem,.7vw,.7rem)] grid grid-cols-4 gap-[clamp(.15rem,.45vw,.45rem)]">
           {profiles.map((profile) => (
             <div key={profile.label} className="min-w-0 text-center">
@@ -210,24 +209,24 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
                   style={{ opacity: profile.highlight, borderColor: profile.accent, boxShadow: profile.glow }}
                 />
               </div>
-              <span className="mt-1 block truncate text-[clamp(.23rem,.55vw,.55rem)] text-white/90">{profile.label}</span>
+              <span className={`mt-1 block truncate text-white/90 ${isMobile ? "text-[.52rem]" : "text-[clamp(.23rem,.55vw,.55rem)]"}`}>{profile.label}</span>
             </div>
           ))}
         </div>
       </section></motion.div>
 
-      <PermissionCard copy={c} locale={locale} scene={scene} opacity={companionCardOpacity} width={permissionWidth} left={permissionLeft} top={permissionTop} x={permissionX} y={permissionY} scale={permissionScale} rotateY={permissionRotateY} zIndex={permissionZIndex} />
+      <PermissionCard copy={c} locale={locale} isMobile={isMobile} cardRatio={cardRatio} scene={scene} opacity={companionCardOpacity} width={permissionWidth} left={permissionLeft} top={permissionTop} x={permissionX} y={permissionY} scale={permissionScale} rotateY={permissionRotateY} zIndex={permissionZIndex} />
 
       <motion.section
-        className="absolute aspect-[1.25] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
+        className={`absolute ${cardRatio} overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md`}
         style={{ opacity: companionCardOpacity, width: annaWidth, left: annaLeft, top: annaTop, x: annaX, y: annaY, scale: annaScale, rotateY: annaRotateY, zIndex: annaZIndex }}
       >
         <div className="flex gap-[clamp(.35rem,.9vw,.8rem)]">
           <Portrait src={PORTRAITS.anna} className="w-[34%]" />
           <div className="min-w-0 pt-1">
-            <p className="text-[clamp(.7rem,1.8vw,1.6rem)] leading-none">{c.anna}</p>
-            <p className="mt-1 text-[clamp(.3rem,.68vw,.68rem)] text-white/70">ID A770 7070</p>
-            <p className="mt-[clamp(.35rem,.8vw,.8rem)] text-[clamp(.28rem,.63vw,.62rem)] leading-[1.35] text-white/74">{c.annaBody}</p>
+            <p className={`leading-none ${isMobile ? "text-[1.15rem]" : "text-[clamp(.7rem,1.8vw,1.6rem)]"}`}>{c.anna}</p>
+            <p className={`mt-1 text-white/70 ${isMobile ? "text-[.55rem]" : "text-[clamp(.3rem,.68vw,.68rem)]"}`}>ID A770 7070</p>
+            <p className={`mt-[clamp(.35rem,.8vw,.8rem)] leading-[1.35] text-white/74 ${isMobile ? "text-[.56rem]" : "text-[clamp(.28rem,.63vw,.62rem)]"}`}>{c.annaBody}</p>
           </div>
         </div>
         <div className="mt-[clamp(.45rem,1vw,1rem)] flex items-center gap-1 border-t border-white/20 pt-[clamp(.35rem,.7vw,.7rem)] text-[clamp(.28rem,.62vw,.62rem)] text-[#f6c86f]">
@@ -237,15 +236,15 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
       </motion.section>
 
       <motion.section
-        className="absolute aspect-[1.25] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
+        className={`absolute ${cardRatio} overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.4rem,1vw,.9rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md`}
         style={{ opacity: guestCardOpacity, width: guestCardWidth, left: guestLeft, top: guestTop, x: guestCardX, y: guestCardY, scale: guestCardScale, rotateY: guestCardRotateY, zIndex: guestCardZIndex }}
       >
         <div className="flex items-end gap-[clamp(.35rem,.8vw,.75rem)]">
           <div className="min-w-0 flex-1">
-            <p className="text-[clamp(.3rem,.7vw,.7rem)] uppercase tracking-[.04em] text-white/70">{c.guestTitle}</p>
-            <p className="mt-1 text-[clamp(.75rem,1.8vw,1.65rem)] leading-none">{c.guestName}</p>
-            <p className="mt-2 text-[clamp(.28rem,.62vw,.62rem)] leading-[1.35] text-white/74">{c.guestBody}</p>
-            <p className="relative mt-[clamp(.35rem,.8vw,.8rem)] pb-[.32em] text-[clamp(.28rem,.62vw,.62rem)] text-white/70">PAGER ID<br /><span className="text-white">A147 0865</span><motion.span className="absolute bottom-0 left-0 h-px w-full origin-left bg-[#4e9cff]" style={{ scaleX: guestIdScan, opacity: guestIdScanOpacity }} /></p>
+            <p className={`uppercase tracking-[.04em] text-white/70 ${isMobile ? "text-[.58rem]" : "text-[clamp(.3rem,.7vw,.7rem)]"}`}>{c.guestTitle}</p>
+            <p className={`mt-1 leading-none ${isMobile ? "text-[1.1rem]" : "text-[clamp(.75rem,1.8vw,1.65rem)]"}`}>{c.guestName}</p>
+            <p className={`mt-2 leading-[1.35] text-white/74 ${isMobile ? "text-[.56rem]" : "text-[clamp(.28rem,.62vw,.62rem)]"}`}>{c.guestBody}</p>
+            <p className={`relative mt-[clamp(.35rem,.8vw,.8rem)] pb-[.32em] text-white/70 ${isMobile ? "text-[.55rem]" : "text-[clamp(.28rem,.62vw,.62rem)]"}`}>PAGER ID<br /><span className="text-white">A147 0865</span><motion.span className="absolute bottom-0 left-0 h-px w-full origin-left bg-[#4e9cff]" style={{ scaleX: guestIdScan, opacity: guestIdScanOpacity }} /></p>
           </div>
           <Portrait src={PORTRAITS.guest} className="w-[37%]" />
         </div>
@@ -254,7 +253,7 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
   );
 }
 
-function PermissionCard({ copy, locale, scene, opacity, width, left, top, x, y, scale, rotateY, zIndex }: { copy: SceneCopy; locale: Locale; scene: MotionValue<number>; opacity: MotionValue<number>; width: MotionValue<string>; left: MotionValue<string>; top: MotionValue<string>; x: MotionValue<string>; y: MotionValue<string>; scale: MotionValue<number>; rotateY: MotionValue<number>; zIndex: MotionValue<number> }) {
+function PermissionCard({ copy, locale, isMobile, cardRatio, scene, opacity, width, left, top, x, y, scale, rotateY, zIndex }: { copy: SceneCopy; locale: Locale; isMobile: boolean; cardRatio: string; scene: MotionValue<number>; opacity: MotionValue<number>; width: MotionValue<string>; left: MotionValue<string>; top: MotionValue<string>; x: MotionValue<string>; y: MotionValue<string>; scale: MotionValue<number>; rotateY: MotionValue<number>; zIndex: MotionValue<number> }) {
   // The card starts as an open channel. During its focused moment, the four
   // non-essential permissions close together, then a timed-access rule turns on.
   const openUntilRule = useTransform(scene, [0, 0.77, 0.81], [1, 1, 0]);
@@ -272,24 +271,24 @@ function PermissionCard({ copy, locale, scene, opacity, width, left, top, x, y, 
   ];
   return (
     <motion.section
-      className="absolute aspect-[1.25] overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.42rem,1vw,.95rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md"
+      className={`absolute ${cardRatio} overflow-hidden rounded-[clamp(.5rem,1.2vw,1rem)] border border-white/30 bg-[linear-gradient(145deg,rgba(24,30,39,.94),rgba(2,5,9,.93))] p-[clamp(.42rem,1vw,.95rem)] shadow-[0_20px_42px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.18)] backdrop-blur-md`}
       style={{ opacity, width, left, top, x, y, scale, rotateY, zIndex }}
     >
-      <p className="mb-[clamp(.25rem,.65vw,.65rem)] text-center text-[clamp(.35rem,.95vw,.9rem)] font-semibold uppercase tracking-[.08em]">{copy.permissions}</p>
+      <p className={`mb-[clamp(.25rem,.65vw,.65rem)] text-center font-semibold uppercase tracking-[.08em] ${isMobile ? "text-[.75rem]" : "text-[clamp(.35rem,.95vw,.9rem)]"}`}>{copy.permissions}</p>
       <div className="space-y-[clamp(.16rem,.42vw,.42rem)]">
         {rows.map(({ label, icon: Icon, enabled }) => (
-          <div key={label} className="flex items-center gap-[clamp(.25rem,.65vw,.6rem)] text-[clamp(.28rem,.68vw,.66rem)] text-white/94">
+          <div key={label} className={`flex items-center gap-[clamp(.25rem,.65vw,.6rem)] text-white/94 ${isMobile ? "text-[.56rem]" : "text-[clamp(.28rem,.68vw,.66rem)]"}`}>
             <Icon className="size-[1.05em] shrink-0 text-white/85" strokeWidth={1.7} />
             <span className="min-w-0 flex-1 truncate">{label}</span>
             <AccessControl enabled={enabled} />
           </div>
         ))}
       </div>
-      <div className="mt-[clamp(.24rem,.55vw,.5rem)] flex min-w-0 items-center gap-[clamp(.25rem,.65vw,.6rem)] border-t border-white/20 pt-[clamp(.22rem,.5vw,.45rem)] text-[clamp(.28rem,.68vw,.66rem)]">
+      <div className={`mt-[clamp(.24rem,.55vw,.5rem)] flex min-w-0 items-center gap-[clamp(.25rem,.65vw,.6rem)] border-t border-white/20 pt-[clamp(.22rem,.5vw,.45rem)] ${isMobile ? "text-[.56rem]" : "text-[clamp(.28rem,.68vw,.66rem)]"}`}>
         <Clock3 className="size-[1.05em] shrink-0 text-[#f6c86f]" strokeWidth={1.7} />
         <div className="min-w-0 flex-1">
-          <p className="text-[clamp(.27rem,.65vw,.63rem)] text-white/94">{access24}</p>
-          <p className="text-[clamp(.22rem,.5vw,.48rem)] text-white/55">{access24Hint}</p>
+          <p className={`text-white/94 ${isMobile ? "text-[.54rem]" : "text-[clamp(.27rem,.65vw,.63rem)]"}`}>{access24}</p>
+          <p className={`text-white/55 ${isMobile ? "text-[.42rem]" : "text-[clamp(.22rem,.5vw,.48rem)]"}`}>{access24Hint}</p>
         </div>
         <motion.span className="grid size-[1.1em] shrink-0 place-items-center rounded-[.18em] border border-[#f6c86f] bg-[#f6c86f] text-[#15191e]" style={{ opacity: timedAccess, scale: timedAccess }}>
           <Check className="size-[.75em]" strokeWidth={3} />
