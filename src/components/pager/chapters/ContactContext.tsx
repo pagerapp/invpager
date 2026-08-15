@@ -1,5 +1,3 @@
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
 import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 import { useT } from "@/i18n";
@@ -7,15 +5,13 @@ import { useT } from "@/i18n";
 const KEYS = ["personal", "work", "guest", "alter"];
 const COLORS = ["var(--personal)", "var(--work)", "var(--guest)", "var(--alter)"];
 const MEDIA = [
-  "Hero_man_personal_1x.png",
-  "Hero_man_work_3x.png",
-  "Hero_man_guest_4x.png",
-  "Hero_man_alter_ego_5x.png",
+  "Personal_profile.png",
+  "Work_profile.png",
+  "Guest_profile.png",
+  "Alter_ego_profile.png",
 ];
 
 export function ContactContext() {
-  const [active, setActive] = useState(0);
-  const reduced = useReducedMotion();
   const t = useT();
 
   const contexts = t.contact.contexts.map((c, i) => ({
@@ -24,7 +20,6 @@ export function ContactContext() {
     color: COLORS[i]!,
     media: MEDIA[i]!,
   }));
-  const ctx = contexts[active]!;
 
   return (
     <Section id="chapter-05" className="py-[var(--chapter-space)]">
@@ -44,96 +39,65 @@ export function ContactContext() {
           </Rise>
         </div>
 
-        <div className="mt-16 grid-12 items-start gap-y-10 md:mt-24">
-          {/* Identity stays constant, context changes */}
-          <div className="col-span-6 md:col-span-5">
-            <div
-              className="relative rule-t rule-b"
-              style={{ borderTopColor: ctx.color, transition: "border-color 400ms" }}
-            >
-              <div className="relative grid">
-                <AnimatePresence initial={false} mode="sync">
-                  <motion.div
-                    key={ctx.key}
-                    className="col-start-1 row-start-1"
-                    initial={reduced ? { opacity: 1 } : { opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={reduced ? { opacity: 0 } : { opacity: 0, y: -12 }}
-                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <MediaSlot
-                      name={ctx.media}
-                      alt={`${t.contact.profileAlt}: ${ctx.label}`}
-                      label={ctx.label.toUpperCase()}
-                      className="w-full"
-                      maxHeight="70vh"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="label-tech">PAGER ID / A490 3880</span>
-                <span className="label-tech" style={{ color: ctx.color }}>
-                  {ctx.label.toUpperCase()}
-                </span>
-              </div>
-            </div>
+        <div
+          aria-label={t.contact.tablistAria}
+          className="mt-14 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-20 md:grid md:grid-cols-4 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
+        >
+          {contexts.map((context, index) => (
+            <ProfileCard key={context.key} context={context} index={index} labels={t.contact} />
+          ))}
+        </div>
+
+        <Rise className="mt-10 max-w-[62ch] md:mt-14">
+          <p className="lead">{t.contact.summary}</p>
+        </Rise>
+      </div>
+    </Section>
+  );
+}
+
+function ProfileCard({
+  context,
+  index,
+  labels,
+}: {
+  context: { key: string; label: string; access: string; rules: string; color: string; media: string };
+  index: number;
+  labels: ReturnType<typeof useT>["contact"];
+}) {
+  return (
+    <Rise
+      delay={index * 0.07}
+      className="group relative flex min-h-[34rem] min-w-[84vw] snap-start flex-col overflow-hidden bg-[color:var(--color-background)] p-5 transition-transform duration-300 hover:-translate-y-1 md:min-w-0 md:p-6"
+      style={{ borderTop: `2px solid ${context.color}` }}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <span className="label-tech">{String(index + 1).padStart(2, "0")} / 04</span>
+        <span className="label-tech" style={{ color: context.color }}>{context.label.toUpperCase()}</span>
+      </div>
+
+      <MediaSlot
+        name={context.media}
+        alt={`${labels.profileAlt}: ${context.label}`}
+        label={context.label.toUpperCase()}
+        className="mt-7 h-[17rem] w-full [&>div:first-child]:opacity-0"
+      />
+
+      <div className="mt-auto border-t border-[color:var(--color-hairline)] pt-5">
+        <h3 className="text-[clamp(1.7rem,2.4vw,2.25rem)] font-bold uppercase leading-[.95] tracking-[-0.045em]">
+          {context.label}
+        </h3>
+        <div className="mt-5 grid grid-cols-2 gap-4 text-sm leading-snug">
+          <div>
+            <span className="label-tech">{labels.accessLabel}</span>
+            <p className="mt-2">{context.access}</p>
           </div>
-
-          <div className="col-span-6 md:col-span-6 md:col-start-7">
-            <div role="tablist" aria-label={t.contact.tablistAria} className="rule-t">
-              {contexts.map((c, i) => {
-                const on = i === active;
-                return (
-                  <button
-                    key={c.key}
-                    role="tab"
-                    aria-selected={on}
-                    id={`ctx-tab-${c.key}`}
-                    aria-controls="ctx-panel"
-                    onClick={() => setActive(i)}
-                    className="focus-instrument rule-b group flex w-full items-center justify-between gap-4 py-5 text-left transition-colors duration-200 hover:bg-[color:var(--color-accent)]"
-                  >
-                    <span className="flex min-w-0 items-center gap-4">
-                      <span
-                        aria-hidden
-                        className="h-2 w-2 shrink-0 transition-opacity duration-200"
-                        style={{ backgroundColor: c.color, opacity: on ? 1 : 0.3 }}
-                      />
-                      <span
-                        className={`truncate text-[clamp(1.15rem,2.2vw,1.8rem)] tracking-[-0.03em] transition-opacity duration-200 ${
-                          on ? "font-bold opacity-100" : "font-medium opacity-45"
-                        }`}
-                      >
-                        {c.label}
-                      </span>
-                    </span>
-                    <span className="label-tech shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div
-              id="ctx-panel"
-              role="tabpanel"
-              aria-labelledby={`ctx-tab-${ctx.key}`}
-              className="mt-8 grid grid-cols-2 gap-px bg-[color:var(--color-hairline)]"
-            >
-              <div className="bg-[color:var(--color-background)] p-5">
-                <span className="label-tech">{t.contact.accessLabel}</span>
-                <p className="mt-4 text-base tracking-[-0.02em]">{ctx.access}</p>
-              </div>
-              <div className="bg-[color:var(--color-background)] p-5">
-                <span className="label-tech">{t.contact.rulesLabel}</span>
-                <p className="mt-4 text-base tracking-[-0.02em]">{ctx.rules}</p>
-              </div>
-            </div>
-
-            <p className="lead mt-8 max-w-[48ch]">{t.contact.summary}</p>
+          <div>
+            <span className="label-tech">{labels.rulesLabel}</span>
+            <p className="mt-2">{context.rules}</p>
           </div>
         </div>
       </div>
-    </Section>
+    </Rise>
   );
 }
