@@ -1,5 +1,5 @@
 import { motion, useInView, useReducedMotion } from "motion/react";
-import { useRef, type ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 
 /** Typographic mask reveal: the line is clipped upward, never a generic fade. */
 export function MaskLine({
@@ -76,13 +76,15 @@ export function ChapterHead({
   index,
   title,
   meta,
+  className = "",
 }: {
   index: string;
   title: string;
   meta?: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="shell">
+    <div className={`shell ${className}`}>
       <DrawnRule />
       <div className="grid-12 py-4">
         <span className="label-tech col-span-2 md:col-span-2">{index}</span>
@@ -102,17 +104,19 @@ export function Section({
   children,
   className = "",
   light = false,
+  style,
 }: {
   id: string;
   children: ReactNode;
   className?: string;
   light?: boolean;
+  style?: CSSProperties;
 }) {
   return (
     <section
       id={id}
       className={`${light ? "chapter-light" : ""} relative ${className}`}
-      style={{ scrollMarginTop: "5rem" }}
+      style={{ scrollMarginTop: "5rem", ...style }}
     >
       {children}
     </section>

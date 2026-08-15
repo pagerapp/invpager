@@ -46,6 +46,7 @@ export const MEDIA = {
   "Multiprofiles_mobile_img_1.png": { url: "media/Multiprofiles_mobile_img_1.png", width: 941, height: 1672, ratio: "941 / 1672" },
   "Multiprofiles_mobile_img_2.png": { url: "media/Multiprofiles_mobile_img_2.png", width: 941, height: 1672, ratio: "941 / 1672" },
   "Multiprofiles_mobile_img_3.png": { url: "media/Multiprofiles_mobile_img_3.png", width: 941, height: 1672, ratio: "941 / 1672" },
+  "pager_handwritten.jpg": { url: "media/pager_handwritten.jpg", width: 1672, height: 941, ratio: "1672 / 941" },
   "hero_dsktp_001.png": { url: "media/hero_dsktp_001.png", width: 1672, height: 941, ratio: "1672 / 941" },
   "hero_dsktp_003.png": { url: "media/hero_dsktp_003.png", width: 1122, height: 1402, ratio: "1122 / 1402" },
   "hero_mob_001.png": { url: "media/hero_mob_001.png", width: 745, height: 1180, ratio: "745 / 1180" },
