@@ -4,7 +4,6 @@ import { useT } from "@/i18n";
 import type { CSSProperties } from "react";
 
 const STATES = ["done", "core", "next"] as const;
-const SCREENS = ["hero_dsktp_003.png", "hero_mob_001.png", "pgr_scr_002.jpg", "pgr_scr_003.jpg"];
 
 export function ProductStatus() {
   const t = useT();
@@ -119,14 +118,6 @@ export function ProductStatus() {
               edgeFade
               className="mt-6 w-full"
             />
-            <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-              {SCREENS.map((m, i) => (
-                <div key={m} className="flex flex-col">
-                  <span className="label-tech mb-3">SCR {String(i + 1).padStart(2, "0")}</span>
-                  <MediaSlot name={m} alt={`${t.product.altScreen} ${i + 1}`} className="w-full" />
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="mt-16 grid grid-cols-1 gap-px border-y border-[color:var(--color-hairline)] bg-[color:var(--color-hairline)] md:mt-24 md:grid-cols-2">
