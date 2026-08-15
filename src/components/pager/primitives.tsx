@@ -79,7 +79,7 @@ export function ChapterHead({
 }: {
   index: string;
   title: string;
-  meta?: string;
+  meta?: ReactNode;
 }) {
   return (
     <div className="shell">

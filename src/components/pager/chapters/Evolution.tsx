@@ -17,10 +17,17 @@ type Stage = { name: string; role: string; prompt: string; q: string; body: stri
 export function Evolution() {
   const t = useT();
   const stages = t.evolution.stages;
+  const [metaFrom, metaTo] = t.evolution.head.meta.split(" / ");
+  const evolutionMeta = metaTo ? (
+    <span className="flex justify-end whitespace-nowrap">
+      <span>{metaFrom} /</span>
+      <span className="ml-1 md:ml-[clamp(2.5rem,8vw,11rem)]">{metaTo}</span>
+    </span>
+  ) : t.evolution.head.meta;
 
   return (
     <Section id="chapter-02" className="pt-[var(--chapter-space)]">
-      <ChapterHead index="02" title={t.evolution.head.title} meta={t.evolution.head.meta} />
+      <ChapterHead index="02" title={t.evolution.head.title} meta={evolutionMeta} />
 
       <div className="shell mt-14 md:mt-20">
         <div className="grid-12 items-start gap-y-8 md:gap-x-12">
@@ -32,7 +39,9 @@ export function Evolution() {
             ))}
           </h2>
           <Rise className="col-span-6 pt-1 md:col-span-5">
-            <p className="lead rule-t pt-4">{t.evolution.lead}</p>
+            <div className="border-l border-[color:var(--color-hairline)] pl-5 md:pl-6">
+              <p className="lead">{t.evolution.lead}</p>
+            </div>
           </Rise>
         </div>
 
@@ -47,12 +56,22 @@ export function Evolution() {
         </div>
 
         <Rise className="mt-14 border-y border-[color:var(--color-hairline)] py-8 md:mt-20 md:grid md:grid-cols-12 md:gap-8 md:py-12">
-          <p className="font-mono text-sm font-medium uppercase tracking-[0.16em] text-[color:var(--color-foreground)] md:col-span-3 md:text-base">
-            {t.evolution.whyNow.title}
-          </p>
-          <p className="mt-5 max-w-[68ch] text-lg leading-relaxed text-[color:var(--color-foreground)] md:col-span-8 md:col-start-5 md:mt-0 md:text-xl">
-            {t.evolution.whyNow.body}
-          </p>
+          <div className="md:col-span-3">
+            <p className="font-mono text-sm font-medium uppercase tracking-[0.16em] text-[color:var(--color-foreground)] md:text-base">
+              {t.evolution.whyNow.title}
+            </p>
+          </div>
+          <div className="mt-5 flex items-center gap-5 md:col-span-8 md:col-start-5 md:mt-0 md:gap-7">
+            <img
+              src="media/why_now.png"
+              alt=""
+              aria-hidden="true"
+              className="h-24 w-24 shrink-0 object-contain md:h-28 md:w-28"
+            />
+            <p className="max-w-[60ch] text-lg leading-relaxed text-[color:var(--color-foreground)] md:text-xl">
+              {t.evolution.whyNow.body}
+            </p>
+          </div>
         </Rise>
       </div>
 
