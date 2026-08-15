@@ -2,14 +2,13 @@ import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 import { useT } from "@/i18n";
 
-const IDS = ["A490 3880", "B117 4021", "C905 7714"];
 const STEP_MEDIA = ["find_001.png", "choose_profile_001.png", "secure_001.png"] as const;
 
 export function PagerId() {
   const t = useT();
 
   return (
-    <Section id="chapter-03" className="py-[var(--chapter-space)]">
+    <Section id="chapter-03">
       <ChapterHead index="03" title={t.pagerId.head.title} meta={t.pagerId.head.meta} />
 
       <div className="shell mt-16 md:mt-24">
@@ -49,45 +48,13 @@ export function PagerId() {
           </div>
         </div>
 
-        {/* The supplied ID object carries the chapter */}
-        <div className="mt-16 md:mt-24">
-          <p className="label-tech rule-t pt-4">PAGER ID / OBJECT</p>
+        <div className="mt-8 md:mt-12">
           <MediaSlot
             name="pager_id_variation_002.jpg"
             alt="PAGER ID"
-            label="PAGER ID / OBJECT"
-            className="mt-6 w-full"
+            label="PAGER ID"
+            className="w-full"
           />
-        </div>
-
-        <div className="mt-16 grid-12 gap-y-6 md:mt-24">
-          <div className="col-span-6 md:col-span-8">
-            <div className="rule-t rule-b divide-y divide-[color:var(--color-hairline)]">
-              {IDS.map((id, i) => (
-                <Rise key={id} delay={i * 0.06}>
-                  <div className="group flex items-center justify-between gap-4 py-6 transition-colors duration-200 hover:bg-[color:var(--color-accent)]">
-                    <div className="flex min-w-0 items-center gap-5">
-                      <span
-                        aria-hidden
-                        className="h-8 w-px shrink-0"
-                        style={{
-                          backgroundColor:
-                            i === 0 ? "var(--personal)" : i === 1 ? "var(--work)" : "var(--guest)",
-                        }}
-                      />
-                      <span className="truncate font-mono text-[clamp(1.5rem,4vw,2.75rem)] font-semibold tracking-[0.08em]">
-                        {id}
-                      </span>
-                    </div>
-                    <span className="label-tech shrink-0 transition-transform duration-200 group-hover:-translate-x-1">
-                      {t.pagerId.request}
-                    </span>
-                  </div>
-                </Rise>
-              ))}
-            </div>
-            <p className="label-tech mt-4">{t.pagerId.idFormat}</p>
-          </div>
         </div>
 
         <Rise className="mt-16">

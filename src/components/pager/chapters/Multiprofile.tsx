@@ -23,7 +23,7 @@ export function Multiprofile() {
           </h2>
         </div>
 
-        <Rise className="mt-12 border-y border-[color:var(--color-hairline)] py-4 md:mt-16 md:py-6">
+        <Rise className="mt-6 md:mt-8">
           <MediaSlot
             name="Multiprofile_img_hero.jpg"
             alt={t.multiprofile.heroAlt}

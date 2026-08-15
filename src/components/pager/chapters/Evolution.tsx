@@ -75,7 +75,6 @@ export function Evolution() {
         </Rise>
       </div>
 
-      <div className="pb-[var(--chapter-space)]" />
     </Section>
   );
 }
