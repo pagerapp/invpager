@@ -1,8 +1,10 @@
 import { MediaSlot } from "../MediaSlot";
+import { ContactContext } from "./ContactContext";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 import { useT } from "@/i18n";
+import { useEffect, useRef, useState } from "react";
 
-const MEDIA = ["Multiprofile_img_01.jpg", "Multiprofile_img_02.jpg", "Multiprofile_img_03.jpg"];
+const MEDIA = ["multiprofile_icon_001.png", "multiprofile_icon_002.png", "multiprofile_icon_003.png"];
 
 /** MULTIPROFILE — an editorial cover and three product proofs, without pinning scroll. */
 export function Multiprofile() {
@@ -28,37 +30,144 @@ export function Multiprofile() {
             name="Multiprofile_img_hero.jpg"
             alt={t.multiprofile.heroAlt}
             priority
+            edgeFade
             className="w-full [&>div:first-child]:opacity-0"
           />
-        </Rise>
-
-        <Rise className="mx-auto mt-8 max-w-[62ch] text-center md:mt-10">
-          <p className="lead">{t.multiprofile.body}</p>
         </Rise>
 
         <div
           aria-label={t.multiprofile.head.title}
           role="list"
-          className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-8 md:grid md:grid-cols-3 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
+          className="mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-8 md:grid md:grid-cols-3 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
         >
           {t.multiprofile.cards.map((card, index) => (
             <ProfileCard key={card.title} card={card} media={MEDIA[index]!} index={index} />
           ))}
         </div>
 
-        <Rise className="mt-14 rule-t pt-4 md:mt-20">
-          <p className="label-tech">{t.multiprofile.quote}</p>
-          <div className="mt-6">
-            <MaskLine as="div" className="display-lg">
-              {t.multiprofile.outro[0]}
-            </MaskLine>
-            <MaskLine as="div" delay={0.08} className="display-lg text-[color:var(--personal)]">
-              {t.multiprofile.outro[1]}
-            </MaskLine>
-          </div>
+        <ScrubLead text={t.multiprofile.body} locale={t.code} />
+
+        <ContactContext />
+
+        <Rise className="mx-auto mt-16 max-w-[62ch] text-center md:mt-24">
+          <MaskLine as="div" className="display-lg md:whitespace-nowrap">
+            <span>{t.multiprofile.outro[0]}</span>{" "}<span className="text-[#f6c86f]">{t.multiprofile.outro[1]}</span>
+          </MaskLine>
         </Rise>
       </div>
     </Section>
+  );
+}
+
+type ScrubToken = { text: string; highlight: boolean; spaced: boolean };
+
+const HIGHLIGHT_WORDS: Record<string, string[]> = {
+  ru: ["мультипрофиль", "создавать", "пространства", "одного", "аккаунта", "контроль", "взаимодействие"],
+  en: ["multiprofile", "create", "spaces", "single", "account", "control", "interaction"],
+};
+const HIGHLIGHT_PHRASES_ZH = ["多重身份", "建立", "不同的沟通空间", "同一个账号", "掌控", "每一次互动"];
+
+function scrubTokens(text: string, locale: string): ScrubToken[] {
+  if (locale !== "zh") {
+    const highlighted = new Set(HIGHLIGHT_WORDS[locale] ?? HIGHLIGHT_WORDS.en);
+    return text.split(/\s+/).filter(Boolean).map((word) => ({
+      text: word,
+      highlight: highlighted.has(word.toLocaleLowerCase().replace(/[^\p{L}]/gu, "")),
+      spaced: true,
+    }));
+  }
+
+  const tokens: ScrubToken[] = [];
+  let rest = text;
+  while (rest) {
+    const match = HIGHLIGHT_PHRASES_ZH
+      .map((phrase) => ({ phrase, index: rest.indexOf(phrase) }))
+      .filter(({ index }) => index >= 0)
+      .sort((a, b) => a.index - b.index)[0];
+    if (!match) {
+      tokens.push(...Array.from(rest).map((character) => ({ text: character, highlight: false, spaced: false })));
+      break;
+    }
+    if (match.index > 0) {
+      tokens.push(...Array.from(rest.slice(0, match.index)).map((character) => ({ text: character, highlight: false, spaced: false })));
+    }
+    tokens.push({ text: match.phrase, highlight: true, spaced: false });
+    rest = rest.slice(match.index + match.phrase.length);
+  }
+  return tokens;
+}
+
+function ScrubLead({ text, locale }: { text: string; locale: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+  const words = scrubTokens(text, locale);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      const element = ref.current;
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      const start = window.innerHeight * 0.86;
+      const end = window.innerHeight * 0.28;
+      const distance = start - end + rect.height;
+      const next = Math.min(1, Math.max(0, (start - rect.top) / distance));
+      setProgress((current) => Math.abs(current - next) > 0.002 ? next : current);
+    };
+    const tick = () => {
+      update();
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className="mt-8 flex min-h-[24vh] items-center justify-center md:mt-10 md:min-h-[32vh]"
+    >
+      <p className="lead mx-auto max-w-[43ch] text-center text-[1.5rem] font-bold leading-[1.32] tracking-[-0.03em] md:text-[clamp(2rem,2.45vw,2.7rem)]">
+        {words.map((word, index) => (
+          <ScrubWord
+            key={`${word.text}-${index}`}
+            word={word}
+            index={index}
+            total={words.length}
+            progress={progress}
+          />
+        ))}
+      </p>
+    </div>
+  );
+}
+
+function ScrubWord({
+  word,
+  index,
+  total,
+  progress,
+}: {
+  word: ScrubToken;
+  index: number;
+  total: number;
+  progress: number;
+}) {
+  const interval = 0.82 / total;
+  const localProgress = Math.min(1, Math.max(0, (progress - index * interval) / (interval * 2.8)));
+  const opacity = 0.2 + localProgress * 0.8;
+  const y = (1 - localProgress) * 7;
+
+  return (
+    <span
+      className="inline-block"
+      style={{ opacity, transform: `translateY(${y}px)`, color: word.highlight ? "#f6c86f" : "#f3efe8" }}
+    >
+      {word.text}{word.spaced ? "\u00a0" : ""}
+    </span>
   );
 }
 
@@ -74,24 +183,23 @@ function ProfileCard({
   return (
     <Rise
       delay={index * 0.08}
-      className="group min-w-[86vw] snap-start border border-[color:var(--color-hairline)] bg-[color:var(--color-background)] p-5 md:min-w-0 md:border-0 md:p-7"
+      className="group flex min-h-[8.5rem] min-w-[86vw] snap-start items-center gap-4 border border-[color:var(--color-hairline)] bg-[color:var(--color-background)] p-4 md:min-w-0 md:border-0 md:p-5"
     >
-      <span className="label-tech">{String(index + 1).padStart(2, "0")} / 03</span>
-      <div className="mt-6 grid grid-cols-[42%_minmax(0,1fr)] items-center gap-5 md:grid-cols-1 md:gap-0">
-        <MediaSlot
-          name={media}
-          alt={card.title}
-          label={card.title}
-          className="w-full transition-transform duration-500 ease-out group-hover:scale-[1.025] [&>div:first-child]:opacity-0"
-        />
-        <div className="min-w-0 border-l border-[color:var(--color-hairline)] pl-5 md:mt-7 md:border-l-0 md:border-t md:pl-0 md:pt-5">
-          <h3 className="text-xl font-semibold uppercase leading-[1.04] tracking-[-0.035em] md:text-2xl">
-            {card.title}
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed text-[color:var(--color-muted-foreground)] md:text-[15px]">
-            {card.body}
-          </p>
-        </div>
+      <MediaSlot
+        name={media}
+        alt={card.title}
+        label={card.title}
+        maxHeight="5rem"
+        className="w-20 shrink-0 transition-transform duration-500 ease-out group-hover:scale-[1.04] [&>div:first-child]:opacity-0"
+      />
+      <div className="min-w-0 border-l border-[color:var(--color-hairline)] pl-4">
+        <span className="label-tech">{String(index + 1).padStart(2, "0")} / 03</span>
+        <h3 className="mt-2 text-base font-semibold uppercase leading-[1.04] tracking-[-0.03em] md:text-lg">
+          {card.title}
+        </h3>
+        <p className="mt-2 text-sm leading-snug text-[color:var(--color-muted-foreground)]">
+          {card.body}
+        </p>
       </div>
     </Rise>
   );

@@ -53,6 +53,7 @@ export function PagerId() {
             name="pager_id_variation_002.jpg"
             alt="PAGER ID"
             label="PAGER ID"
+            edgeFade
             className="w-full"
           />
         </div>

@@ -5,7 +5,6 @@ import { Telemetry } from "@/components/pager/Telemetry";
 import { Evolution } from "@/components/pager/chapters/Evolution";
 import { PagerId } from "@/components/pager/chapters/PagerId";
 import { Multiprofile } from "@/components/pager/chapters/Multiprofile";
-import { ContactContext } from "@/components/pager/chapters/ContactContext";
 import { ProductStatus } from "@/components/pager/chapters/ProductStatus";
 import { Business } from "@/components/pager/chapters/Business";
 import { FinalCta } from "@/components/pager/chapters/FinalCta";
@@ -51,7 +50,6 @@ function Page() {
         <Evolution />
         <PagerId />
         <Multiprofile />
-        <ContactContext />
         <ProductStatus />
         <Business />
         <FinalCta />

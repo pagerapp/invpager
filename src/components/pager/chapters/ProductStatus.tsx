@@ -44,6 +44,7 @@ export function ProductStatus() {
             name="hero_dsktp_001.png"
             alt={t.product.altDesktop}
             label="DESKTOP 001"
+            edgeFade
             className="mt-6 w-full"
           />
           <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">

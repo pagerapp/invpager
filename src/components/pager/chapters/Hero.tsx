@@ -99,7 +99,7 @@ type SceneCopy = {
 const SCENE_COPY: Record<Locale, SceneCopy> = {
   ru: {
     profiles: "Профили общения", profilesLead: "Выберите профиль общения с этим человеком.",
-    personal: "Личные", work: "Рабочие", guest: "Гостевые", alter: "Альтер эго",
+    personal: "ЛИЧНЫЙ", work: "РАБОТА", guest: "ГОСТИ", alter: "АЛЬТЕР ЭГО",
     permissions: "Что разрешить", text: "Текстовые сообщения", audio: "Аудио сообщения",
     video: "Видео сообщения", files: "Отправка файлов", anna: "Анна", guestTitle: "Гостевой", temporary: "Временный чат",
   },

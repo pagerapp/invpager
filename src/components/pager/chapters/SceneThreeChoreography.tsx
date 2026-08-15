@@ -20,7 +20,7 @@ type Copy = {
 const COPY: Record<Locale, Copy> = {
   ru: {
     profiles: "ПРОФИЛИ ОБЩЕНИЯ", profilesLead: "Выберите профиль общения с этим человеком.",
-    personal: "Личные", work: "Рабочие", guest: "Гостевые", alter: "Альтер эго",
+    personal: "ЛИЧНЫЙ", work: "РАБОТА", guest: "ГОСТИ", alter: "АЛЬТЕР ЭГО",
     permissions: "ЧТО РАЗРЕШИТЬ", text: "Текстовые сообщения", audio: "Аудио сообщения", video: "Видео сообщения", files: "Отправка файлов", calls: "Аудио звонки", videoCalls: "Видео звонки",
     access24: "Доступ на 24 часа", access24Lead: "Чат закроется автоматически.", anna: "Анна", temporary: "Временный чат", expires: "До 24 июл., 15:56",
     guestTitle: "ГОСТЕВОЙ", guestName: "Оскар", guestBody: "Буду рад общению, но прошу уважать мою приватность.",

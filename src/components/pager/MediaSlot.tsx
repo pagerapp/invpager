@@ -17,6 +17,8 @@ export function MediaSlot({
   className = "",
   priority = false,
   maxHeight,
+  lockHeight = false,
+  edgeFade = false,
   children,
 }: {
   name: string;
@@ -30,6 +32,9 @@ export function MediaSlot({
   priority?: boolean;
   /** Optional cap, e.g. "58vh". Scales the entire image down — never crops. */
   maxHeight?: string;
+  lockHeight?: boolean;
+  /** Softly blends a large standalone image into a black page background. */
+  edgeFade?: boolean;
   children?: ReactNode;
 }) {
   const entry = media(name);
@@ -51,9 +56,10 @@ export function MediaSlot({
     : undefined;
 
   const slotStyle = {
-    aspectRatio: aspect,
+    ...(lockHeight ? {} : { aspectRatio: aspect }),
     maxHeight,
     maxWidth,
+    ...(edgeFade ? { overflow: "visible" } : {}),
     ...(mobileAspect ? { "--media-mobile-ratio": mobileAspect } : {}),
     ...(mobileMaxWidth ? { "--media-mobile-max-width": mobileMaxWidth } : {}),
   } as CSSProperties;
@@ -66,6 +72,13 @@ export function MediaSlot({
       {...(mobileEntry ? { "data-mobile-media": mobileName } : {})}
     >
       <Placeholder name={name} label={label} />
+      {edgeFade && !failed ? (
+        <img
+          aria-hidden
+          src={src}
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full scale-[1.1] object-contain opacity-70 blur-3xl"
+        />
+      ) : null}
       {!failed ? (
         <picture className="absolute inset-0 z-10 block">
           {mobileEntry && mobileSrc ? <source media="(max-width: 767px)" srcSet={mobileSrc} /> : null}
