@@ -62,7 +62,6 @@ export const en: Dict = {
         { name: "Chats, voice, video", role: "03 / CHATS, VOICE, VIDEO", prompt: "How do you communicate in real time?", q: "Instant communication.", body: "Messengers brought different modes of communication into one space and made constant connection habitual. The key change: communication became continuous." },
         { name: "Multiprofile", role: "04 / MULTIPROFILE", prompt: "How do you choose the format of a connection?", q: "Controlled communication.", body: "PAGER adds a new level: different profiles, personal rules, and control over how every interaction unfolds. The key change: communication becomes personal." },
       ],
-      progression: ["E-mail", "SMS", "Chats", "Multiprofile"],
       whyNow: { title: "Why now?", body: "One profile no longer reflects modern life. Digital communication once solved the problem of sending messages. Today, one person exists in several contexts at once: work, family, friends, communities, and new connections. Yet the digital representation remains one." },
   },
   pagerId: {

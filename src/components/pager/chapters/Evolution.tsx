@@ -1,9 +1,15 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import { MediaSlot } from "../MediaSlot";
 import { ChapterHead, MaskLine, Rise, Section } from "../primitives";
 import { useT } from "@/i18n";
 
 const MEDIA = ["Evo_1.png", "Evo_2.png", "Evo_3.png", "Evo_4.png"];
+/** The fourth stage is PAGER itself, not another chapter of prior art — it
+ * carries the same accent used for it elsewhere on the page (Hero's guest
+ * highlight, Multiprofile's outro word). */
+const PAGER_INDEX = 3;
+const ACCENT = "#f6c86f";
 
 type Stage = { name: string; role: string; prompt: string; q: string; body: string };
 
@@ -11,8 +17,10 @@ type Stage = { name: string; role: string; prompt: string; q: string; body: stri
  * EVOLUTION — an editorial index, not a story scroll.
  *
  * The four transparent illustrations are compact product signals. Desktop
- * presents the full system as a quiet 2×2 grid; mobile keeps the same cards in
- * a native horizontal snap carousel without taking control of page scrolling.
+ * presents the full system as a quiet 2×2 grid. Mobile can't fit that same
+ * full-detail grid without every tile growing tall, so it gets its own
+ * compact tile-selector + single detail panel (see EvolutionSwitcher) —
+ * all four stages stay reachable without a swipe carousel.
  */
 export function Evolution() {
   const t = useT();
@@ -45,14 +53,17 @@ export function Evolution() {
           </Rise>
         </div>
 
-        <div
-          aria-label={t.evolution.head.title}
-          role="list"
-          className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-16 md:grid md:grid-cols-2 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
-        >
-          {stages.map((stage, i) => (
-            <StageCard key={stage.name} stage={stage} media={MEDIA[i]!} index={i} />
-          ))}
+        <div className="mt-12 md:mt-16">
+          <div
+            aria-label={t.evolution.head.title}
+            role="list"
+            className="hidden md:grid md:grid-cols-2 md:gap-px md:bg-[color:var(--color-hairline)]"
+          >
+            {stages.map((stage, i) => (
+              <StageCard key={stage.name} stage={stage} media={MEDIA[i]!} index={i} />
+            ))}
+          </div>
+          <EvolutionSwitcher stages={stages} title={t.evolution.head.title} />
         </div>
 
         <Rise className="mt-14 border-y border-[color:var(--color-hairline)] py-8 md:mt-20 md:grid md:grid-cols-12 md:gap-8 md:py-12">
@@ -80,24 +91,41 @@ export function Evolution() {
 }
 
 function StageCard({ stage, media, index }: { stage: Stage; media: string; index: number }) {
+  const isPager = index === PAGER_INDEX;
   return (
     <motion.article
       role="listitem"
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex min-h-[25rem] min-w-[88vw] snap-start flex-col overflow-hidden border border-[color:var(--color-hairline)] bg-[color:var(--color-background)] px-5 py-5 md:min-h-[31rem] md:min-w-0 md:border-0 md:px-8 md:py-7"
+      className="group relative flex min-h-[31rem] flex-col overflow-hidden bg-[color:var(--color-background)] px-8 py-7"
+      style={isPager ? { boxShadow: `inset 0 0 0 2px ${ACCENT}` } : undefined}
     >
       <div className="flex items-start justify-between gap-4">
-        <span className="label-tech transition-colors duration-300 group-hover:text-[color:var(--color-foreground)]">
+        <span
+          className="label-tech transition-colors duration-300 group-hover:text-[color:var(--color-foreground)]"
+          style={isPager ? { color: ACCENT } : undefined}
+        >
           {stage.role}
         </span>
-        <span className="font-mono text-[10px] tracking-[0.16em] text-[color:var(--color-muted-foreground)]">
-          {String(index + 1).padStart(2, "0")} / 04
-        </span>
+        {isPager ? (
+          <span
+            className="border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em]"
+            style={{ borderColor: ACCENT, color: ACCENT }}
+          >
+            PAGER
+          </span>
+        ) : (
+          <span className="font-mono text-[10px] tracking-[0.16em] text-[color:var(--color-muted-foreground)]">
+            {String(index + 1).padStart(2, "0")} / 04
+          </span>
+        )}
       </div>
 
-      <div className="grid flex-1 grid-cols-[34%_minmax(0,1fr)] items-center gap-5 py-6 md:grid-cols-[38%_minmax(0,1fr)] md:gap-8 md:py-9">
-        <div className="flex min-w-0 items-center justify-center">
+      <div className="grid flex-1 grid-cols-[38%_minmax(0,1fr)] items-center gap-8 py-9">
+        <div
+          className="flex min-w-0 items-center justify-center"
+          style={isPager ? { filter: `drop-shadow(0 0 20px ${ACCENT}66)` } : undefined}
+        >
           <MediaSlot
             name={media}
             alt={stage.name}
@@ -108,19 +136,105 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
           />
         </div>
 
-        <div className="min-w-0 border-l border-[color:var(--color-hairline)] pl-5 md:pl-8">
+        <div className="min-w-0 border-l pl-8" style={{ borderColor: isPager ? ACCENT : "var(--color-hairline)" }}>
           <p className="label-tech mb-4 text-[color:var(--color-foreground)]">{stage.prompt}</p>
-          <h3 className="text-xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] md:text-3xl">
+          <h3 className="text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em]">
             {stage.name}
           </h3>
-          <p className="mt-4 text-sm font-medium leading-snug text-[color:var(--color-foreground)] md:text-base">
+          <p className="mt-4 text-base font-medium leading-snug text-[color:var(--color-foreground)]">
             {stage.q}
           </p>
-          <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-muted-foreground)] md:text-[15px]">
+          <p className="mt-4 text-[15px] leading-relaxed text-[color:var(--color-muted-foreground)]">
             {stage.body}
           </p>
         </div>
       </div>
     </motion.article>
+  );
+}
+
+/**
+ * Mobile-only replacement for the swipe carousel. A compact 2×2 tile grid
+ * (icon + role + name, fixed short height) acts as a selector; the full
+ * prompt/title/q/body for whichever stage is active renders once, below —
+ * so the grid itself never grows tall no matter how long a stage's body
+ * text is, and all four stages stay reachable without horizontal paging.
+ */
+function EvolutionSwitcher({ stages, title }: { stages: Stage[]; title: string }) {
+  const [active, setActive] = useState(0);
+  const stage = stages[active]!;
+  const activeIsPager = active === PAGER_INDEX;
+
+  return (
+    <div className="md:hidden">
+      <div role="tablist" aria-label={title} className="grid grid-cols-2 gap-px bg-[color:var(--color-hairline)]">
+        {stages.map((s, i) => {
+          const isPager = i === PAGER_INDEX;
+          const isActive = active === i;
+          return (
+            <button
+              key={s.name}
+              type="button"
+              role="tab"
+              id={`evo-tab-${i}`}
+              aria-selected={isActive}
+              aria-controls="evo-panel"
+              onClick={() => setActive(i)}
+              className="relative flex flex-col items-center gap-2 overflow-hidden bg-[color:var(--color-background)] px-3 py-5 text-center transition-colors duration-200"
+              style={isActive ? { backgroundColor: "color-mix(in srgb, var(--color-foreground) 5%, transparent)" } : undefined}
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute left-2 top-1 select-none text-[2.75rem] font-black leading-none text-[color:var(--color-hairline)]"
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div
+                className="relative flex w-full max-w-[3rem] items-center justify-center"
+                style={isPager ? { filter: `drop-shadow(0 0 14px ${ACCENT}66)` } : undefined}
+              >
+                <MediaSlot
+                  name={MEDIA[i]!}
+                  alt=""
+                  label={s.role}
+                  maxHeight="3rem"
+                  className="w-full [&>div:first-child]:opacity-0"
+                />
+              </div>
+              <span
+                className="relative text-[13px] font-semibold uppercase leading-tight"
+                style={{ color: isPager ? ACCENT : undefined }}
+              >
+                {s.name}
+              </span>
+              <span className="label-tech relative normal-case text-[11px] leading-snug text-[color:var(--color-muted-foreground)]">
+                {s.prompt}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        id="evo-panel"
+        role="tabpanel"
+        aria-labelledby={`evo-tab-${active}`}
+        className="mt-6 border-l pl-5"
+        style={{ borderColor: activeIsPager ? ACCENT : "var(--color-hairline)" }}
+      >
+        <p className="label-tech mb-3 text-[color:var(--color-foreground)]">{stage.prompt}</p>
+        <h3 className="text-2xl font-semibold uppercase leading-[1.05] tracking-[-0.03em]">{stage.name}</h3>
+        <p className="mt-3 text-sm font-medium leading-snug text-[color:var(--color-foreground)]">{stage.q}</p>
+        <p className="mt-3 text-sm leading-relaxed text-[color:var(--color-muted-foreground)]">{stage.body}</p>
+        {activeIsPager ? (
+          <span
+            className="mt-4 inline-block border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em]"
+            style={{ borderColor: ACCENT, color: ACCENT }}
+          >
+            PAGER
+          </span>
+        ) : null}
+      </div>
+    </div>
   );
 }
