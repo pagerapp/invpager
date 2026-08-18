@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, type MotionValue } from "motion/react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { MediaSlot } from "./MediaSlot";
 import { rng } from "@/lib/scroll-range";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -40,7 +40,8 @@ export type StoryState = {
   color?: string;
   footer?: ReactNode;
   /** Dedicated layers staged at the end of a held final frame. */
-  finaleLaunch?: ReactNode;
+  /** [title line, subtitle line] — revealed one after another, left-aligned. */
+  finaleLaunch?: [string, string];
   finaleCta?: ReactNode;
   /**
    * Transition character of the scene:
@@ -121,10 +122,12 @@ export function StoryScroll({
     };
   }, [progress, reduced, states.length]);
 
+  const stageRef = useRef<HTMLDivElement>(null);
+
   return (
     <div ref={ref} className={`relative ${className}`} style={{ height: `${heightSvh}svh` }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <div className="relative h-[100svh]">
+        <div ref={stageRef} className="relative h-[100svh]">
           <Rail states={states} progress={progress} holdFinal={holdFinal} />
           {states.map((s, i) => (
             <Panel
@@ -139,6 +142,7 @@ export function StoryScroll({
               holdFinal={holdFinal}
               preloadMedia={preloadMedia}
               isMobile={isMobile}
+              stageRef={stageRef}
             />
           ))}
         </div>
@@ -191,6 +195,7 @@ function Panel({
   holdFinal,
   preloadMedia,
   isMobile,
+  stageRef,
 }: {
   state: StoryState;
   index: number;
@@ -202,6 +207,7 @@ function Panel({
   holdFinal: boolean;
   preloadMedia: boolean;
   isMobile: boolean;
+  stageRef: RefObject<HTMLDivElement | null>;
 }) {
   const { a, b, c, d, first, last } = windowFor(index, count);
   const isIntro = !state.media;
@@ -218,6 +224,16 @@ function Panel({
   const span = b - a || 1e-4;
   const hold = c - b || 1e-4;
   const bodyIn = [b - span * 0.1, b + hold * 0.1] as const;
+  // A scene with a card overlay (the "control" beat) lets its cards make
+  // their case, then hands off to the headline right as they recede (see
+  // SceneThreeCards' cardRecede, tuned to this same checkpoint). The key
+  // art's own blur/scale settle is pinned to the same moment — the photo
+  // resolves into focus exactly as the payoff line enters, instead of
+  // continuing to sharpen for the rest of the scene after already being
+  // upstaged by the text.
+  const hasCardOverlay = Boolean(state.mediaOverlay);
+  const textStart = hasCardOverlay ? b + hold * 0.32 : b - span * (isMobile ? 0.04 : 0.12);
+  const mediaSettleAt = hasCardOverlay ? textStart : c;
 
   const opacity = useTransform(
     progress,
@@ -244,13 +260,13 @@ function Panel({
     ...(lateMedia
       ? rng([lateMediaStart, c], [0, 1])
       : gradualMedia
-        ? rng([a, b, c, d], [0.18, 0.38, 1, 1])
+        ? rng([a, b, mediaSettleAt, d], [0.18, 0.38, 1, 1])
       : rng([a, b, c, d], heldFinal ? [0, 1, 1, 1] : [0, 1, 1, 0])),
   );
   const mediaFilter = useTransform(
     progress,
     ...rng(
-      [a, b, c, d],
+      gradualMedia ? [a, b, mediaSettleAt, d] : [a, b, c, d],
       lateMedia
         ? ["blur(10px) brightness(0.28)", "blur(10px) brightness(0.28)", "blur(5px) brightness(0.45)", "blur(0px) brightness(1)"]
         : gradualMedia
@@ -265,7 +281,7 @@ function Panel({
   const mediaScale = useTransform(
     progress,
     ...rng(
-      [a, b, c, d],
+      gradualMedia ? [a, b, mediaSettleAt, d] : [a, b, c, d],
       lateMedia
         ? [0.92, 0.92, 0.96, 1]
         : gradualMedia
@@ -306,9 +322,10 @@ function Panel({
   // Text has a separate, deliberate trajectory from the key art. On desktop
   // it slows across the reading zone; the supporting paragraph follows with a
   // small lag, giving the two layers a restrained magnetic relationship.
-  const textStart = b - span * (isMobile ? 0.04 : 0.12);
-  const textCruiseIn = b + hold * (isMobile ? 0.16 : 0.27);
-  const textCruiseOut = b + hold * (isMobile ? 0.58 : 0.62);
+  // (textStart itself is declared earlier — see mediaSettleAt above — since
+  // the key art's own sharpen-in now needs to land on the same checkpoint.)
+  const textCruiseIn = hasCardOverlay ? b + hold * 0.57 : b + hold * (isMobile ? 0.16 : 0.27);
+  const textCruiseOut = hasCardOverlay ? b + hold * 0.67 : b + hold * (isMobile ? 0.58 : 0.62);
   const textEnd = heldFinal ? d : c + (d - c) * 0.92;
   const headlineY = useTransform(
     progress,
@@ -343,12 +360,23 @@ function Panel({
     progress,
     ...rng([textStart, textCruiseIn, textCruiseOut, textEnd], heldFinal ? [1, 0, 0, 0] : [1, 0, 0, 1]),
   );
-  const finaleLaunchAt = b + (d - b) * 0.8;
-  const finaleCtaAt = b + (d - b) * 0.9;
-  // Supporting copy begins only after the headline has reached its reading zone.
-  const supportStart = textCruiseIn + hold * (isMobile ? 0.055 : 0.08);
-  const supportCruiseIn = supportStart + hold * (isMobile ? 0.12 : 0.16);
-  const supportCruiseOut = textCruiseOut + hold * (isMobile ? 0.025 : 0.04);
+  // The launch line reads as headline → subhead → CTA, one beat at a time —
+  // never as a single block landing at once. The card-overlay scene starts
+  // its headline later than a plain scene would (see textStart), so its
+  // launch/CTA beats are pushed later too — otherwise they'd land before the
+  // subhead has even finished its own reveal.
+  const finaleLaunchAt = hasCardOverlay ? b + (d - b) * 0.86 : b + (d - b) * 0.78;
+  const finaleLaunchLine2At = hasCardOverlay ? b + (d - b) * 0.9 : b + (d - b) * 0.85;
+  const finaleCtaAt = hasCardOverlay ? b + (d - b) * 0.94 : b + (d - b) * 0.92;
+  // Supporting copy begins only after the headline has reached its reading
+  // zone. The card-overlay scene compresses textCruiseIn→textCruiseOut into
+  // a tighter band than a plain scene has, so it gets its own explicit
+  // checkpoints here rather than the generic hold-relative deltas below,
+  // which assumed a wider gap and would otherwise land supportCruiseIn
+  // after supportCruiseOut.
+  const supportStart = hasCardOverlay ? b + hold * 0.7 : textCruiseIn + hold * (isMobile ? 0.055 : 0.08);
+  const supportCruiseIn = hasCardOverlay ? b + hold * 0.78 : supportStart + hold * (isMobile ? 0.12 : 0.16);
+  const supportCruiseOut = hasCardOverlay ? b + hold * 0.8 : textCruiseOut + hold * (isMobile ? 0.025 : 0.04);
   const supportY = useTransform(
     progress,
     ...rng(
@@ -367,8 +395,10 @@ function Panel({
       heldFinal && !isMobile ? [0, 1, 1, 1] : [0, 1, 1, 0],
     ),
   );
-  const finaleLaunchOpacity = useTransform(progress, ...rng([finaleLaunchAt, finaleLaunchAt + 0.035], [0, 1]));
-  const finaleLaunchY = useTransform(progress, ...rng([finaleLaunchAt, finaleLaunchAt + 0.035], ["18%", "0%"]));
+  const finaleLine1Opacity = useTransform(progress, ...rng([finaleLaunchAt, finaleLaunchAt + 0.035], [0, 1]));
+  const finaleLine1Y = useTransform(progress, ...rng([finaleLaunchAt, finaleLaunchAt + 0.035], ["16%", "0%"]));
+  const finaleLine2Opacity = useTransform(progress, ...rng([finaleLaunchLine2At, finaleLaunchLine2At + 0.035], [0, 1]));
+  const finaleLine2Y = useTransform(progress, ...rng([finaleLaunchLine2At, finaleLaunchLine2At + 0.035], ["16%", "0%"]));
   const finaleCtaOpacity = useTransform(progress, ...rng([finaleCtaAt, finaleCtaAt + 0.03], [0, 1]));
   const finaleCtaY = useTransform(progress, ...rng([finaleCtaAt, finaleCtaAt + 0.03], ["18%", "0%"]));
   // The poster clears only after its parts have physically left the frame.
@@ -380,6 +410,43 @@ function Panel({
   const introLeadY = useTransform(progress, ...rng([0.05, 0.085], ["0%", "-28%"]));
 
   const hasBottom = Boolean(state.body || state.footer);
+
+  // The CTA sits centered in the leftover space below the media column, not
+  // at a guessed fixed offset — that space's height depends on the media's
+  // own rendered size (min(70svh, 92vw)) plus whatever slack items-center
+  // leaves above/below it, none of which is knowable from CSS alone.
+  const mediaColumnRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const [ctaBottom, setCtaBottom] = useState<number | null>(null);
+  useEffect(() => {
+    if (!state.finaleCta) return;
+    // stageRef is attached to an ancestor rendered by the parent StoryScroll
+    // component in the same commit as this list of Panels; it is not yet
+    // guaranteed to be set the instant this effect runs, so the actual
+    // observer setup is deferred one frame, past the point every ref in the
+    // tree is attached.
+    let ro: ResizeObserver | undefined;
+    const raf = requestAnimationFrame(() => {
+      const mediaEl = mediaColumnRef.current;
+      const stageEl = stageRef.current;
+      const ctaEl = ctaRef.current;
+      if (!mediaEl || !stageEl) return;
+      const measure = () => {
+        const gap = stageEl.getBoundingClientRect().bottom - mediaEl.getBoundingClientRect().bottom;
+        const ctaHeight = ctaEl?.getBoundingClientRect().height ?? 0;
+        setCtaBottom(Math.max(0, gap / 2 - ctaHeight / 2));
+      };
+      measure();
+      ro = new ResizeObserver(measure);
+      ro.observe(mediaEl);
+      ro.observe(stageEl);
+      if (ctaEl) ro.observe(ctaEl);
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+    };
+  }, [state.finaleCta, stageRef]);
 
   if (isIntro) {
     const centered = introAlign === "center";
@@ -452,7 +519,7 @@ function Panel({
     >
       <div className="shell grid h-full grid-rows-[auto_minmax(0,1fr)_auto] pt-[calc(6rem+env(safe-area-inset-top))] pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:grid-cols-12 md:grid-rows-1 md:items-center md:gap-x-10 md:pt-24 md:pb-12">
         {/* MEDIA — the dominant anchor of the composed frame. */}
-        <div className="order-2 flex min-h-0 items-center justify-center py-3 md:order-1 md:col-span-7 md:py-0">
+        <div ref={mediaColumnRef} className="order-2 flex min-h-0 items-center justify-center py-3 md:order-1 md:col-span-7 md:py-0">
           <div className="relative w-full">
             <motion.div style={{ filter: mediaFilter, opacity: mediaOpacity, scale: mediaScale, y: mediaY }} className="relative w-full">
             <MediaSlot
@@ -493,14 +560,46 @@ function Panel({
 
         {/* COPY COLUMN — headline and supporting text read as one editorial unit. */}
         {hasBottom ? (
-          <motion.div className="relative -top-9 order-3 mt-3 text-center md:hidden" style={{ opacity: supportOpacity, y: supportY }}>
-            {state.body ? (
-              <p className="mx-auto max-w-[34ch] text-[clamp(1rem,4.5vw,1.2rem)] leading-[1.48] text-[color:var(--color-foreground)]/88">
-                <ScrubbedBody text={state.body} progress={progress} start={supportStart} end={supportCruiseIn} />
-              </p>
+          <div className="relative -top-9 order-3 mt-3 text-center md:hidden">
+            {/* Body fades out near the end on mobile to give the final frame
+                room to breathe — but the launch line must survive that fade,
+                so it gets its own opacity below, not the shared supportOpacity. */}
+            <motion.div style={{ opacity: supportOpacity, y: supportY }}>
+              {state.body ? (
+                <p className="mx-auto max-w-[34ch] text-[clamp(1rem,4.5vw,1.2rem)] leading-[1.48] text-[color:var(--color-foreground)]/88">
+                  <ScrubbedBody text={state.body} progress={progress} start={supportStart} end={supportCruiseIn} />
+                </p>
+              ) : null}
+              {state.footer}
+            </motion.div>
+            {state.finaleLaunch ? (
+              <div className="mt-7 flex flex-col items-center gap-1.5 font-mono uppercase tracking-[0.13em]">
+                <motion.span
+                  style={{ opacity: finaleLine1Opacity, y: finaleLine1Y }}
+                  className="text-[clamp(0.95rem,4vw,1.1rem)] text-[#fff2d8]"
+                >
+                  {state.finaleLaunch[0]}
+                </motion.span>
+                <motion.span
+                  style={{ opacity: finaleLine2Opacity, y: finaleLine2Y }}
+                  className="text-[clamp(0.68rem,3vw,0.78rem)] leading-[1.6] text-[#b7aa92]"
+                >
+                  {state.finaleLaunch[1]}
+                </motion.span>
+              </div>
             ) : null}
-            {state.footer}
-          </motion.div>
+            {/* On mobile the CTA joins the same in-flow stack — the absolute,
+                page-centered version below is desktop-only, so the two never
+                fight over the same bottom-anchored space. */}
+            {state.finaleCta ? (
+              <motion.div
+                style={{ opacity: finaleCtaOpacity, y: finaleCtaY }}
+                className="pointer-events-auto mt-7"
+              >
+                {state.finaleCta}
+              </motion.div>
+            ) : null}
+          </div>
         ) : null}
 
         <div className="relative top-8 order-1 text-center md:top-0 md:order-2 md:col-span-5 md:text-left">
@@ -556,25 +655,44 @@ function Panel({
                 </p>
               ) : null}
               {state.footer}
+              {/* Launch info reads as a third line of the same editorial
+                  stack — same mt-7/pt-6 rhythm as the headline→subhead gap,
+                  not a separately anchored block floating near the page edge. */}
+              {state.finaleLaunch ? (
+                <div className="mt-7 flex flex-col gap-1.5 pt-6 font-mono uppercase tracking-[0.13em]">
+                  <motion.span
+                    style={{ opacity: finaleLine1Opacity, y: finaleLine1Y }}
+                    className="text-[clamp(0.95rem,1.4vw,1.25rem)] text-[#fff2d8]"
+                  >
+                    {state.finaleLaunch[0]}
+                  </motion.span>
+                  <motion.span
+                    style={{ opacity: finaleLine2Opacity, y: finaleLine2Y }}
+                    className="text-[clamp(0.68rem,0.85vw,0.8rem)] leading-[1.6] text-[#b7aa92]"
+                  >
+                    {state.finaleLaunch[1]}
+                  </motion.span>
+                </div>
+              ) : null}
             </motion.div>
           ) : null}
         </div>
       </div>
-      {state.finaleLaunch || state.finaleCta ? (
-        <div className="pointer-events-none absolute inset-x-5 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-20 flex flex-col items-center text-center md:inset-x-0 md:bottom-[7svh]">
-          {state.finaleLaunch ? (
-            <motion.div
-              style={{ opacity: finaleLaunchOpacity, y: finaleLaunchY }}
-              className="mb-7 max-w-[36rem] font-mono text-[clamp(0.85rem,1.15vw,1.1rem)] uppercase leading-[1.9] tracking-[0.13em] text-[color:var(--color-muted)]"
-            >
-              {state.finaleLaunch}
-            </motion.div>
-          ) : null}
-          {state.finaleCta ? (
+      {state.finaleCta ? (
+        // The CTA is the one element that still breaks away from the copy
+        // column to sit centered on the full shell — the launch title/subhead
+        // now live in-flow right under the subhead (see the hasBottom blocks
+        // above), reading as one editorial stack instead of two disconnected
+        // groups.
+        <div
+          className="shell pointer-events-none absolute inset-x-0 bottom-[7svh] z-20 hidden md:block"
+          style={ctaBottom !== null ? { bottom: `${ctaBottom}px` } : undefined}
+        >
+          <div ref={ctaRef} className="flex flex-col items-center text-center">
             <motion.div style={{ opacity: finaleCtaOpacity, y: finaleCtaY }} className="pointer-events-auto">
               {state.finaleCta}
             </motion.div>
-          ) : null}
+          </div>
         </div>
       ) : null}
     </motion.div>

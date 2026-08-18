@@ -330,7 +330,7 @@ html[data-locale="en"] .display-lg {
 }
 
 .pager-marquee {
-  animation: pager-marquee 46s linear infinite;
+  animation: pager-marquee 24s linear infinite;
   will-change: transform;
 }
 

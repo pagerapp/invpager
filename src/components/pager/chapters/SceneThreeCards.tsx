@@ -169,16 +169,36 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
   // Cards no longer travel through the frame. They appear directly in their
   // final places, so the story is expressed through the product states rather
   // than a fragile four-card choreography.
-  const profileOpacity = useTransform(scene, [0.02, 0.12], [0, 1]);
-  const guestCardOpacity = useTransform(scene, [0.20, 0.30], [0, 1]);
-  const permissionOpacity = useTransform(scene, [0.38, 0.48], [0, 1]);
-  const annaOpacity = useTransform(scene, [0.66, 0.76], [0, 1]);
+  // Reveal order reads column by column — the whole left side (profile,
+  // then the recipient's PAGER ID) before the eye ever moves right (their
+  // permissions, then their temporary access) — instead of jumping rows.
+  // The four cards each get a real, readable beat — not a flash-cut — inside
+  // the first third of the scene. The Hero's total runway (heightSvh) was
+  // widened specifically so this pacing and the closing headline's own long
+  // read (see StoryScroll's hasCardOverlay text timing, synced to start the
+  // instant cardRecede below begins) can both breathe without stealing time
+  // from each other.
+  const profileOpacityIn = useTransform(scene, [0.02, 0.08], [0, 1]);
+  const guestCardOpacityIn = useTransform(scene, [0.12, 0.18], [0, 1]);
+  const permissionOpacityIn = useTransform(scene, [0.22, 0.28], [0, 1]);
+  const annaOpacityIn = useTransform(scene, [0.32, 0.38], [0, 1]);
+  // Rack focus: right as the last card has made its point, the whole set
+  // recedes — dimmed and slightly smaller — in the same beat the closing
+  // headline enters (see StoryScroll's hasCardOverlay text timing, tuned to
+  // land on this same checkpoint), so the cut from "evidence" to "payoff
+  // line" reads as one deliberate move, not two competing animations.
+  const cardRecede = useTransform(scene, [0.4, 0.5], [1, 0.55]);
+  const cardRecedeScale = useTransform(scene, [0.4, 0.5], [1, 0.97]);
+  const profileOpacity = useTransform([profileOpacityIn, cardRecede], (v) => (v as number[])[0] * (v as number[])[1]);
+  const permissionOpacity = useTransform([permissionOpacityIn, cardRecede], (v) => (v as number[])[0] * (v as number[])[1]);
+  const guestCardOpacity = useTransform([guestCardOpacityIn, cardRecede], (v) => (v as number[])[0] * (v as number[])[1]);
+  const annaOpacity = useTransform([annaOpacityIn, cardRecede], (v) => (v as number[])[0] * (v as number[])[1]);
   // A profile is highlighted in place. No floating outline travels between
   // cards, so every step is tied precisely to its own profile tile.
-  const personalHighlight = useTransform(scene, [0.12, 0.15, 0.18, 0.21], [0, 1, 0.55, 0]);
-  const workHighlight = useTransform(scene, [0.18, 0.21, 0.24, 0.27], [0, 1, 0.55, 0]);
-  const alterHighlight = useTransform(scene, [0.24, 0.27, 0.30, 0.33], [0, 1, 0.48, 0]);
-  const guestHighlight = useTransform(scene, [0.30, 0.34, 0.40, 0.44], [0, 1, 1, 0.9]);
+  const personalHighlight = useTransform(scene, [0.04, 0.07, 0.1, 0.13], [0, 1, 0.55, 0]);
+  const workHighlight = useTransform(scene, [0.1, 0.13, 0.16, 0.19], [0, 1, 0.55, 0]);
+  const alterHighlight = useTransform(scene, [0.16, 0.19, 0.22, 0.25], [0, 1, 0.48, 0]);
+  const guestHighlight = useTransform(scene, [0.22, 0.26, 0.31, 0.35], [0, 1, 1, 0.9]);
   const profiles = [
     { label: c.personal, src: PORTRAITS.personal, accent: "#27d5a7", glow: "0 0 15px rgba(39,213,167,.82)", highlight: personalHighlight },
     { label: c.work, src: PORTRAITS.work, accent: "#4e9cff", glow: "0 0 15px rgba(78,156,255,.84)", highlight: workHighlight },
@@ -188,7 +208,7 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
 
   return (
     <div className="relative h-full w-full font-sans text-white [text-shadow:0_1px_8px_rgba(0,0,0,.7)]">
-      <motion.div className="absolute z-30 aspect-[1.25] w-[35%]" style={{ opacity: profileOpacity, left: "1.2%", top: "16%" }}>
+      <motion.div className="absolute z-30 aspect-[1.25] w-[35%]" style={{ opacity: profileOpacity, scale: cardRecedeScale, left: "1.2%", top: "16%" }}>
       <section className={`flex h-full flex-col ${EDITORIAL_CARD}`}>
         <div className={`flex items-baseline justify-between gap-2 border-b ${EDITORIAL_RULE} pb-[clamp(.24rem,.55vw,.52rem)]`}>
           <p className={`${CARD_HEADING} whitespace-nowrap text-[clamp(.27rem,.54vw,.52rem)] tracking-normal`}>{c.profiles}</p>
@@ -214,11 +234,11 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
         </div>
       </section></motion.div>
 
-      <PermissionCard copy={c} locale={locale} scene={scene} opacity={permissionOpacity} />
+      <PermissionCard copy={c} locale={locale} scene={scene} opacity={permissionOpacity} scale={cardRecedeScale} />
 
       <motion.section
         className={`absolute z-10 flex aspect-[1.25] w-[35%] flex-col ${EDITORIAL_CARD}`}
-        style={{ opacity: annaOpacity, left: "63.75%", top: "16%" }}
+        style={{ opacity: annaOpacity, scale: cardRecedeScale, left: "63.9%", top: "54%" }}
       >
         <div className={`mb-[clamp(.3rem,.65vw,.6rem)] flex items-baseline justify-between gap-2 border-b ${EDITORIAL_RULE} pb-[clamp(.24rem,.55vw,.52rem)]`}>
           <p className={CARD_HEADING}>{temporaryCardTitle}</p>
@@ -252,7 +272,7 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
 
       <motion.section
         className={`absolute z-20 flex aspect-[1.25] w-[35%] flex-col ${EDITORIAL_CARD}`}
-        style={{ opacity: guestCardOpacity, left: "63.9%", top: "54%" }}
+        style={{ opacity: guestCardOpacity, scale: cardRecedeScale, left: "1.15%", top: "54%" }}
       >
         <div className={`mb-[clamp(.3rem,.65vw,.6rem)] flex items-baseline justify-between gap-2 border-b ${EDITORIAL_RULE} pb-[clamp(.24rem,.55vw,.52rem)]`}>
           <p className={CARD_HEADING}>{pagerIdCardTitle}</p>
@@ -281,7 +301,7 @@ export function SceneThreeCards({ locale, progress, range }: { locale: Locale; p
   );
 }
 
-function PermissionCard({ copy, locale, scene, opacity }: { copy: SceneCopy; locale: Locale; scene: MotionValue<number>; opacity: MotionValue<number> }) {
+function PermissionCard({ copy, locale, scene, opacity, scale }: { copy: SceneCopy; locale: Locale; scene: MotionValue<number>; opacity: MotionValue<number>; scale: MotionValue<number> }) {
   // The card starts as an open channel. During its focused moment, the four
   // non-essential permissions close together; time limits now belong to the
   // recipient's card, where their meaning is immediately clear.
@@ -303,7 +323,7 @@ function PermissionCard({ copy, locale, scene, opacity }: { copy: SceneCopy; loc
   return (
     <motion.section
       className={`absolute z-[15] aspect-[1.25] w-[35%] ${EDITORIAL_CARD}`}
-      style={{ opacity, left: "1.15%", top: "54%" }}
+      style={{ opacity, scale, left: "63.75%", top: "16%" }}
     >
       <div className={`mb-[clamp(.28rem,.6vw,.6rem)] flex items-baseline justify-between gap-2 border-b ${EDITORIAL_RULE} pb-[clamp(.28rem,.58vw,.56rem)]`}>
         <p className={CARD_HEADING}>{copy.permissions}</p>

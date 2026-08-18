@@ -48,13 +48,7 @@ export function Hero() {
     ...(i === 2 ? { mediaGradualReveal: true } : {}),
     ...(i === t.hero.frames.length - 1
       ? {
-          finaleLaunch: (
-            <div className="flex flex-col items-center gap-1.5">
-              <span className="text-[#f6c86f]">{t.hero.launch.label}</span>
-              <span className="text-[#fff2d8]">{t.hero.launch.beta}</span>
-              <span className="text-[#b7aa92]">{t.hero.launch.stores}</span>
-            </div>
-          ),
+          finaleLaunch: [t.hero.launch.beta, t.hero.launch.stores] as [string, string],
           finaleCta: (
             <a
               href="#chapter-08"
@@ -70,7 +64,7 @@ export function Hero() {
   return (
     <StoryScroll
       states={[intro, ...frames]}
-      heightSvh={520}
+      heightSvh={680}
       mediaHeight="min(70svh, 92vw)"
       introAlign="center"
       holdFinal
