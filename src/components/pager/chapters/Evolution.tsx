@@ -169,7 +169,6 @@ function EvolutionSwitcher({ stages, title }: { stages: Stage[]; title: string }
     <div className="md:hidden">
       <div role="tablist" aria-label={title} className="grid grid-cols-2 gap-px bg-[color:var(--color-hairline)]">
         {stages.map((s, i) => {
-          const isPager = i === PAGER_INDEX;
           const isActive = active === i;
           return (
             <button
@@ -180,36 +179,32 @@ function EvolutionSwitcher({ stages, title }: { stages: Stage[]; title: string }
               aria-selected={isActive}
               aria-controls="evo-panel"
               onClick={() => setActive(i)}
-              className="relative flex flex-col items-center gap-2 overflow-hidden bg-[color:var(--color-background)] px-3 py-5 text-center transition-colors duration-200"
+              className="relative flex items-stretch gap-3 overflow-hidden bg-[color:var(--color-background)] py-3 pl-3 pr-2 text-left transition-colors duration-200"
               style={isActive ? { backgroundColor: "color-mix(in srgb, var(--color-foreground) 5%, transparent)" } : undefined}
             >
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute left-2 top-1 select-none text-[2.75rem] font-black leading-none text-[color:var(--color-hairline)]"
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div
-                className="relative flex w-full max-w-[3rem] items-center justify-center"
-                style={isPager ? { filter: `drop-shadow(0 0 14px ${ACCENT}66)` } : undefined}
-              >
+              <div className="w-[34%] shrink-0 self-stretch">
                 <MediaSlot
                   name={MEDIA[i]!}
                   alt=""
                   label={s.role}
-                  maxHeight="3rem"
-                  className="w-full [&>div:first-child]:opacity-0"
+                  lockHeight
+                  className="h-full w-full [&>div:first-child]:opacity-0"
                 />
               </div>
-              <span
-                className="relative text-[13px] font-semibold uppercase leading-tight"
-                style={{ color: isPager ? ACCENT : undefined }}
-              >
-                {s.name}
-              </span>
-              <span className="label-tech relative normal-case text-[11px] leading-snug text-[color:var(--color-muted-foreground)]">
-                {s.prompt}
-              </span>
+              <div className="relative min-w-0 flex-1 overflow-hidden">
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-1 top-1/2 -translate-y-1/2 select-none text-[3.25rem] font-black leading-none text-[color:var(--color-hairline)] opacity-40"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="relative flex min-h-full flex-col justify-center">
+                  <span className="text-[13px] font-semibold leading-snug">{s.q}</span>
+                  <span className="label-tech mt-1 normal-case text-[10px] leading-snug text-[color:var(--color-muted-foreground)]">
+                    {s.prompt}
+                  </span>
+                </div>
+              </div>
             </button>
           );
         })}
