@@ -101,10 +101,7 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
       style={isPager ? { boxShadow: `inset 0 0 0 2px ${ACCENT}` } : undefined}
     >
       <div className="flex items-start justify-between gap-4">
-        <span
-          className="label-tech transition-colors duration-300 group-hover:text-[color:var(--color-foreground)]"
-          style={isPager ? { color: ACCENT } : undefined}
-        >
+        <span className="label-tech transition-colors duration-300 group-hover:text-[color:var(--color-foreground)]">
           {stage.role}
         </span>
         {isPager ? (
@@ -138,7 +135,7 @@ function StageCard({ stage, media, index }: { stage: Stage; media: string; index
 
         <div className="min-w-0 border-l pl-8" style={{ borderColor: isPager ? ACCENT : "var(--color-hairline)" }}>
           <p className="label-tech mb-4 text-[color:var(--color-foreground)]">{stage.prompt}</p>
-          <h3 className="text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em]">
+          <h3 className="break-words text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em]">
             {stage.name}
           </h3>
           <p className="mt-4 text-base font-medium leading-snug text-[color:var(--color-foreground)]">
