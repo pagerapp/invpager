@@ -38,10 +38,10 @@ export function Multiprofile() {
         <div
           aria-label={t.multiprofile.head.title}
           role="list"
-          className="mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-8 md:grid md:grid-cols-3 md:gap-px md:overflow-visible md:bg-[color:var(--color-hairline)] md:pb-0"
+          className="mt-6 grid grid-cols-2 gap-3 md:mt-8 md:grid-cols-3 md:gap-px md:bg-[color:var(--color-hairline)]"
         >
           {t.multiprofile.cards.map((card, index) => (
-            <ProfileCard key={card.title} card={card} media={MEDIA[index]!} index={index} />
+            <ProfileCard key={card.title} card={card} media={MEDIA[index]!} index={index} wide={index === 2} />
           ))}
         </div>
 
@@ -175,29 +175,63 @@ function ProfileCard({
   card,
   media,
   index,
+  wide = false,
 }: {
   card: { title: string; body: string };
   media: string;
   index: number;
+  wide?: boolean;
 }) {
   return (
     <Rise
       delay={index * 0.08}
-      className="group flex min-h-[8.5rem] min-w-[86vw] snap-start items-center gap-4 border border-[color:var(--color-hairline)] bg-[color:var(--color-background)] p-4 md:min-w-0 md:border-0 md:p-5"
+      className={`group relative flex min-h-[8.5rem] overflow-hidden border p-4 text-left md:p-5 ${
+        wide
+          ? "col-span-2 flex-row items-center gap-4 border-[#f6c86f]/35 bg-[linear-gradient(135deg,rgba(246,200,111,0.12),rgba(246,200,111,0)_65%)] md:col-span-1"
+          : "flex-col gap-3 border-[color:var(--color-hairline)] bg-[color:var(--color-background)] md:flex-row md:items-center md:gap-4 md:border-0"
+      }`}
     >
-      <MediaSlot
-        name={media}
-        alt={card.title}
-        label={card.title}
-        maxHeight="5rem"
-        className="w-20 shrink-0 transition-transform duration-500 ease-out group-hover:scale-[1.04] [&>div:first-child]:opacity-0"
-      />
-      <div className="min-w-0 border-l border-[color:var(--color-hairline)] pl-4">
-        <span className="label-tech">{String(index + 1).padStart(2, "0")} / 03</span>
-        <h3 className="mt-2 text-base font-semibold uppercase leading-[1.04] tracking-[-0.03em] md:text-lg">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-3 top-3 select-none text-[3.75rem] font-black leading-none text-[color:var(--color-hairline)] opacity-40 md:right-4 md:top-4 md:text-[4.5rem]"
+      >
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      {wide ? (
+        <MediaSlot
+          name={media}
+          alt={card.title}
+          label={card.title}
+          maxHeight="6.5rem"
+          className="w-20 shrink-0 transition-transform duration-500 ease-out group-hover:scale-[1.04] md:w-20 [&>div:first-child]:opacity-0"
+        />
+      ) : (
+        <div className="relative flex items-center gap-3 md:contents">
+          <MediaSlot
+            name={media}
+            alt={card.title}
+            label={card.title}
+            maxHeight="5rem"
+            className="w-14 shrink-0 transition-transform duration-500 ease-out group-hover:scale-[1.04] md:w-20 [&>div:first-child]:opacity-0"
+          />
+          <h3 className="min-w-0 text-[13px] font-semibold uppercase leading-[1.15] tracking-[-0.02em] md:hidden">
+            {card.title}
+          </h3>
+        </div>
+      )}
+      <div className="relative min-w-0 md:border-l md:border-[color:var(--color-hairline)] md:pl-4">
+        <h3
+          className={`text-base font-semibold uppercase leading-[1.04] tracking-[-0.03em] md:text-lg ${
+            wide ? "" : "hidden md:block"
+          }`}
+        >
           {card.title}
         </h3>
-        <p className="mt-2 text-sm leading-snug text-[color:var(--color-muted-foreground)]">
+        <p
+          className={`text-sm leading-snug text-[color:var(--color-muted-foreground)] ${
+            wide ? "mt-2" : "md:mt-2"
+          }`}
+        >
           {card.body}
         </p>
       </div>

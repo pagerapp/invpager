@@ -92,7 +92,7 @@ export function ChapterHead({
           {title}
         </span>
         {meta ? (
-          <span className="label-tech col-span-6 md:col-span-4 md:text-right">{meta}</span>
+          <span className="label-tech col-span-6 hidden md:col-span-4 md:block md:text-right">{meta}</span>
         ) : null}
       </div>
     </div>

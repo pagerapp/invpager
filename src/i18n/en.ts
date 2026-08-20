@@ -69,8 +69,14 @@ export const en: Dict = {
     kicker: "A new way to find people",
     h: ["NOT A NUMBER.", "NOT A HANDLE.", "PAGER ID"],
     lead: "A new way to start a connection without instant access to your personal space.",
-    todayLabel: "Today a phone number is all of this at once:",
-    today: ["a way to find a person", "a way to reach them", "access to their personal space"],
+    compare: {
+      columns: ["NUMBER", "HANDLE", "PAGER ID"],
+      rows: [
+        { label: "Findable", values: [true, false, true] },
+        { label: "Privacy", values: [false, true, true] },
+        { label: "Own rules", values: [false, false, true] },
+      ],
+    },
     request: "CONNECTION REQUEST →",
     idFormat: "ID FORMAT / XXXX XXXX",
     summary:
@@ -114,7 +120,7 @@ export const en: Dict = {
     contexts: [
       { label: "Personal", access: "Full access", rules: "Calls, voice, media" },
       { label: "Work", access: "Working hours", rules: "Text, files, calls on agreement" },
-      { label: "Guest", access: "Temporary access", rules: "Text only, limited period" },
+      { label: "Guest", access: "24-hour temporary access", rules: "Text only, limited period" },
       { label: "Special context", access: "On request", rules: "A separate space and its own rules" },
     ],
     summary:

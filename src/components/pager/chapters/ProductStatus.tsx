@@ -67,11 +67,10 @@ export function ProductStatus() {
       </div>
 
       <div
-        className="relative -mt-16 pb-[var(--chapter-space)] pt-44 text-[#f3efe8] md:-mt-20 md:pt-48"
+        className="relative -mt-16 bg-fixed bg-top bg-cover bg-no-repeat pb-[var(--chapter-space)] pt-44 text-[#f3efe8] md:-mt-20 md:pt-48"
         style={
           {
-            backgroundImage:
-              "linear-gradient(to bottom, rgb(226 223 217 / 0) 0, #ddd9d3 3rem, #b6b3ad 4.2rem, #898680 5.8rem, #585650 7.2rem, #2d2c29 8.8rem, #0b0b0b 10rem, #0b0b0b 100%)",
+            backgroundImage: "url(media/product_roadmap_bg.jpg)",
             "--background": "#0b0b0b",
             "--foreground": "#f3efe8",
             "--muted-foreground": "#a8a29e",
@@ -79,7 +78,16 @@ export function ProductStatus() {
           } as CSSProperties
         }
       >
-        <div className="shell">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(to bottom, rgb(226 223 217 / 0) 0, #ddd9d3 3rem, #b6b3ad 4.2rem, #898680 5.8rem, #585650 7.2rem, #2d2c29 8.8rem, rgba(11,11,11,0.55) 10rem, rgba(11,11,11,0.55) 100%)",
+          }}
+        />
+
+        <div className="shell relative">
           <Rise>
             <h2 className="display-lg mx-auto max-w-[20ch] text-center text-[#f3efe8] md:max-w-none md:whitespace-nowrap">
               {t.product.bridge}

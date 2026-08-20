@@ -69,8 +69,14 @@ export const zh: Dict = {
     kicker: "找到一个人的新方式",
     h: ["不是号码。", "不是昵称。", "PAGER ID"],
     lead: "一种开启连接的新方式，且不会立即让对方进入你的私人空间。",
-    todayLabel: "今天，手机号码同时意味着：",
-    today: ["找到一个人的方式", "取得联系的方式", "进入私人空间的通道"],
+    compare: {
+      columns: ["号码", "昵称", "PAGER ID"],
+      rows: [
+        { label: "可被找到", values: [true, false, true] },
+        { label: "隐私保护", values: [false, true, true] },
+        { label: "自定规则", values: [false, false, true] },
+      ],
+    },
     request: "发起连接请求 →",
     idFormat: "ID FORMAT / XXXX XXXX",
     summary:
@@ -114,7 +120,7 @@ export const zh: Dict = {
     contexts: [
       { label: "私人", access: "完全开放", rules: "通话、语音、媒体" },
       { label: "工作", access: "工作时间", rules: "文字、文件、通话需事先约定" },
-      { label: "访客", access: "临时访问", rules: "仅限文字，限定时段" },
+      { label: "访客", access: "24 小时临时访问", rules: "仅限文字，限定时段" },
       { label: "特殊情境", access: "按请求开放", rules: "独立空间与独立规则" },
     ],
     summary:

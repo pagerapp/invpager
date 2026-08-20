@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LOCALES, useLocale } from "@/i18n";
 
 const logo = { url: "favicon.png" };
@@ -11,12 +11,22 @@ const profileIcons = [
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeProfile, setActiveProfile] = useState(0);
   const { t } = useLocale();
+  const lastY = useRef(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      const delta = y - lastY.current;
+      if (y < 80) setHidden(false);
+      else if (delta > 4) setHidden(true);
+      else if (delta < -4) setHidden(false);
+      lastY.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -31,7 +41,9 @@ export function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        hidden && !open ? "max-md:-translate-y-full" : "max-md:translate-y-0"
+      } ${
         scrolled
           ? "bg-[color-mix(in_oklab,var(--ink)_88%,transparent)] backdrop-blur-[6px] border-b border-[color:oklch(1_0_0/12%)]"
           : "border-b border-transparent"
